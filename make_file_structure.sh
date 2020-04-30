@@ -221,10 +221,12 @@ for i in $OFFSET_ACT_FNS; do
 done
 
 # Make nepochs directories.
-d=$OUTDIR/qn_models/additional_setups/nepochs/
-if [ ! -d $d ] ; then
+for i in $NEPOCH_PROP_TRAINSIZES; do
+  d=$OUTDIR/qn_models/additional_setups/nepochs/prop_${i}/
+  if [ ! -d $d ] ; then
     mkdir -p $d
-fi
+  fi
+done
 
 # Make dll_values directories.
 for i in $DLL_VALUES; do
