@@ -2,11 +2,13 @@
 source ./variables
 
 ## Make coadded dataset.
-cmd="parse_data --spplates $REDUXDIR/*/spPlate-*.fits --spall $SPALL --sdrq $SDRQ --out $OUTDIR/data/full_datasets/data_dr12.fits"
+cmd="parse_data --spplates $REDUXDIR/*/spPlate-*.fits --spall $SPALL --sdrq $SDRQ --out $OUTDIR/data/coadd/full_datasets/data_dr12.fits"
 $cmd
 
 ## Make bestexp dataset.
-parse_data --spplates $REDUXDIR/*/spPlate-*.fits --spall $SPALL --sdrq $SDRQ --out $OUTDIR/data/full_datasets/data_dr12.fits --use-best-exp
+cmd="parse_data --spplates $REDUXDIR/*/spPlate-*.fits --spall $SPALL --sdrq $SDRQ --out $OUTDIR/data/bestexp/full_datasets/data_dr12_best_exp.fits --use-best-exp"
+$cmd
 
 ## Make randexp dataset.
-parse_data --spplates $REDUXDIR/*/spPlate-*.fits --spall $SPALL --sdrq $SDRQ --out $OUTDIR/data/full_datasets/data_dr12.fits --use-random-exp --random-seed 0
+cmd="parse_data --spplates $REDUXDIR/*/spPlate-*.fits --spall $SPALL --sdrq $SDRQ --out $OUTDIR/data/randexp/full_datasets/data_dr12_rand_exp_seed0.fits --use-random-exp --random-seed 0"
+$cmd

@@ -111,7 +111,7 @@ done
 
 ## Make QN models directories.
 # Make directories for setup types.
-for i in main_setups additional_setups; do
+for i in main_setup additional_setups; do
   d=$OUTDIR/qn_models/$i
   if [ ! -d $d ] ; then
       mkdir -p $d
