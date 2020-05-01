@@ -29,12 +29,12 @@ parser.add_argument('--output-prefix', type=str, required=True)
 args = parser.parse_args()
 
 ## Check that directories exist for the outputs, make them if not.
-print('Output will written to directory {}'.format(args.output_dir))
+print(' -> Output will written to directory {}'.format(args.output_dir))
 if not os.path.isdir(args.output_dir):
     os.mkdir(args.output_dir)
 
 run_dir = '{}/run_files'.format(args.output_dir)
-print(' -> Job files will be saved to {}'.format(run_dir))
+print(' -> Job files will be saved to directory {}'.format(run_dir))
 if not os.path.isdir(run_dir):
     os.mkdir(run_dir)
 
@@ -79,4 +79,4 @@ run_script_text += 'date\n'
 print(run_script_text)
 with open(run_script, 'w') as file:
     file.write(run_script_text)
-os.chmod(run_file,stat.S_IRWXU | stat.S_IRWXG)
+os.chmod(run_script,stat.S_IRWXU | stat.S_IRWXG)
