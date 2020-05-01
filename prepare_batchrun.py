@@ -71,7 +71,7 @@ for a in BESTEXP_ABS_TRAINSIZES:
 for p in RANDEXP_PROP_TRAINSIZES:
     run_file_text += 'echo "Preparing for training models on random exposure data with training proportion {}..."\n'.format(p)
     train_dir = '{}/data/randexp/training_datasets/prop_{}/'.format(OUTDIR,p)
-    train_prefix = 'data_dr12_randexp_train'
+    train_prefix = 'data_dr12_randexp_seed0_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
     splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
     nhours = PROP_JOB_TIMES[p]
@@ -85,7 +85,7 @@ for p in RANDEXP_PROP_TRAINSIZES:
 for a in RANDEXP_ABS_TRAINSIZES:
     run_file_text += 'echo "Preparing for training models on random exposure data with training size {}..."\n'.format(a)
     train_dir = '{}/data/randexp/training_datasets/abs_{}/'.format(OUTDIR,a)
-    train_prefix = 'data_dr12_randexp_train'
+    train_prefix = 'data_dr12_randexp_seed0_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
     splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
     nhours = ABS_JOB_TIMES[a]
@@ -102,7 +102,7 @@ for oaf in OFFSET_ACT_FNS:
     train_prefix = 'data_dr12_coadd_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
     splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
-    split = splits[0]
+    split = splits.sort()[0]
     nhours = PROP_JOB_TIMES[OFFSET_ACT_PROP_TRAINSIZE]
     output_dir = '{}/qn_models/additional_setups/offset_act/{}'.format(OUTDIR,oaf)
     output_prefix = 'qn_train_coadd'
@@ -116,7 +116,7 @@ for p in NEPOCH_PROP_TRAINSIZES:
     train_prefix = 'data_dr12_coadd_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
     splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
-    split = splits[0]
+    split = splits.sort()[0]
     nhours = PROP_JOB_TIMES[p]*(NEPOCH_MAX/200)
     output_dir = '{}/qn_models/additional_setups/nepochs/prop_{}/'.format(OUTDIR,p)
     output_prefix = 'qn_train_coadd'
@@ -130,7 +130,7 @@ for dll in DLL_VALUES:
     train_prefix = 'data_dr12_coadd_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
     splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
-    split = splits[0]
+    split = splits.sort()[0]
     nhours = PROP_JOB_TIMES[DLL_PROP_TRAINSIZE]
     output_dir = '{}/qn_models/additional_setups/dll_values/dll_{}'.format(OUTDIR,dll)
     output_prefix = 'qn_train_coadd'
@@ -144,7 +144,7 @@ for nchunk in NCHUNK_VALUES:
     train_prefix = 'data_dr12_coadd_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
     splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
-    split = splits[0]
+    split = splits.sort()[0]
     nhours = PROP_JOB_TIMES[NCHUNK_PROP_TRAINSIZE]
     output_dir = '{}/qn_models/additional_setups/dll_values/nchunk_{}'.format(OUTDIR,nchunk)
     output_prefix = 'qn_train_coadd'
