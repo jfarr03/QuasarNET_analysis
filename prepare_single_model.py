@@ -45,7 +45,7 @@ run_script = '{}/run_qn_train_{}.sh'.format(args.output_dir,args.split)
 if args.verbose:
     print(' -> Run script will be written to {}'.format(run_script))
 
-command = 'qn_train --truth {} --data {}/{}_{}.fits --epochs {} --out-prefix {}/{}_{} --lines {} --lines-bal {} --decay {} --offset-activation-function {} --nepochs {} --dll {} --nchunks {}'.format(args.truth,args.training_dir,args.training_prefix,args.split,args.nepochs,args.output_dir,args.output_prefix,args.split,args.lines,args.lines_bal,args.decay,args.offset_activation_function,args.nepochs,args.dll,args.nchunks)
+command = 'qn_train --truth {} --data {}/{}_{}.fits --epochs {} --out-prefix {}/{}_{} --lines {} --lines-bal {} --decay {} --offset-activation-function {} --epochs {} --dll {} --boxes {}'.format(args.truth,args.training_dir,args.training_prefix,args.split,args.nepochs,args.output_dir,args.output_prefix,args.split,args.lines,args.lines_bal,args.decay,args.offset_activation_function,args.nepochs,args.dll,args.nchunks)
 
 if args.save_epoch_checkpoints:
     command += ' --save-epoch-checkpoints'
@@ -72,6 +72,8 @@ run_script_text += '#Fix to bug in HDF5 (https://www.nersc.gov/users/data-analyt
 run_script_text += 'export HDF5_USE_FILE_LOCKING=FALSE\n\n'
 
 run_script_text += 'command="{}"\n\n'.format(command)
+
+run_script_text += 'date\n\n'
 
 run_script_text += 'echo "Running command: $command"\n'
 run_script_text += '$command >& {}/{}_{}.log &\n\n'.format(run_dir,args.output_prefix,args.split)
