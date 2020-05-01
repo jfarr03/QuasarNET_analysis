@@ -21,6 +21,7 @@ parser.add_argument('--offset-activation-function', type=str, required=False, de
 parser.add_argument('--nepochs', type=int, required=False, default=200)
 parser.add_argument('--dll', type=float, required=False, default=1e-4)
 parser.add_argument('--nchunks', type=int, required=False, default=13)
+parser.add_argument('--save-epoch-checkpoints', action='store_true', default=False, required=False)
 
 parser.add_argument('--output-dir', type=str, required=True)
 parser.add_argument('--output-prefix', type=str, required=True)
@@ -41,6 +42,12 @@ run_script = '{}/run_qn_train_{}.sh'.format(args.output_dir,args.split)
 print(' -> Run script will be written to {}'.format(run_script))
 if not os.path.isdir(run_script):
     os.mkdir(run_script)
+
+command = 'qn_train --truth {} --data {}/{}_{}.fits --epochs {} --out-prefix {}/{}_{} --lines {} --lines-bal {} --decay {} --offset-activation-function {} --nepochs {} --dll {} --nchunks {}'.format(args.truth,args.training_dir,args.training_prefix,args.split,args.nepochs,args.output_dir,args.output_prefix,args.split,args.lines,args.lines_bal,args.decay,args.offset_activation_function,args.nepochs,args.dll,args.nchunks)
+
+
+if args.save_epoch_checkpoints:
+    command += ' --save-epoch-checkpoints'
 
 ## Write the run file.
 run_script_text = ''
@@ -63,7 +70,7 @@ run_script_text += 'export OMP_NUM_THREADS=64\n\n'
 run_script_text += '#Fix to bug in HDF5 (https://www.nersc.gov/users/data-analytics/data-management/i-o-libraries/hdf5-2/h5py/)\n'
 run_script_text += 'export HDF5_USE_FILE_LOCKING=FALSE\n\n'
 
-run_script_text += 'command="qn_train --truth {} --data {}/{}_{}.fits --epochs {} --out-prefix {}/{}_{} --lines {} --lines-bal {} --decay {}"\n\n'.format(args.truth,args.training_dir,args.training_prefix,args.split,args.nepochs,args.output_dir,args.output_prefix,args.split,args.lines,args.lines_bal,args.decay)
+run_script_text += 'command="{}"'.format(command)
 
 run_script_text += 'echo "Running command: \$command"\n'
 run_script_text += '\$command >& {}/{}_{}.log &\n\n'.format(run_dir,args.output_prefix,args.split)
