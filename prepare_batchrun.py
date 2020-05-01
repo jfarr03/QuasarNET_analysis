@@ -156,7 +156,7 @@ for nchunk in NCHUNK_VALUES:
     splits.sort()
     split = splits[0]
     nhours = PROP_JOB_TIMES[NCHUNK_PROP_TRAINSIZE]
-    output_dir = '{}/qn_models/additional_setups/dll_values/nchunk_{}'.format(OUTDIR,nchunk)
+    output_dir = '{}/qn_models/additional_setups/nchunks/nchunks_{}'.format(OUTDIR,nchunk)
     output_prefix = 'qn_train_coadd'
     run_file_text += './prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} --nchunks {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,nchunk)
 run_file_text += 'echo " -> Done!"\n'
