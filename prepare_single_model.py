@@ -25,21 +25,25 @@ parser.add_argument('--save-epoch-checkpoints', action='store_true', default=Fal
 
 parser.add_argument('--output-dir', type=str, required=True)
 parser.add_argument('--output-prefix', type=str, required=True)
+parser.add_argument('--verbose', action='store_true', default=False, required=False)
 
 args = parser.parse_args()
 
 ## Check that directories exist for the outputs, make them if not.
-print(' -> Output will written to directory {}'.format(args.output_dir))
+if args.verbose:
+    print(' -> Output will written to directory {}'.format(args.output_dir))
 if not os.path.isdir(args.output_dir):
     os.mkdir(args.output_dir)
 
 run_dir = '{}/run_files'.format(args.output_dir)
-print(' -> Job files will be saved to directory {}'.format(run_dir))
+if args.verbose:
+    print(' -> Job files will be saved to directory {}'.format(run_dir))
 if not os.path.isdir(run_dir):
     os.mkdir(run_dir)
 
 run_script = '{}/run_qn_train_{}.sh'.format(args.output_dir,args.split)
-print(' -> Run script will be written to {}'.format(run_script))
+if args.verbose:
+    print(' -> Run script will be written to {}'.format(run_script))
 
 command = 'qn_train --truth {} --data {}/{}_{}.fits --epochs {} --out-prefix {}/{}_{} --lines {} --lines-bal {} --decay {} --offset-activation-function {} --nepochs {} --dll {} --nchunks {}'.format(args.truth,args.training_dir,args.training_prefix,args.split,args.nepochs,args.output_dir,args.output_prefix,args.split,args.lines,args.lines_bal,args.decay,args.offset_activation_function,args.nepochs,args.dll,args.nchunks)
 
@@ -75,7 +79,6 @@ run_script_text += '$command >& {}/{}_{}.log &\n\n'.format(run_dir,args.output_p
 run_script_text += 'wait\n'
 run_script_text += 'date\n'
 
-print(run_script_text)
 with open(run_script, 'w') as file:
     file.write(run_script_text)
 os.chmod(run_script,stat.S_IRWXU | stat.S_IRWXG)
