@@ -96,8 +96,8 @@ for a in RANDEXP_ABS_TRAINSIZES:
     run_file_text += 'echo " -> Done!"\n'
     run_file_text += 'echo " "\n\n'
 
+run_file_text += 'echo "Preparing for training models on coadd data with training size {} with varying offset activation functions..."\n'.format(OFFSET_ACT_PROP_TRAINSIZE)
 for oaf in OFFSET_ACT_FNS:
-    run_file_text += 'echo "Preparing for training models on coadd data with training size {} with varying offset activation functions..."\n'.format(OFFSET_ACT_PROP_TRAINSIZE)
     train_dir = '{}/data/coadd/training_datasets/prop_{}/'.format(OUTDIR,OFFSET_ACT_PROP_TRAINSIZE)
     train_prefix = 'data_dr12_coadd_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
@@ -111,8 +111,8 @@ for oaf in OFFSET_ACT_FNS:
     run_file_text += 'echo " -> Done!"\n'
     run_file_text += 'echo " "\n\n'
 
+run_file_text += 'echo "Preparing for training models on coadd data with training size {}, outputting models at each epoch..."\n'.format(p)
 for p in NEPOCH_PROP_TRAINSIZES:
-    run_file_text += 'echo "Preparing for training models on coadd data with training size {}, outputting models at each epoch..."\n'.format(p)
     train_dir = '{}/data/coadd/training_datasets/prop_{}/'.format(OUTDIR,p)
     train_prefix = 'data_dr12_coadd_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
@@ -126,8 +126,8 @@ for p in NEPOCH_PROP_TRAINSIZES:
     run_file_text += 'echo " -> Done!"\n'
     run_file_text += 'echo " "\n\n'
 
+run_file_text += 'echo "Preparing for training models on coadd data with training size {} with varying dll values..."\n'.format(DLL_PROP_TRAINSIZE)
 for dll in DLL_VALUES:
-    run_file_text += 'echo "Preparing for training models on coadd data with training size {} with varying dll values..."\n'.format(DLL_PROP_TRAINSIZE)
     train_dir = '{}/data/coadd/training_datasets/prop_{}/'.format(OUTDIR,DLL_PROP_TRAINSIZE)
     train_prefix = 'data_dr12_coadd_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
@@ -141,8 +141,8 @@ for dll in DLL_VALUES:
     run_file_text += 'echo " -> Done!"\n'
     run_file_text += 'echo " "\n\n'
 
+run_file_text += 'echo "Preparing for training models on coadd data with training size {} with varying nchunk values..."\n'.format(NCHUNK_PROP_TRAINSIZE)
 for nchunk in NCHUNK_VALUES:
-    run_file_text += 'echo "Preparing for training models on coadd data with training size {} with varying nchunk values..."\n'.format(NCHUNK_PROP_TRAINSIZE)
     train_dir = '{}/data/coadd/training_datasets/prop_{}/'.format(OUTDIR,NCHUNK_PROP_TRAINSIZE)
     train_prefix = 'data_dr12_coadd_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
