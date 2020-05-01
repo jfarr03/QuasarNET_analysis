@@ -17,7 +17,7 @@ for p in COADD_PROP_TRAINSIZES:
     train_dir = '{}/data/coadd/training_datasets/prop_{}/'.format(OUTDIR,p)
     train_prefix = 'data_dr12_coadd_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
-    splits = [training_set.split('train')[-1][1:-5] for training_set in training_sets]
+    splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
     nhours = PROP_JOB_TIMES[p]
     for split in splits:
         output_dir = '{}/qn_models/coadd/prop_{}/model_{}'.format(OUTDIR,p,split)
@@ -31,7 +31,7 @@ for a in COADD_ABS_TRAINSIZES:
     train_dir = '{}/data/coadd/training_datasets/abs_{}/'.format(OUTDIR,p)
     train_prefix = 'data_dr12_coadd_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
-    splits = [training_set.split('train')[-1][1:-5] for training_set in training_sets]
+    splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
     nhours = PROP_JOB_TIMES[p]
     for split in splits:
         output_dir = '{}/qn_models/coadd/abs_{}/model_{}'.format(OUTDIR,a,split)
@@ -45,7 +45,7 @@ for p in BESTEXP_PROP_TRAINSIZES:
     train_dir = '{}/data/bestexp/training_datasets/prop_{}/'.format(OUTDIR,p)
     train_prefix = 'data_dr12_bestexp_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
-    splits = [training_set.split('train')[-1][1:-5] for training_set in training_sets]
+    splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
     nhours = PROP_JOB_TIMES[p]
     for split in splits:
         output_dir = '{}/qn_models/bestexp/prop_{}/model_{}'.format(OUTDIR,p,split)
@@ -59,7 +59,7 @@ for a in BESTEXP_ABS_TRAINSIZES:
     train_dir = '{}/data/bestexp/training_datasets/abs_{}/'.format(OUTDIR,p)
     train_prefix = 'data_dr12_bestexp_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
-    splits = [training_set.split('train')[-1][1:-5] for training_set in training_sets]
+    splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
     nhours = PROP_JOB_TIMES[p]
     for split in splits:
         output_dir = '{}/qn_models/bestexp/abs_{}/model_{}'.format(OUTDIR,a,split)
@@ -73,7 +73,7 @@ for p in RANDEXP_PROP_TRAINSIZES:
     train_dir = '{}/data/randexp/training_datasets/prop_{}/'.format(OUTDIR,p)
     train_prefix = 'data_dr12_randexp_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
-    splits = [training_set.split('train')[-1][1:-5] for training_set in training_sets]
+    splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
     nhours = PROP_JOB_TIMES[p]
     for split in splits:
         output_dir = '{}/qn_models/randexp/prop_{}/model_{}'.format(OUTDIR,p,split)
@@ -87,7 +87,7 @@ for a in RANDEXP_ABS_TRAINSIZES:
     train_dir = '{}/data/randexp/training_datasets/abs_{}/'.format(OUTDIR,p)
     train_prefix = 'data_dr12_randexp_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
-    splits = [training_set.split('train')[-1][1:-5] for training_set in training_sets]
+    splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
     nhours = PROP_JOB_TIMES[p]
     for split in splits:
         output_dir = '{}/qn_models/randexp/abs_{}/model_{}'.format(OUTDIR,a,split)
