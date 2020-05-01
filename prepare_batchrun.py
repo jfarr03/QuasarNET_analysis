@@ -125,7 +125,7 @@ for p in NEPOCH_PROP_TRAINSIZES:
     splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
     splits.sort()
     split = splits[0]
-    nhours = PROP_JOB_TIMES[p]*(NEPOCH_MAX/200)
+    nhours = int(PROP_JOB_TIMES[p]*(NEPOCH_MAX/200))
     output_dir = '{}/qn_models/additional_setups/nepochs/prop_{}/'.format(OUTDIR,p)
     output_prefix = 'qn_train_coadd'
     run_file_text += './prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} --nepochs {} --save-epoch-checkpoints\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,NEPOCH_MAX)
@@ -143,7 +143,7 @@ for dll in DLL_VALUES:
     nhours = PROP_JOB_TIMES[DLL_PROP_TRAINSIZE]
     output_dir = '{}/qn_models/additional_setups/dll_values/dll_{}'.format(OUTDIR,dll)
     output_prefix = 'qn_train_coadd'
-    run_file_text += './prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} -dll {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,dll)
+    run_file_text += './prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} --dll {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,dll)
 run_file_text += 'echo " -> Done!"\n'
 run_file_text += 'echo " "\n\n'
 
