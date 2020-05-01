@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 from variables import *
+from os.path import stat
+import os
 
 run_file = 'make_training_datasets.sh'
 
@@ -44,3 +46,4 @@ for a in RANDEXP_ABS_TRAINSIZES:
 
 with open(run_file, 'w') as file:
     file.write(run_file_text)
+os.chmod(run_file, stat.S_IRWXU | stat.S_IRWXG)

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from os.path import stat
 import os
 import argparse
 
@@ -73,3 +74,4 @@ run_script_text += 'date\n'
 print(run_script_text)
 with open(run_script, 'w') as file:
     file.write(run_script_text)
+os.chmod(run_file,stat.S_IRWXU | stat.S_IRWXG)
