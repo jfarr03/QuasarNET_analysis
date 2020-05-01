@@ -108,8 +108,8 @@ for oaf in OFFSET_ACT_FNS:
     output_dir = '{}/qn_models/additional_setups/offset_act/{}'.format(OUTDIR,oaf)
     output_prefix = 'qn_train_coadd'
     run_file_text += './prepare_single_model.py --training_dir {} --train-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} --offset-activation-function {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,oaf)
-    run_file_text += 'echo " -> Done!"\n'
-    run_file_text += 'echo " "\n\n'
+run_file_text += 'echo " -> Done!"\n'
+run_file_text += 'echo " "\n\n'
 
 run_file_text += 'echo "Preparing for training models on coadd data with training size {}, outputting models at each epoch..."\n'.format(p)
 for p in NEPOCH_PROP_TRAINSIZES:
@@ -122,9 +122,9 @@ for p in NEPOCH_PROP_TRAINSIZES:
     nhours = PROP_JOB_TIMES[p]*(NEPOCH_MAX/200)
     output_dir = '{}/qn_models/additional_setups/nepochs/prop_{}/'.format(OUTDIR,p)
     output_prefix = 'qn_train_coadd'
-    run_file_text += './prepare_single_model.py --training_dir {} --train-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} --nepochs --save-epoch-checkpoints\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,NEPOCH_MAX)
-    run_file_text += 'echo " -> Done!"\n'
-    run_file_text += 'echo " "\n\n'
+    run_file_text += './prepare_single_model.py --training_dir {} --train-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} --nepochs {} --save-epoch-checkpoints\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,NEPOCH_MAX)
+run_file_text += 'echo " -> Done!"\n'
+run_file_text += 'echo " "\n\n'
 
 run_file_text += 'echo "Preparing for training models on coadd data with training size {} with varying dll values..."\n'.format(DLL_PROP_TRAINSIZE)
 for dll in DLL_VALUES:
@@ -138,8 +138,8 @@ for dll in DLL_VALUES:
     output_dir = '{}/qn_models/additional_setups/dll_values/dll_{}'.format(OUTDIR,dll)
     output_prefix = 'qn_train_coadd'
     run_file_text += './prepare_single_model.py --training_dir {} --train-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} -dll {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,dll)
-    run_file_text += 'echo " -> Done!"\n'
-    run_file_text += 'echo " "\n\n'
+run_file_text += 'echo " -> Done!"\n'
+run_file_text += 'echo " "\n\n'
 
 run_file_text += 'echo "Preparing for training models on coadd data with training size {} with varying nchunk values..."\n'.format(NCHUNK_PROP_TRAINSIZE)
 for nchunk in NCHUNK_VALUES:
@@ -153,8 +153,8 @@ for nchunk in NCHUNK_VALUES:
     output_dir = '{}/qn_models/additional_setups/dll_values/nchunk_{}'.format(OUTDIR,nchunk)
     output_prefix = 'qn_train_coadd'
     run_file_text += './prepare_single_model.py --training_dir {} --train-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} --nchunks {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,nchunk)
-    run_file_text += 'echo " -> Done!"\n'
-    run_file_text += 'echo " "\n\n'
+run_file_text += 'echo " -> Done!"\n'
+run_file_text += 'echo " "\n\n'
 
 with open(run_file, 'w') as file:
     file.write(run_file_text)
