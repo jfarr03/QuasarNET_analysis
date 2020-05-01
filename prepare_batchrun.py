@@ -28,11 +28,11 @@ for p in COADD_PROP_TRAINSIZES:
 
 for a in COADD_ABS_TRAINSIZES:
     run_file_text += 'echo "Preparing for training models on coadded data with training size {}..."\n'.format(a)
-    train_dir = '{}/data/coadd/training_datasets/abs_{}/'.format(OUTDIR,p)
+    train_dir = '{}/data/coadd/training_datasets/abs_{}/'.format(OUTDIR,a)
     train_prefix = 'data_dr12_coadd_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
     splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
-    nhours = PROP_JOB_TIMES[p]
+    nhours = ABS_JOB_TIMES[a]
     for split in splits:
         output_dir = '{}/qn_models/coadd/abs_{}/model_{}'.format(OUTDIR,a,split)
         output_prefix = 'qn_train'
@@ -56,11 +56,11 @@ for p in BESTEXP_PROP_TRAINSIZES:
 
 for a in BESTEXP_ABS_TRAINSIZES:
     run_file_text += 'echo "Preparing for training models on best exposure data with training size {}..."\n'.format(a)
-    train_dir = '{}/data/bestexp/training_datasets/abs_{}/'.format(OUTDIR,p)
+    train_dir = '{}/data/bestexp/training_datasets/abs_{}/'.format(OUTDIR,a)
     train_prefix = 'data_dr12_bestexp_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
     splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
-    nhours = PROP_JOB_TIMES[p]
+    nhours = ABS_JOB_TIMES[a]
     for split in splits:
         output_dir = '{}/qn_models/bestexp/abs_{}/model_{}'.format(OUTDIR,a,split)
         output_prefix = 'qn_train_bestexp'
@@ -84,11 +84,11 @@ for p in RANDEXP_PROP_TRAINSIZES:
 
 for a in RANDEXP_ABS_TRAINSIZES:
     run_file_text += 'echo "Preparing for training models on random exposure data with training size {}..."\n'.format(a)
-    train_dir = '{}/data/randexp/training_datasets/abs_{}/'.format(OUTDIR,p)
+    train_dir = '{}/data/randexp/training_datasets/abs_{}/'.format(OUTDIR,a)
     train_prefix = 'data_dr12_randexp_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
     splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
-    nhours = PROP_JOB_TIMES[p]
+    nhours = ABS_JOB_TIMES[a]
     for split in splits:
         output_dir = '{}/qn_models/randexp/abs_{}/model_{}'.format(OUTDIR,a,split)
         output_prefix = 'qn_train_randexp'
