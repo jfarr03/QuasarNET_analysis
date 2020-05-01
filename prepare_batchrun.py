@@ -21,7 +21,7 @@ for p in COADD_PROP_TRAINSIZES:
     nhours = PROP_JOB_TIMES[p]
     for split in splits:
         output_dir = '{}/qn_models/main_setup/coadd/prop_{}/model_{}'.format(OUTDIR,p,split)
-        output_prefix = 'qn_train'
+        output_prefix = 'qn_train_coadd'
         run_file_text += './prepare_single_model.py --training_dir {} --train-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix)
     run_file_text += 'echo " -> Done!"\n'
     run_file_text += 'echo " "\n\n'
@@ -35,7 +35,7 @@ for a in COADD_ABS_TRAINSIZES:
     nhours = ABS_JOB_TIMES[a]
     for split in splits:
         output_dir = '{}/qn_models/main_setup/coadd/abs_{}/model_{}'.format(OUTDIR,a,split)
-        output_prefix = 'qn_train'
+        output_prefix = 'qn_train_coadd'
         run_file_text += './prepare_single_model.py --training_dir {} --train-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix)
     run_file_text += 'echo " -> Done!"\n'
     run_file_text += 'echo " "\n\n'
