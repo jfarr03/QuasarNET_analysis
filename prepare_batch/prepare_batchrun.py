@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from variables import *
+from qn_analysis.variables import *
 import glob
 from os.path import stat
 import os
@@ -8,7 +8,7 @@ import os
 truth = '{}/data/truth/truth_dr12q.fits'.format(OUTDIR)
 
 ## Make prepare_models.sh
-run_file = 'make_runfiles.sh'
+run_file = '../run_batch/make_runfiles.sh'
 
 run_file_text = '#!/usr/bin/env bash\n\n'
 

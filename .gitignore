@@ -1,0 +1,14 @@
+#Plots and output files
+plots
+output
+
+#pycache
+py/__pycache__/
+
+#build files
+build
+core
+dist
+py/LyaCoLoRe.egg-info
+py/LyaCoLoRe/__pycache__
+

@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-from variables import *
+from qn_analysis.variables import *
 from os.path import stat
 import os
 
-run_file = 'make_full_datasets.sh'
+run_file = '../run_batch/make_full_datasets.sh'
 
 run_file_text = '#!/usr/bin/env bash\n\n'
 
