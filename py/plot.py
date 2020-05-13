@@ -384,7 +384,14 @@ def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,
 
     isqso_truth, isgal_truth, isstar_truth, isbad = get_truths(data_table)
 
-    for j,s in enumerate(strategies.keys()):
+    # Make sure that we have the right keys.
+    keys = np.array(['QN_cc','QN_sc','QN_cs','QN_ss'])
+    for s in strategies.keys():
+        assert (s in keys)
+
+    for s in enumerate(strategies.keys()):
+
+        j = np.where(s==keys)[0][0]
 
         com = []
         pur = []
