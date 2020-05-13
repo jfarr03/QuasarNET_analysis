@@ -204,7 +204,7 @@ def plot_pur_com_vs_cth_zbin(data_table,strategies,filename=None,zbins=[(None,2.
     return
 
 ## Function for Figure 2 (3 panel).
-def plot_qn_model_compare_3panel(data_table,strategies,filename=None,dv_max=6000.,nydec=1,figsize=(12,12),ymin=0.97,ymax=1.):
+def plot_qn_model_compare_3panel(data_table,strategies,filename=None,dv_max=6000.,nydec=1,figsize=(18,6),ymin=0.97,ymax=1.):
 
     fig, axs = plt.subplots(1,3,figsize=figsize)
 
@@ -373,7 +373,89 @@ def plot_qn_model_compare_2panel(data_table,strategies,filename=None,dv_max=6000
     return
 
 ## Function for Figure 3.
-def plot_qn_model_data_compare():
+def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,nydec=0,figsize=(12,12),ymin=0.90,ymax=1.,verbose=False):
+
+    fig, axs = plt.subplots(2,2,figsize=figsize,sharex=True,sharey=True)
+
+    cth_min = 0.0
+    cth_max = 1.0
+    n_int = 100
+    c_th = np.arange(cth_min,cth_max,(1/n_int)*(cth_max-cth_min))
+
+    isqso_truth, isgal_truth, isstar_truth, isbad = get_truths(data_table)
+
+    for j,s in enumerate(strategies.keys()):
+
+        com = []
+        pur = []
+
+        z_s = data_table['Z_{}'.format(s)]
+
+        for cth in c_th:
+
+            # Try to use confidences, otherwise use weights.
+            try:
+                isqso_s = strategies[s]['confs']>cth
+            except KeyError:
+                raise KeyError('Confidences not found for strategy {}'.format(s))
+
+            # Calculate purity and completeness.
+            p,c = get_pur_com(isqso_s,z_s,isqso_truth,isgal_truth,isbad,
+                data_table['Z_VI'],dv_max=dv_max)
+
+            # Add to purity/completeness lists.
+            pur += [p]
+            com += [c]
+
+            if (cth==0.5) and verbose:
+                print(s)
+                w_contaminants = isqso_s & isstar_truth
+                w_zerr = isqso_s & (isqso_truth | isgal_truth) & (~zgood)
+                print('number of stars is',w_contaminants.sum())
+                print('number of zerr is',w_zerr.sum())
+                pur_denom = (isqso_s & (~isbad)).sum()
+                pur_num = p*pur_denom
+                print('number of classified QSOs is',pur_denom)
+                print('number of correctly classified QSOs is',pur_num)
+                print('')
+
+        pur = np.array(pur)
+        com = np.array(com)
+
+        ind = np.where(pur>com)[0][0]
+        if verbose:
+            print('cth:',c_th[ind-2:ind+2])
+            print('pur:',pur[ind-2:ind+2])
+            print('com:',com[ind-2:ind+2])
+            print('')
+
+        axs[j//2,j%2].plot(c_th,pur,label='purity',color=utils.colours['C0'])
+        axs[j//2,j%2].plot(c_th,com,label='completeness',color=utils.colours['C1'])
+
+    axs[0,0].text(-0.22,0.5,'4 exposure (coadded)\ntesting data',ha='center',va='center',
+                  transform=axs[0,0].transAxes,rotation=90)
+    axs[1,0].text(-0.22,0.5,'single exposure\ntesting data',ha='center',va='center',
+                  transform=axs[1,0].transAxes,rotation=90)
+    axs[0,0].text(0.5,1.1,'4 exposure (coadded)\ntraining data',ha='center',va='center',
+                  transform=axs[0,0].transAxes,rotation=0)
+    axs[0,1].text(0.5,1.1,'single exposure\ntraining data',ha='center',va='center',
+                  transform=axs[0,1].transAxes,rotation=0)
+
+    for i,ax in enumerate(axs.flatten()):
+        if i//2==1:
+            ax.set_xlabel(r'confidence threshold')
+        ax.grid()
+        ax.set_xlim(0.,1.)
+        ax.set_ylim(ymin,ymax)
+        ax.yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec))
+
+    axs[1,1].legend(loc=4)
+    plt.tight_layout()
+    fig.subplots_adjust(wspace=0.1,hspace=0.1)
+
+    if filename is not None:
+        plt.savefig(filename)
+
     return
 
 ## Function for Figure 4.
