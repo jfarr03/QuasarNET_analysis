@@ -1,5 +1,3 @@
-    ## Same plot as above but colouring classifiers differently
-
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
@@ -172,7 +170,7 @@ def plot_pur_com_vs_cth_zbin(data_table,strategies,filename=None,zbins=[(None,2.
             zbin_label = zbin_label + r'$<{}$'.format(zbin[1])
 
         axs[i,0].text(-0.18,0.5,zbin_label,ha='center',va='center',
-                      transform=axs[1,0].transAxes,rotation=90)
+                      transform=axs[i,0].transAxes,rotation=90)
 
     axs[0,0].text(0.5,1.05,'Purity',ha='center',va='center',
                   transform=axs[0,0].transAxes,rotation=0)
@@ -196,7 +194,7 @@ def plot_pur_com_vs_cth_zbin(data_table,strategies,filename=None,zbins=[(None,2.
         labels += [strategies[s]['n']]
 
     fig.legend(artists,labels,loc='lower center',borderaxespad=0,bbox_to_anchor=(0.5,0.03),ncol=len(artists))
-    rect = (0,0.13,1.,1.)
+    rect = (0,0.15,1.,1.)
     plt.tight_layout(rect=rect)
 
     # Save.
@@ -225,7 +223,7 @@ def plot_qn_model_compare_3panel(data_table,strategies,filename=None,dv_max=6000
         com = []
         pur = []
 
-        z_c = data_table['Z_{}'.format(s)]
+        z_s = data_table['Z_{}'.format(s)]
 
         for cth in c_th:
 
@@ -339,11 +337,11 @@ def plot_qn_model_compare_2panel(data_table,strategies,filename=None,dv_max=6000
             labelc = None
 
         axs[0].plot(c_th,pur,label=labelp,color=utils.colours['C0'],ls=strategies[s]['ls'])
-        axs[1].plot(c_th,com,label=labelc,color=utils.colours['C1'],ls=strategies[s]['ls'])
+        axs[0].plot(c_th,com,label=labelc,color=utils.colours['C1'],ls=strategies[s]['ls'])
 
         ## Plot the dv histogram.
         dv = 300000. * (z_s-data_table['Z_VI']) / (1+data_table['Z_VI'])
-        axs[2].hist(dv,bins=dv_bins,histtype='step',ls=strategies[s]['ls'],color=utils.colours['C2'])
+        axs[1].hist(dv,bins=dv_bins,histtype='step',ls=strategies[s]['ls'],color=utils.colours['C2'])
 
         if verbose:
             dv_med = np.median(dv[abs(dv)<dv_max])
