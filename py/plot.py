@@ -4,28 +4,28 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
-def get_pur_com(isqso_c,z_c,isqso_truth,isgal_truth,isbad,z_truth,zbin=None,dv_max=6000.):
+def get_pur_com(isqso_s,z_s,isqso_truth,isgal_truth,isbad,z_truth,zbin=None,dv_max=6000.):
 
     # Determine which entries are in the z bin.
     in_zbin_zvi = np.ones(z_truth.shape).astype(bool)
-    in_zbin_zc = np.ones(z_c.shape).astype(bool)
+    in_zbin_zs = np.ones(z_s.shape).astype(bool)
     if zbin is not None:
         if zbin[0] is not None:
             in_zbin_zvi &= (z_truth>=zbin[0])
-            in_zbin_zc &= (z_c>=zbin[0])
+            in_zbin_zs &= (z_s>=zbin[0])
         if zbin[1] is not None:
             in_zbin_zvi &= (z_truth<zbin[1])
-            in_zbin_zc &= (z_c<zbin[1])
+            in_zbin_zs &= (z_s<zbin[1])
 
     # See which classifier redshifts are "good".
-    zgood = (z_truth>-1.) & (abs(z_c-z_truth) < dv_max*(1+z_truth)/300000.)
+    zgood = (z_truth>-1.) & (abs(z_s-z_truth) < dv_max*(1+z_truth)/300000.)
 
     # Calculate the two parts of purity.
-    pur_num = (isqso_c & (isqso_truth | isgal_truth) & zgood & (~isbad) & in_zbin_zc).sum()
-    pur_denom = (isqso_c & (~isbad) & in_zbin_zc).sum()
+    pur_num = (isqso_s & (isqso_truth | isgal_truth) & zgood & (~isbad) & in_zbin_zs).sum()
+    pur_denom = (isqso_s & (~isbad) & in_zbin_zs).sum()
 
     # Calculate the two parts of completeness.
-    com_num = (isqso_c & zgood & isqso_truth & in_zbin_zvi).sum()
+    com_num = (isqso_s & zgood & isqso_truth & in_zbin_zvi).sum()
     com_denom = (isqso_truth & in_zbin_zvi).sum()
 
     # Add to purity/completeness lists.
@@ -58,19 +58,19 @@ def plot_pur_com_vs_z(data_table,strategies,filename=None,zmin=0.,zmax=5.,dz_int
     isqso_truth, isgal_truth, isstar_truth, isbad = get_truths(data_table)
 
     # For each strategy:
-    for j,c in enumerate(strategies.keys()):
+    for j,s in enumerate(strategies.keys()):
         com = []
         pur = []
 
         # Extract data from strategy.
-        isqso_c = strategies[c]['w']
-        z_c = strategies[c]['z']
+        isqso_s = strategies[s]['w']
+        z_s = strategies[s]['z']
 
         # For each z bin:
         for i in range(len(dz_edges)-1):
 
             # Calculate purity and completeness.
-            p,c = get_pur_com(isqso_c,z_c,isqso_truth,isgal_truth,isbad,
+            p,c = get_pur_com(isqso_s,z_s,isqso_truth,isgal_truth,isbad,
                 data_table['Z_VI'],zbin=(dz_edges[i],dz_edges[i+1]),dv_max=dv_max)
 
             # Add to purity/completeness lists.
@@ -78,8 +78,8 @@ def plot_pur_com_vs_z(data_table,strategies,filename=None,zmin=0.,zmax=5.,dz_int
             com += [c]
 
         # Plot the results.
-        axs[0].step(dz_edges,[pur[0]]+pur,where='pre',label=c,color=strategies[c]['c'],ls=strategies[c]['ls'])
-        axs[1].step(dz_edges,[com[0]]+com,where='pre',label=c,color=strategies[c]['c'],ls=strategies[c]['ls'])
+        axs[0].step(dz_edges,[pur[0]]+pur,where='pre',label=s,color=strategies[s]['c'],ls=strategies[s]['ls'])
+        axs[1].step(dz_edges,[com[0]]+com,where='pre',label=s,color=strategies[s]['c'],ls=strategies[s]['ls'])
 
     # Format the axes.
     for ax in axs:
@@ -130,15 +130,15 @@ def plot_pur_com_vs_cth_zbin(data_table,strategies,filename=None,zbins=[(None,2.
 
         for i,zbin in enumerate(zbins):
 
-            z_c = strategies[s]['z']
+            z_s = strategies[s]['z']
             in_zbin_zvi = np.ones(data_table['Z_VI'].shape).astype(bool)
-            in_zbin_zc = np.ones(z_c.shape).astype(bool)
+            in_zbin_zs = np.ones(z_s.shape).astype(bool)
             if zbin[0] is not None:
                 in_zbin_zvi &= (data_table['Z_VI']>=zbin[0])
-                in_zbin_zc &= (z_c>=zbin[0])
+                in_zbin_zs &= (z_s>=zbin[0])
             if zbin[1] is not None:
                 in_zbin_zvi &= (data_table['Z_VI']<zbin[1])
-                in_zbin_zc &= (z_c<zbin[1])
+                in_zbin_zs &= (z_s<zbin[1])
 
             com = []
             pur = []
@@ -147,20 +147,20 @@ def plot_pur_com_vs_cth_zbin(data_table,strategies,filename=None,zbins=[(None,2.
 
                 # Try to use confidences, otherwise use weights.
                 try:
-                    isqso_c = strategies[s]['confs']>cth
+                    isqso_s = strategies[s]['confs']>cth
                 except KeyError:
-                    isqso_c = strategies[s]['w']
+                    isqso_s = strategies[s]['w']
 
                 # Calculate purity and completeness.
-                p,c = get_pur_com(isqso_c,z_c,isqso_truth,isgal_truth,isbad,
+                p,c = get_pur_com(isqso_s,z_s,isqso_truth,isgal_truth,isbad,
                     data_table['Z_VI'],zbin=zbin,dv_max=dv_max)
 
                 # Add to purity/completeness lists.
                 pur += [p]
                 com += [c]
 
-            axs[i,0].plot(c_th,pur,color=utils.colours['C0'],ls=strategies[c]['ls'])
-            axs[i,1].plot(c_th,com,color=utils.colours['C1'],ls=strategies[c]['ls'])
+            axs[i,0].plot(c_th,pur,color=utils.colours['C0'],ls=strategies[s]['ls'])
+            axs[i,1].plot(c_th,com,color=utils.colours['C1'],ls=strategies[s]['ls'])
 
     for i,zbin in enumerate(zbins):
         zbin_label = r'$z$'
@@ -229,12 +229,12 @@ def plot_qn_model_compare_3panel(data_table,strategies,filename=None,dv_max=6000
 
             # Try to use confidences, otherwise use weights.
             try:
-                isqso_c = strategies[s]['confs']>cth
+                isqso_s = strategies[s]['confs']>cth
             except KeyError:
                 raise KeyError('Confidences not found for strategy {}'.format(s))
 
             # Calculate purity and completeness.
-            p,c = get_pur_com(isqso_c,z_c,isqso_truth,isgal_truth,isbad,
+            p,c = get_pur_com(isqso_s,z_s,isqso_truth,isgal_truth,isbad,
                 data_table['Z_VI'],dv_max=dv_max)
 
             # Add to purity/completeness lists.
@@ -245,7 +245,7 @@ def plot_qn_model_compare_3panel(data_table,strategies,filename=None,dv_max=6000
         axs[1].plot(c_th,com,label='com',color=utils.colours['C1'],ls=strategies[s]['ls'])
 
         ## Plot the dv histogram.
-        dv = 300000. * (z_c-data_table['Z_VI']) / (1+data_table['Z_VI'])
+        dv = 300000. * (z_s-data_table['Z_VI']) / (1+data_table['Z_VI'])
         axs[2].hist(dv,bins=dv_bins,histtype='step',ls=strategies[s]['ls'],color=utils.colours['C2'])
 
     for ax in axs[:2]:
@@ -300,18 +300,18 @@ def plot_qn_model_compare_2panel(data_table,strategies,filename=None,dv_max=6000
         com = []
         pur = []
 
-        z_c = data_table['Z_{}'.format(s)]
+        z_s = data_table['Z_{}'.format(s)]
 
         for cth in c_th:
 
             # Try to use confidences, otherwise use weights.
             try:
-                isqso_c = strategies[s]['confs']>cth
+                isqso_s = strategies[s]['confs']>cth
             except KeyError:
                 raise KeyError('Confidences not found for strategy {}'.format(s))
 
             # Calculate purity and completeness.
-            p,c = get_pur_com(isqso_c,z_c,isqso_truth,isgal_truth,isbad,
+            p,c = get_pur_com(isqso_s,z_s,isqso_truth,isgal_truth,isbad,
                 data_table['Z_VI'],dv_max=dv_max)
 
             # Add to purity/completeness lists.
@@ -340,13 +340,13 @@ def plot_qn_model_compare_2panel(data_table,strategies,filename=None,dv_max=6000
         axs[1].plot(c_th,com,label=labelc,color=utils.colours['C1'],ls=strategies[s]['ls'])
 
         ## Plot the dv histogram.
-        dv = 300000. * (z_c-data_table['Z_VI']) / (1+data_table['Z_VI'])
+        dv = 300000. * (z_s-data_table['Z_VI']) / (1+data_table['Z_VI'])
         axs[2].hist(dv,bins=dv_bins,histtype='step',ls=strategies[s]['ls'],color=utils.colours['C2'])
 
         if verbose:
             dv_med = np.median(dv[abs(dv)<dv_max])
             dv_std = np.std(dv[abs(dv)<dv_max])
-            print('{} has median velocity error {:3.3f} and standard deviation {:3.3f}\n'.format(c,dv_med,dv_std))
+            print('{} has median velocity error {:3.3f} and standard deviation {:3.3f}\n'.format(s,dv_med,dv_std))
 
         ## Add objects to list of artists and labels for legend.
         artists += [axs[0].plot([0],[0],color='grey',ls=strategies[s]['ls'])[0]]
