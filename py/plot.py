@@ -7,7 +7,7 @@ import matplotlib.ticker as mtick
 def get_pur_com(isqso_c,z_c,isqso_truth,isgal_truth,isbad,z_truth,zbin=None,dv_max=6000.):
 
     # Determine which entries are in the z bin.
-    in_zbin_zvi = np.ones(data_table['Z_VI'].shape).astype(bool)
+    in_zbin_zvi = np.ones(z_truth.shape).astype(bool)
     in_zbin_zc = np.ones(z_c.shape).astype(bool)
     if zbin is not None:
         if zbin[0] is not None:
