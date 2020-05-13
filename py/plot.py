@@ -37,8 +37,8 @@ def get_pur_com(isqso_c,z_c,isqso_truth,isgal_truth,isbad,z_truth,zbin=None,dv_m
 def get_truths(data_table):
 
     isqso_truth = (data_table['ISQSO_VI'] & (data_table['ZCONF_PERSON']==2))
-    isgal_truth = (data_table['CLASS_VI']=='GALAXY' & (data_table['ZCONF_PERSON']==2))
-    isstar_truth = (data_table['CLASS_VI']=='STAR' & (data_table['ZCONF_PERSON']==2))
+    isgal_truth = ((data_table['CLASS_VI']=='GALAXY') & (data_table['ZCONF_PERSON']==2))
+    isstar_truth = ((data_table['CLASS_VI']=='STAR') & (data_table['ZCONF_PERSON']==2))
     isbad = ((data_table['ZCONF_PERSON']=='BAD') | (data_table['ZCONF_PERSON']!=2))
 
     return isqso_truth, isgal_truth, isstar_truth, isbad
