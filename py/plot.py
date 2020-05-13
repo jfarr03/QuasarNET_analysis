@@ -389,9 +389,9 @@ def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,
     for s in strategies.keys():
         assert (s in keys)
 
-    for s in enumerate(strategies.keys()):
+    for s in strategies.keys():
 
-        j = np.where(s==keys)[0][0]
+        j = np.where(keys==s)[0][0]
 
         com = []
         pur = []
