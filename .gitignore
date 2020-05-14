@@ -11,4 +11,4 @@ core
 dist
 py/LyaCoLoRe.egg-info
 py/LyaCoLoRe/__pycache__
-
+analysis/notebooks/.ipynb_checkpoints/
