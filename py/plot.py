@@ -562,12 +562,12 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
             pli = strategies[s]['nhighz_truth_flagged']/nhighz_truth
 
             if len(reobs_dens)>1:
-                axs[0,0].plot(reobs_dens,pli,c='grey',marker=strategies[s]['marker'],label=s,zorder=2,ms=np.sqrt(marker_size))
-                points = axs[0,0].scatter(reobs_dens,pli,c=strategies[s]['color'],marker=strategies[s]['marker'],s=marker_size,zorder=3)
+                axs[0,k].plot(reobs_dens,pli,c='grey',marker=strategies[s]['marker'],label=s,zorder=2,ms=np.sqrt(marker_size))
+                points = axs[0,k].scatter(reobs_dens,pli,c=strategies[s]['color'],marker=strategies[s]['marker'],s=marker_size,zorder=3)
             else:
                 while (reobs_dens,pli) in points_occupied:
                     reobs_dens *= 1.004
-                points = axs[0,0].scatter(reobs_dens,pli,c=strategies[s]['color'],marker=strategies[s]['marker'],s=marker_size,label=s,zorder=3)
+                points = axs[0,k].scatter(reobs_dens,pli,c=strategies[s]['color'],marker=strategies[s]['marker'],s=marker_size,label=s,zorder=3)
                 points_occupied += [(reobs_dens,pli)]
 
         axs[0,k].axvline(x=n_highz_desi_filt,c='k',zorder=1,ls='--')
