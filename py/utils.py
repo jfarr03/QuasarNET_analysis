@@ -17,7 +17,6 @@ colours = {'C0': '#F5793A',
            'C3': '#0F2080',
           }
 
-
 def get_data_dict(data_file,truth_file,train_file,nspec=None,nspec_method='first',seed=0):
 
     ## set nspec to the number of spectra to load or to None for the full sample
@@ -285,7 +284,6 @@ def show_spec_pred(ax,model,data,wave,tid,lines,lines_bal,show_bal=True,ndetect=
 
     return
 
-
 def get_pmf2tid(f_spall):
 
     spall = fits.open(f_spall)
@@ -467,10 +465,10 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_cmax_qn=False,incl
             cols += [data[ref][k]]
             colnames += [k]
 
-        # Now add plate, MJD, FIBERID columns.
+        """# Now add plate, MJD, FIBERID columns.
         plate,mjd,fiberid = targetid2platemjdfiber(data[ref]['TARGETID'])
         cols += [plate,mjd,fiberid]
-        colnames += ['PLATE','MJD','FIBERID']
+        colnames += ['PLATE','MJD','FIBERID']"""
 
         # Now the VI columns.
         for k in ['ZCONF_PERSON','Z_VI','CLASS_VI','ISQSO_VI']:
