@@ -166,7 +166,7 @@ def plot_pur_com_vs_cth_zbin(data_table,strategies,filename=None,zbins=[(None,2.
     for i,zbin in enumerate(zbins):
         zbin_label = r'$z$'
         if zbin[0] is not None:
-            zbin_label = r'${}\geq$'.format(zbin[0]) + zbin_label
+            zbin_label = r'${}\leq$'.format(zbin[0]) + zbin_label
         if zbin[1] is not None:
             zbin_label = zbin_label + r'$<{}$'.format(zbin[1])
 
@@ -664,7 +664,7 @@ def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6
         axs[0,i].set_ylim(0,ymax)
         zbin_label = r'$z$'
         if zbin[0] is not None:
-            zbin_label = r'${}\geq$'.format(zbin[0]) + zbin_label
+            zbin_label = r'${}\leq$'.format(zbin[0]) + zbin_label
         if zbin[1] is not None:
             zbin_label = zbin_label + r'$<{}$'.format(zbin[1])
         axs[0,i].text(0.5,1.05,zbin_label,ha='center',va='center',transform=axs[0,i].transAxes)
