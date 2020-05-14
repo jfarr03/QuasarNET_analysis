@@ -480,6 +480,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
 
     if filters is None:
         filters = {None: np.ones(len(data_table)).astype(bool)}
+        strategies = {None: strategies}
 
     if isinstance(xmin,float) or isinstance(xmin,int):
         if len(filters)>1:
@@ -495,7 +496,6 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
         if len(filters)>1:
             print('WARN: using same n_highz_desi for all panels. Use a dict of values to specify separately.')
         n_highz_desi = {filt_name: n_highz_desi for filt_name in filters.keys()}
-
 
     fig, axs = plt.subplots(1,len(filters),figsize=figsize,squeeze=False,sharey=True)
 
