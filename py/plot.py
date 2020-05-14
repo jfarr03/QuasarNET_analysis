@@ -479,16 +479,16 @@ def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,
 def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(12,6),eff_area=None,dv_max=6000.,zcut=2.1,ymin=0.94,xmin=47.,xmax=52.,verbose=False,n_highz_desi=50,nydec=0,filters=None,marker_size=100):
 
     if filters is None:
-        filters = [np.ones(len(data_table)).astype(bool)]
+        filters = {None: np.ones(len(data_table)).astype(bool)}
 
     if isinstance(xmin,float) or isinstance(xmin,int):
         if len(filters)>1:
             print('WARN: using same xmin for all panels. Use a list of values to specify separately.')
-        xmin = [xmin] * len(filters)
+        xmin = {filt_name: xmin for filt_name in filters.keys()}
     if isinstance(xmax,float) or isinstance(xmax,int):
         if len(filters)>1:
             print('WARN: using same xmax for all panels. Use a list of values to specify separately.')
-        xmax = [xmax] * len(filters)
+        xmax = {filt_name: xmax for filt_name in filters.keys()}
 
     fig, axs = plt.subplots(1,len(filters),figsize=figsize,squeeze=False,sharey=True)
 
@@ -499,14 +499,16 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
     need_colourbar = False
     points_occupied = []
 
-    for k,filter in enumerate(filters):
+    for k,filt_name in enumerate(filters.keys()):
 
-        filt = filter & (~isbad)
+        filt = filters[filt_name] & (~isbad)
         nhighz_truth = (isqso_truth & highz_truth & filt).sum()
+
+        n_highz_desi_filt = n_highz_desi[filt_name]
 
         # If no eff_area is provided, normalise such that there are 50/sqd high-z QSOs.
         if eff_area is None:
-            eff_area = nhighz_truth/n_highz_desi
+            eff_area = nhighz_truth/n_highz_desi_filt
 
         for s in strategies.keys():
 
@@ -566,7 +568,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
 
         axs[0,k].axvline(x=n_highz_desi,c='k',zorder=1,ls='--')
 
-        axs[0,k].set_xlim(xmin[k],xmax[k])
+        axs[0,k].set_xlim(xmin[filt_name],xmax[filt_name])
         axs[0,k].grid()
         axs[0,k].set_axisbelow(True)
 
@@ -595,11 +597,12 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
             ## Add marker shapes for strategy
             artists += [axs[0,0].scatter([],[],color='grey',marker=markers[s],s=marker_size)]
             labels += ['{}'.format(s)]
-
         fig.legend(artists,labels,loc='lower center',borderaxespad=0,bbox_to_anchor=(0.5,0.03),ncol=len(artists))
         rect = (0,0.15,1.,1.)
         plt.tight_layout(rect=rect)
         fig.text(0.5,0.14,xlabel,ha='center',va='center')
+        for k, filt_name in enumerate(filters.keys()):
+            axs[0,k].set_title(filt_name)
 
     if need_colourbar:
         # Colour bar
