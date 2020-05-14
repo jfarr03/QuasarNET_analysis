@@ -44,6 +44,19 @@ def get_truths(data_table):
 
     return isqso_truth, isgal_truth, isstar_truth, isbad
 
+def get_label_from_zbin(zbin):
+
+    if (zbin[0] is not None) and (zbin[1] is not None):
+        zbin_label = r'${} \leq z < {}$'.format(zbin[0],zbin[1])
+    elif zbin[0] is None:
+        zbin_label = r'$z < {}$'.format(zbin[1])
+    elif zbin[1] is None:
+        zbin_label = r'$z \geq {}$'.format(zbin[0])
+    else:
+        zbin_label = None
+
+    return zbin_label
+
 ## Function for Figure 1.
 def plot_pur_com_vs_z(data_table,strategies,filename=None,zmin=0.,zmax=5.,dz_int=21,dv_max=6000.,nydec=0,figsize=(12,6),ymin=0.93,ymax=1.005):
 
@@ -164,11 +177,7 @@ def plot_pur_com_vs_cth_zbin(data_table,strategies,filename=None,zbins=[(None,2.
             axs[i,1].plot(c_th,com,color=utils.colours['C1'],ls=strategies[s]['ls'])
 
     for i,zbin in enumerate(zbins):
-        zbin_label = r'$z$'
-        if zbin[0] is not None:
-            zbin_label = r'${}\leq$'.format(zbin[0]) + zbin_label
-        if zbin[1] is not None:
-            zbin_label = zbin_label + r'$<{}$'.format(zbin[1])
+        zbin_label = get_label_from_zbin(zbin)
 
         axs[i,0].text(-0.18,0.5,zbin_label,ha='center',va='center',
                       transform=axs[i,0].transAxes,rotation=90)
@@ -662,11 +671,7 @@ def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6
 
         axs[0,i].yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec))
         axs[0,i].set_ylim(0,ymax)
-        zbin_label = r'$z$'
-        if zbin[0] is not None:
-            zbin_label = r'${}\leq$'.format(zbin[0]) + zbin_label
-        if zbin[1] is not None:
-            zbin_label = zbin_label + r'$<{}$'.format(zbin[1])
+        zbin_label = get_label_from_zbin(zbin)
         axs[0,i].text(0.5,1.05,zbin_label,ha='center',va='center',transform=axs[0,i].transAxes)
 
         cell_text = []
