@@ -661,7 +661,12 @@ def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6
 
         axs[0,i].yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec))
         axs[0,i].set_ylim(0,ymax)
-        axs[0,i].text(0.5,1.05,panel_splits[p]['label'],ha='center',va='center',transform=axs[0,i].transAxes)
+        zbin_label = r'$z$'
+        if zbin[0] is not None:
+            zbin_label = r'${}\geq$'.format(zbin[0]) + zbin_label
+        if zbin[1] is not None:
+            zbin_label = zbin_label + r'$<{}$'.format(zbin[1])
+        axs[0,i].text(0.5,1.05,zbin_label,ha='center',va='center',transform=axs[0,i].transAxes)
 
         cell_text = []
         extrarow = False
