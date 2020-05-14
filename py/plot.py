@@ -483,12 +483,16 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
 
     if isinstance(xmin,float) or isinstance(xmin,int):
         if len(filters)>1:
-            print('WARN: using same xmin for all panels. Use a list of values to specify separately.')
+            print('WARN: using same xmin for all panels. Use a dict of values to specify separately.')
         xmin = {filt_name: xmin for filt_name in filters.keys()}
     if isinstance(xmax,float) or isinstance(xmax,int):
         if len(filters)>1:
-            print('WARN: using same xmax for all panels. Use a list of values to specify separately.')
+            print('WARN: using same xmax for all panels. Use a dict of values to specify separately.')
         xmax = {filt_name: xmax for filt_name in filters.keys()}
+    if isinstance(n_highz_desi,float) or isinstance(n_highz_desi,int):
+        if len(filters)>1:
+            print('WARN: using same n_highz_desi for all panels. Use a dict of values to specify separately.')
+        n_highz_desi = {filt_name: n_highz_desi for filt_name in filters.keys()}
 
     fig, axs = plt.subplots(1,len(filters),figsize=figsize,squeeze=False,sharey=True)
 
@@ -566,16 +570,16 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                 points = axs[0,0].scatter(reobs_dens,pli,c=strategies[s]['color'],marker=strategies[s]['marker'],s=marker_size,label=s,zorder=3)
                 points_occupied += [(reobs_dens,pli)]
 
-        axs[0,k].axvline(x=n_highz_desi,c='k',zorder=1,ls='--')
+        axs[0,k].axvline(x=n_highz_desi_filt,c='k',zorder=1,ls='--')
 
         axs[0,k].set_xlim(xmin[filt_name],xmax[filt_name])
         axs[0,k].grid()
         axs[0,k].set_axisbelow(True)
 
         # Shaded region.
-        x = np.linspace(n_highz_desi*0.0,n_highz_desi*2.0,101)
-        y = x/n_highz_desi
-        y[x>n_highz_desi] = 1.
+        x = np.linspace(n_highz_desi_filt*0.0,n_highz_desi_filt*2.0,101)
+        y = x/n_highz_desi_filt
+        y[x>n_highz_desi_filt] = 1.
         axs[0,k].fill_between(x,y,np.ones_like(y)*1.1,edgecolor='darkgrey',facecolor='none',hatch='\\')
 
     axs[0,0].set_ylabel(r'fraction of high-$z$ QSOs reobserved')
