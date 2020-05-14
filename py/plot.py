@@ -481,11 +481,11 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
     if filters is None:
         filters = [np.ones(len(data_table)).astype(bool)]
 
-    if isinstance(xmin,float):
+    if isinstance(xmin,float) or isinstance(xmin,int):
         if len(filters)>1:
             print('WARN: using same xmin for all panels. Use a list of values to specify separately.')
         xmin = [xmin] * len(filters)
-    if isinstance(xmax,float):
+    if isinstance(xmax,float) or isinstance(xmax,int):
         if len(filters)>1:
             print('WARN: using same xmax for all panels. Use a list of values to specify separately.')
         xmax = [xmax] * len(filters)
