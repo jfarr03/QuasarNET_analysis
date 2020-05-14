@@ -466,7 +466,7 @@ def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,
     return fig, axs
 
 ## Function for Figure 4.
-def plot_reobservation_performance(data_table,strategies,filename=None,eff_area=None,dv_max=6000.,zcut=2.1,ymin=0.94,xmin=47.,xmax=52.,verbose=False,n_highz_desi=50):
+def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(12,6),eff_area=None,dv_max=6000.,zcut=2.1,ymin=0.94,xmin=47.,xmax=52.,verbose=False,n_highz_desi=50,nydec=0):
 
     fig, axs = plt.subplots(1,1,figsize=figsize,squeeze=False)
 
@@ -528,11 +528,12 @@ def plot_reobservation_performance(data_table,strategies,filename=None,eff_area=
     for s in strategies.keys():
         reobs_dens = strategies[s]['nhighz_flagged']/eff_area
         pli = strategies[s]['nhighz_truth_flagged']/nhighz_truth
+        marker_size = 100
         if len(reobs_dens)>1:
-            axs[0,0].plot(reobs_dens,pli,c='grey',marker=strategies[s]['marker'],label=s,zorder=2,s=100)
-            points = axs[0,0].scatter(reobs_dens,pli,c=strategies[s]['color'],marker=strategies[s]['marker'],s=100,zorder=3)
+            axs[0,0].plot(reobs_dens,pli,c='grey',marker=strategies[s]['marker'],label=s,zorder=2,ms=np.sqrt(marker_size))
+            points = axs[0,0].scatter(reobs_dens,pli,c=strategies[s]['color'],marker=strategies[s]['marker'],s=marker_size,zorder=3)
         else:
-            points = axs[0,0].scatter(reobs_dens,pli,c=strategies[s]['color'],marker=strategies[s]['marker'],s=100,label=s,zorder=3)
+            points = axs[0,0].scatter(reobs_dens,pli,c=strategies[s]['color'],marker=strategies[s]['marker'],s=marker_size,label=s,zorder=3)
 
     if need_colourbar:
         # Colour bar
@@ -565,7 +566,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,eff_area=
         p_contour = (x/50)*(p)
         axs[0,0].plot(x,p_contour,c='darkgrey')"""
 
-    plt.tight_layout()
+    #plt.tight_layout()
     plt.savefig(filename)
 
     return fig, axs
