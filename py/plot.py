@@ -494,10 +494,6 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
     isqso_truth, isgal_truth, isstar_truth, isbad = get_truths(data_table)
     highz_truth = data_table['Z_VI']>=zcut
 
-    # If no eff_area is provided, normalise such that there are 50/sqd high-z QSOs.
-    if eff_area is None:
-        eff_area = nhighz_truth/n_highz_desi
-
     need_colourbar = False
     points_occupied = []
 
@@ -505,6 +501,10 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
 
         filt = filter & (~isbad)
         nhighz_truth = (isqso_truth & highz_truth & filt).sum()
+
+        # If no eff_area is provided, normalise such that there are 50/sqd high-z QSOs.
+        if eff_area is None:
+            eff_area = nhighz_truth/n_highz_desi
 
         for s in strategies.keys():
 
