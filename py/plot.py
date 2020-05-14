@@ -485,14 +485,17 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
         if len(filters)>1:
             print('WARN: using same xmin for all panels. Use a dict of values to specify separately.')
         xmin = {filt_name: xmin for filt_name in filters.keys()}
+
     if isinstance(xmax,float) or isinstance(xmax,int):
         if len(filters)>1:
             print('WARN: using same xmax for all panels. Use a dict of values to specify separately.')
         xmax = {filt_name: xmax for filt_name in filters.keys()}
+
     if isinstance(n_highz_desi,float) or isinstance(n_highz_desi,int):
         if len(filters)>1:
             print('WARN: using same n_highz_desi for all panels. Use a dict of values to specify separately.')
         n_highz_desi = {filt_name: n_highz_desi for filt_name in filters.keys()}
+
 
     fig, axs = plt.subplots(1,len(filters),figsize=figsize,squeeze=False,sharey=True)
 
@@ -505,6 +508,8 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
 
     for k,filt_name in enumerate(filters.keys()):
 
+        filt_strategies = strategies[filt_name]
+
         filt = filters[filt_name] & (~isbad)
         nhighz_truth = (isqso_truth & highz_truth & filt).sum()
 
@@ -514,60 +519,60 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
         if eff_area is None:
             eff_area = nhighz_truth/n_highz_desi_filt
 
-        for s in strategies.keys():
+        for s in filt_strategies.keys():
 
-            npoints = len(strategies[s]['w'])
-            strategies[s]['nhighz_flagged'] = np.zeros(npoints)
-            strategies[s]['nhighz_truth_flagged'] = np.zeros(npoints)
+            npoints = len(filt_strategies[s]['w'])
+            filt_strategies[s]['nhighz_flagged'] = np.zeros(npoints)
+            filt_strategies[s]['nhighz_truth_flagged'] = np.zeros(npoints)
 
             if npoints>1:
 
                 need_colourbar = True
 
                 for i in range(npoints):
-                    w = strategies[s]['w'][i] & filt
-                    strategies[s]['nhighz_flagged'][i] = (w).sum()
-                    strategies[s]['nhighz_truth_flagged'][i] = (isqso_truth&highz_truth&w).sum()
+                    w = filt_strategies[s]['w'][i] & filt
+                    filt_strategies[s]['nhighz_flagged'][i] = (w).sum()
+                    filt_strategies[s]['nhighz_truth_flagged'][i] = (isqso_truth&highz_truth&w).sum()
 
                     if verbose:
                         print(s)
                         print('true hz qsos:',nhighz_truth)
-                        print('obj flagged:',strategies[s]['nhighz_flagged'][0])
-                        print('true hz qsos flagged:',strategies[s]['nhighz_truth_flagged'][0])
+                        print('obj flagged:',filt_strategies[s]['nhighz_flagged'][0])
+                        print('true hz qsos flagged:',filt_strategies[s]['nhighz_truth_flagged'][0])
                         print('stars selected:',(isstar_truth&w).sum())
                         print('gal selected:',(isgal_truth&w).sum())
                         print('lowz qso selected:',(isqso_truth&(~highz_truth)&w).sum())
                         print('')
 
             else:
-                w = strategies[s]['w'][0] & filt
-                strategies[s]['nhighz_flagged'][0] = (w).sum()
-                strategies[s]['nhighz_truth_flagged'][0] = (isqso_truth&highz_truth&w).sum()
+                w = filt_strategies[s]['w'][0] & filt
+                filt_strategies[s]['nhighz_flagged'][0] = (w).sum()
+                filt_strategies[s]['nhighz_truth_flagged'][0] = (isqso_truth&highz_truth&w).sum()
 
                 if (('RR' in s) or ('PIPE' in s)) and verbose:
                     zwarn = data_table['ZWARN_{}'.format(s)]>0
                     print(s)
                     print('true hz qsos:',nhighz_truth)
-                    print('obj flagged:',strategies[s]['nhighz_flagged'][0])
-                    print('true hz qsos flagged:',strategies[s]['nhighz_truth_flagged'][0])
+                    print('obj flagged:',filt_strategies[s]['nhighz_flagged'][0])
+                    print('true hz qsos flagged:',filt_strategies[s]['nhighz_truth_flagged'][0])
                     print('obj with zwarn:',(zwarn).sum())
                     print('true hz qsos with zwarn:',(highz_truth&isqso_truth&zwarn).sum())
-                    print('true hz qsos with zwarn missed:',(highz_truth&isqso_truth&zwarn&(~strategies[s]['w'][0])).sum())
+                    print('true hz qsos with zwarn missed:',(highz_truth&isqso_truth&zwarn&(~filt_strategies[s]['w'][0])).sum())
                     print('stars selected:',(isstar_truth&w).sum())
                     print('gal selected:',(isgal_truth&w).sum())
                     print('lowz qso selected:',(isqso_truth&(~highz_truth)&w).sum())
                     print('')
 
-            reobs_dens = strategies[s]['nhighz_flagged']/eff_area
-            pli = strategies[s]['nhighz_truth_flagged']/nhighz_truth
+            reobs_dens = filt_strategies[s]['nhighz_flagged']/eff_area
+            pli = filt_strategies[s]['nhighz_truth_flagged']/nhighz_truth
 
             if len(reobs_dens)>1:
-                axs[0,k].plot(reobs_dens,pli,c='grey',marker=strategies[s]['marker'],label=s,zorder=2,ms=np.sqrt(marker_size))
-                points = axs[0,k].scatter(reobs_dens,pli,c=strategies[s]['color'],marker=strategies[s]['marker'],s=marker_size,zorder=3)
+                axs[0,k].plot(reobs_dens,pli,c='grey',marker=filt_strategies[s]['marker'],label=s,zorder=2,ms=np.sqrt(marker_size))
+                points = axs[0,k].scatter(reobs_dens,pli,c=filt_strategies[s]['color'],marker=filt_strategies[s]['marker'],s=marker_size,zorder=3)
             else:
                 while (reobs_dens,pli) in points_occupied:
                     reobs_dens *= 1.004
-                points = axs[0,k].scatter(reobs_dens,pli,c=strategies[s]['color'],marker=strategies[s]['marker'],s=marker_size,label=s,zorder=3)
+                points = axs[0,k].scatter(reobs_dens,pli,c=filt_strategies[s]['color'],marker=filt_strategies[s]['marker'],s=marker_size,label=s,zorder=3)
                 points_occupied += [(reobs_dens,pli)]
 
         axs[0,k].axvline(x=n_highz_desi_filt,c='k',zorder=1,ls='--')
@@ -593,10 +598,11 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
     else:
         artists = []
         labels = []
+        filt_strategies = strategies[filt_name]
         try:
-            markers = {strategies[k]['n']: strategies[k]['marker'] for k in strategies.keys()}
+            markers = {filt_strategies[k]['n']: filt_strategies[k]['marker'] for k in filt_strategies.keys()}
         except KeyError:
-            markers = {k.split(' ')[0]: strategies[k]['marker'] for k in strategies.keys()}
+            markers = {k.split(' ')[0]: filt_strategies[k]['marker'] for k in filt_strategies.keys()}
         for s in markers.keys():
             ## Add marker shapes for strategy
             artists += [axs[0,0].scatter([],[],color='grey',marker=markers[s],s=marker_size)]
