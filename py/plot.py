@@ -572,7 +572,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
     return fig, axs
 
 ## Function for Figure 5.
-def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6),zbins=[(0.9,2.1),(2.1,None)],desi_nqso=[1.3*10**6,0.8*10**6],dv_max=6000.,show_correctwrongzbin=False,verbose=False,nydec=0):
+def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6),zbins=[(0.9,2.1),(2.1,None)],desi_nqso=[1.3*10**6,0.8*10**6],dv_max=6000.,show_correctwrongzbin=False,verbose=False,nydec=0,ymax=0.1):
 
     fig, axs = plt.subplots(1,len(zbins),figsize=figsize,sharey=True,squeeze=False)
 
