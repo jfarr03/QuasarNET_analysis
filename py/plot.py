@@ -579,7 +579,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
     axs[0,0].yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec))
 
     xlabel = r'number density of fibers allocated to reobservations [sqd$^{-1}$]'
-    if len(filters) = 1:
+    if len(filters) == 1:
         axs[0,0].legend(loc=4,ncol=1)
         axs[0,0].set_xlabel(xlabel)
     else:
