@@ -579,7 +579,7 @@ def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6
     # determine the true classifications
     isqso_truth, isgal_truth, isstar_truth, isbad = get_truths(data_table)
 
-    for i,zbin in enumerate(zbins.keys()):
+    for i,zbin in enumerate(zbins):
 
         for s in strategies.keys():
 
