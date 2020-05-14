@@ -572,5 +572,132 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
     return fig, axs
 
 ## Function for Figure 5.
-def plot_catalogue_performance():
-    return
+def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6),zbins=[(0.9,2.1),(2.1,None)],desi_nqso=[1.3*10**6,0.8*10**6],dv_max=6000.,show_correctwrongzbin=False,verbose=False,nydec=0):
+
+    fig, axs = plt.subplots(1,len(zbins),figsize=figsize,sharey=True,squeeze=False)
+
+    # determine the true classifications
+    isqso_truth, isgal_truth, isstar_truth, isbad = get_truths(data_table)
+
+    for i,zbin in enumerate(zbins.keys()):
+
+        for s in strategies.keys():
+
+            z_s = strategies[s]['z']
+            w_s = strategies[s]['w']
+
+            in_zbin_zvi = np.ones(data_table['Z_VI'].shape).astype(bool)
+            in_zbin_zs = np.ones(z_s.shape).astype(bool)
+            if zbin[0] is not None:
+                in_zbin_zvi &= (data_table['Z_VI']>=zbin[0])
+                in_zbin_zs &= (z_s>=zbin[0])
+            if zbin[1] is not None:
+                in_zbin_zvi &= (data_table['Z_VI']<zbin[1])
+                in_zbin_zs &= (z_s<zbin[1])
+
+            zgood = (data_table['Z_VI']>-1) & (abs(z_s-data_table['Z_VI']) < dv_max*(1+data_table['Z_VI'])/300000.)
+
+            strategies[s]['ncat'] = (w_s & in_zbin_zs & (~isbad)).sum()
+
+            strategies[s]['nstar'] = (w_s & in_zbin_zs & isstar_truth).sum()
+            strategies[s]['ngalwrongz'] = (w_s & ~zgood & in_zbin_zs & isgal_truth).sum()
+            strategies[s]['nqsowrongz'] = (w_s & ~zgood & in_zbin_zs & isqso_truth).sum()
+            strategies[s]['ncorrectwrongzbin'] = (w_s & zgood & in_zbin_zs & (isqso_truth | isgal_truth) & ~in_zbin_zvi).sum()
+
+            strategies[s]['nwrong'] = (strategies[s]['nstar'] + strategies[s]['ngalwrongz']
+                                        + strategies[s]['nqsowrongz'] + strategies[s]['ncorrectwrongzbin'])
+
+            com_num = (w_s & zgood & in_zbin_zs & isqso_truth & in_zbin_zvi).sum()
+            com_denom = (isqso_truth & in_zbin_zvi).sum()
+            strategies[s]['completeness'] = com_num/com_denom
+
+            if ('RR' in s) and verbose:
+                print(s)
+                for k in strategies[s]:
+                    if (k[0]=='n') or (k=='completeness'):
+                        print(k,strategies[s][k])
+                nlostqso = (~w_s & isqso_truth & in_zbin_zvi).sum()
+                print(nlostqso,com_denom,nlostqso/com_denom)
+                print('')
+
+        nwrong = np.array([strategies[s]['nwrong'] for s in strategies.keys()])
+        ncat = np.array([strategies[s]['ncat'] for s in strategies.keys()])
+
+        pstar = np.array([strategies[s]['nstar'] for s in strategies.keys()])/ncat
+        pgalwrongz = np.array([strategies[s]['ngalwrongz'] for s in strategies.keys()])/ncat
+        pqsowrongz = np.array([strategies[s]['nqsowrongz'] for s in strategies.keys()])/ncat
+        pcorrectwrongzbin = np.array([strategies[s]['ncorrectwrongzbin'] for s in strategies.keys()])/ncat
+
+        completeness = np.array([strategies[s]['completeness'] for s in strategies.keys()])
+
+        axs[0,i].bar(range(len(strategies)),pstar,color=utils.colours['C0'],label='star',width=0.5)
+        axs[0,i].bar(range(len(strategies)),pgalwrongz,bottom=pstar,color=utils.colours['C1'],label='galaxy w.\nwrong $z$',width=0.5)
+        bars = axs[0,i].bar(range(len(strategies)),pqsowrongz,bottom=pstar+pgalwrongz,color=utils.colours['C2'],label='QSO w.\nwrong $z$',width=0.5)
+        if show_correctwrongzbin:
+            axs[0,i].bar(range(len(strategies)),pcorrectwrongzbin,bottom=pstar+pgalwrongz+pqsowrongz,color=utils.colours['C3'],label='correct w.\nwrong $z$-bin',width=0.5)
+
+        bar_heights = pstar+pgalwrongz+pqsowrongz
+        if show_correctwrongzbin:
+            bar_heights += pcorrectwrongzbin
+
+        utils.autolabel_bars(axs[0,i],bars,numbers=bar_heights,heights=bar_heights,percentage=True,above=True)
+        DESI_ncat_presents = []
+        for j,c in enumerate(completeness):
+            pcon = nwrong[j]/ncat[j]
+            DESI_ncat = c * desi_nqso[i]/(1 - pcon)
+            DESI_ncat_present = (round(DESI_ncat * 10**-6,3))
+            DESI_ncat_presents.append(DESI_ncat_present)
+
+        axs[0,i].set_xlabel('classification strategy',labelpad=10)
+        axs[0,i].set_xticks(range(len(strategies)))
+        axs[0,i].set_xlim(-0.5,len(strategies)-0.5)
+        slabels = []
+        for s in strategies.keys():
+            try:
+                slabels += [strategies[s]['label']]
+            except KeyError:
+                slabels += [s]
+        axs[0,i].set_xticklabels(slabels)
+
+        axs[0,i].yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec))
+        axs[0,i].set_ylim(0,ymax)
+        axs[0,i].text(0.5,1.05,panel_splits[p]['label'],ha='center',va='center',transform=axs[0,i].transAxes)
+
+        cell_text = []
+        extrarow = False
+        for s in slabels:
+            if '\n' in s:
+                extrarow = True
+        if extrarow:
+            cell_text.append(['']*len(completeness))
+        cell_text.append(['{:2.1%}'.format(c) for c in completeness])
+        cell_text.append(['{:1.3f}'.format(c) for c in DESI_ncat_presents])
+
+        rowLabels = []
+        if extrarow:
+            rowLabels += ['']
+        if i==0:
+            rowLabels += ['completeness:','estimated DESI\ncatalogue size\n[million QSOs]:']
+        else:
+            rowLabels += ['','']
+        table = mp_table.table(cellText=cell_text,
+                      rowLabels=rowLabels,
+                      colLabels=['' for s in strategies.keys()],
+                      loc='bottom',
+                      ax=axs[0,i],
+                      edges='open',
+                      cellLoc='center',
+                      rowLoc='right',
+                      in_layout=True)
+        table.scale(1,6)
+
+    offset_label = -0.1
+    axs[0,0].set_ylabel('contamination of\nQSO catalogue')
+    axs[0,1].legend()
+
+    rect = (0.07,0.2,1.0,1.0)
+    plt.tight_layout(rect=rect)
+    if filename is not None:
+        plt.savefig(filename)
+
+    return fig, axs
