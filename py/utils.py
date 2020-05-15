@@ -353,7 +353,7 @@ def load_qn_data(f_qn,n_lines=1,c_th=0.8,include_c=False,mode='BOSS'):
     data = qn[1].data[w]
 
     ## Calculate which spectra we think are QSOs.
-    isqso = (data['C_LINES']>c_th).sum(axis=1)>n_lines
+    isqso = (data['C_LINES']>c_th).sum(axis=1)>n_detect
 
     ## Convert the QN class labelling.
     objclass = np.array(['']*len(isqso),dtype='U8')
@@ -421,7 +421,7 @@ def load_sq_data(f_sq,p_min=0.32,include_p=False,mode='BOSS'):
 
     return sq_data
 
-def reduce_data_to_table(data,truth=None,verbose=True,include_cmax_qn=False,include_cmax2_qn=False,include_p_sq=False):
+def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include_cmax_qn=False,include_cmax2_qn=False,include_p_sq=False):
 
     if truth is not None:
         ## In each, reduce to the set of spectra that are in the truth dictionary.
@@ -488,6 +488,11 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_cmax_qn=False,incl
                 colnames += ['{}_{}'.format(k,c)]
 
         # Now optional extras.
+        if include_c_qn:
+            for c in data.keys():
+                if 'QN' in c:
+                    cols += [data[c]['C']]
+                    colnames += ['C_{}'.format(c)]
         if include_cmax_qn:
             for c in data.keys():
                 if 'QN' in c:
@@ -549,6 +554,11 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_cmax_qn=False,incl
                 colnames += ['{}_{}'.format(name,c)]
 
         ## Add optional extras.
+        if include_c_qn:
+            for c in data.keys():
+                if 'QN' in c:
+                    cols += [data[c]['C']]
+                    colnames += ['C_{}'.format(c)]
         if include_cmax_qn:
             for c in data.keys():
                 if 'QN' in c:
@@ -573,6 +583,10 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_cmax_qn=False,incl
     ks = [cn for cn in table.colnames if ('Z_' in cn)]
     for k in ks:
         table[k].format = '1.3f'
+    if include_c_qn:
+        for c in data.keys():
+            if 'QN' in c:
+                table['C_{}'.format(c)].format = '1.3f'
     if include_cmax_qn:
         for c in data.keys():
             if 'QN' in c:

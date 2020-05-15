@@ -351,7 +351,7 @@ def plot_qn_model_compare_2panel(data_table,strategies,filename=None,dv_max=6000
 
         ## Plot the dv histogram.
         dv = 300000. * (z_s-data_table['Z_VI']) / (1+data_table['Z_VI'])
-        axs[0,1].hist(dv,bins=dv_bins,histtype='step',ls=strategies[s]['ls'],color=utils.colours['C2'])
+        axs[1,0].hist(dv,bins=dv_bins,histtype='step',ls=strategies[s]['ls'],color=utils.colours['C2'])
 
         if verbose:
             dv_med = np.median(dv[abs(dv)<dv_max])
@@ -368,10 +368,10 @@ def plot_qn_model_compare_2panel(data_table,strategies,filename=None,dv_max=6000
     axs[0,0].yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec))
     axs[0,0].legend()
 
-    axs[0,1].axvline(x=0,c='lightgrey',zorder=-1)
-    axs[0,1].set_ylabel(r'#')
-    axs[0,1].set_xlabel(r'd$v$ [km/s]')
-    axs[0,1].set_xlim(-3000.,3000.)
+    axs[1,0].axvline(x=0,c='lightgrey',zorder=-1)
+    axs[1,0].set_ylabel(r'#')
+    axs[1,0].set_xlabel(r'd$v$ [km/s]')
+    axs[1,0].set_xlim(-3000.,3000.)
 
     fig.legend(artists,labels,loc='lower center',borderaxespad=0,bbox_to_anchor=(0.5,0.03),ncol=len(artists))
     rect = (0,0.13,1.,1.)
