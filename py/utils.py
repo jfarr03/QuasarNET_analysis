@@ -324,20 +324,28 @@ def load_sdrq_data(f_sdrq):
 
     return sdrq_data
 
-def load_rr_data(f_rr):
+def load_rr_data(f_rr,mode='BOSS'):
 
     rr = fits.open(f_rr)
 
     ## Make a boolean isqso.
     isqso = (rr[1].data['SPECTYPE']=='QSO')
 
-    rr_data = list(zip(rr[1].data['THING_ID_DR12'], rr[1].data['Z'], rr[1].data['SPECTYPE'], isqso, rr[1].data['TARGETID'], rr[1].data['ZWARN']))
-    dtype = [('THING_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('TARGETID','i8'),('ZWARN','i8')]
+    if mode == 'BOSS':
+        obj_id = rr[1].data['THING_ID_DR12']
+        spec_id = rr[1].data['TARGETID']
+    elif mode == 'DESI':
+        obj_id = rr[1].data['TARGETID']
+        # Need to come up with a spectrum ID
+        spec_id = rr[1].data['TARGETID']
+
+    rr_data = list(zip(obj_id, rr[1].data['Z'], rr[1].data['SPECTYPE'], isqso, spec_id, rr[1].data['ZWARN']))
+    dtype = [('OBJ_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('SPEC_ID','i8'),('ZWARN','i8')]
     rr_data = np.array(rr_data, dtype=dtype)
 
     return rr_data
 
-def load_qn_data(f_qn,n_lines=1,c_th=0.8,include_c=False,include_cmax=False,include_cmax2=False):
+def load_qn_data(f_qn,n_lines=1,c_th=0.8,include_c=False,mode='BOSS'):
 
     qn = fits.open(f_qn)
 
@@ -352,40 +360,30 @@ def load_qn_data(f_qn,n_lines=1,c_th=0.8,include_c=False,include_cmax=False,incl
     objclass[isqso] = 'QSO'
     objclass[~isqso] = 'NONQSO'
 
-    ## Make targetid.
-    targetid = platemjdfiber2targetid(data['PLATE'].astype('i8'),data['MJD'].astype('i8'),data['FIBERID'].astype('i8'))
+    if mode == 'BOSS':
+        ## Make targetid.
+        targetid = platemjdfiber2targetid(data['PLATE'].astype('i8'),data['MJD'].astype('i8'),data['FIBERID'].astype('i8'))
+        obj_id = data['THING_ID']
+        spec_id = targetid
+    elif mode == 'DESI':
+        obj_id = data['THING_ID']
+        # Need to come up with a spectrum ID
+        spec_id = data['THING_ID']
 
-    csort = np.sort(data['C_LINES'],axis=1)
-    cmax = csort[:,-1]
-    cmax2 = csort[:,-2]
 
     if include_c:
-        qn_data = list(zip(data['THING_ID'], data['ZBEST'], objclass, isqso, targetid, data['C_LINES']))
-        dtype = [('THING_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('TARGETID','i8'),('C','f8')]
-        qn_data = np.array(qn_data, dtype=dtype)
-    elif include_cmax & include_cmax2:
-        qn_data = list(zip(data['THING_ID'], data['ZBEST'], objclass, isqso, targetid, cmax, cmax2))
-        dtype = [('THING_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('TARGETID','i8'),('CMAX','f8'),('CMAX2','f8')]
-        qn_data = np.array(qn_data, dtype=dtype)
-    elif include_cmax2:
-        cmax = data['C_LINES'].max(axis=1)
-        qn_data = list(zip(data['THING_ID'], data['ZBEST'], objclass, isqso, targetid, cmax2))
-        dtype = [('THING_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('TARGETID','i8'),('CMAX2','f8')]
-        qn_data = np.array(qn_data, dtype=dtype)
-    elif include_cmax:
-        cmax = data['C_LINES'].max(axis=1)
-        qn_data = list(zip(data['THING_ID'], data['ZBEST'], objclass, isqso, targetid, cmax))
-        dtype = [('THING_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('TARGETID','i8'),('CMAX','f8')]
+        qn_data = list(zip(obj_id, data['ZBEST'], objclass, isqso, spec_id, data['C_LINES']))
+        dtype = [('OBJ_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('SPEC_ID','i8'),('C','f8')]
         qn_data = np.array(qn_data, dtype=dtype)
     else:
-        qn_data = list(zip(data['THING_ID'], data['ZBEST'], objclass, isqso, targetid))
-        dtype = [('THING_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('TARGETID','i8')]
+        qn_data = list(zip(obj_id, data['ZBEST'], objclass, isqso, spec_id))
+        dtype = [('OBJ_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('SPEC_ID','i8')]
         qn_data = np.array(qn_data, dtype=dtype)
 
     return qn_data
 
 ##
-def load_sq_data(f_sq,p_min=0.32,include_p=False):
+def load_sq_data(f_sq,p_min=0.32,include_p=False,mode='BOSS'):
 
     sq = fits.open(f_sq)
 
@@ -400,16 +398,25 @@ def load_sq_data(f_sq,p_min=0.32,include_p=False):
     objclass[isqso] = 'QSO'
     objclass[~isqso] = 'NONQSO'
 
-    ## Make targetid.
-    targetid = platemjdfiber2targetid(data['plate'].astype('i8'),data['mjd'].astype('i8'),data['fiberid'].astype('i8'))
+    if mode == 'BOSS':
+        ## Make targetid.
+        targetid = platemjdfiber2targetid(data['PLATE'].astype('i8'),data['MJD'].astype('i8'),data['FIBERID'].astype('i8'))
+        obj_id = data['thing_id']
+        spec_id = targetid
+        z = data['z_try']
+    elif mode == 'DESI':
+        obj_id = data['THING_ID']
+        # Need to come up with a spectrum ID
+        spec_id = data['THING_ID']
+        z = data['Z_TRY']
 
     if include_p:
-        sq_data = list(zip(data['thing_id'], data['z_try'], objclass, isqso, targetid, data['prob']))
-        dtype = [('THING_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('TARGETID','i8'),('P','f8')]
+        sq_data = list(zip(obj_id, z, objclass, isqso, spec_id, data['prob']))
+        dtype = [('OBJ_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('SPEC_ID','i8'),('P','f8')]
         sq_data = np.array(sq_data, dtype=dtype)
     else:
-        sq_data = list(zip(data['thing_id'], data['z_try'], objclass, isqso, targetid))
-        dtype = [('THING_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('TARGETID','i8')]
+        sq_data = list(zip(obj_id, z, objclass, isqso, spec_id))
+        dtype = [('OBJ_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('SPEC_ID','i8')]
         sq_data = np.array(sq_data, dtype=dtype)
 
     return sq_data
@@ -418,45 +425,45 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_cmax_qn=False,incl
 
     if truth is not None:
         ## In each, reduce to the set of spectra that are in the truth dictionary.
-        thing_ids_truth = list(truth.keys())
+        obj_ids_truth = list(truth.keys())
         nonVI_datasets = [c for c in data.keys() if c!='VI']
         for c in nonVI_datasets:
-            w = np.in1d(data[c]['THING_ID'],thing_ids_truth)
+            w = np.in1d(data[c]['OBJ_ID'],obj_ids_truth)
             data[c] = data[c][w]
 
-        ## Find the set of common targetids in the reduced non-VI datasets.
-        ct_set = set(data[nonVI_datasets[0]]['TARGETID'])
+        ## Find the set of common spec_ids in the reduced non-VI datasets.
+        cs_set = set(data[nonVI_datasets[0]]['SPEC_ID'])
         if len(nonVI_datasets)>1:
             for c in nonVI_datasets[1:]:
-                ct_set = ct_set.intersection(set(data[c]['TARGETID']))
-        common_targetids = np.array(list(ct_set))
+                cs_set = cs_set.intersection(set(data[c]['SPEC_ID']))
+        common_spec_ids = np.array(list(cs_set))
 
-        ## In each non-VI dataset, reduce to the set of common targetids.
-        ## Sort the data by TARGETID in each of the reduced non-VI datasets.
+        ## In each non-VI dataset, reduce to the set of common spec_ids.
+        ## Sort the data by SPEC_ID in each of the reduced non-VI datasets.
         for c in nonVI_datasets:
-            w = np.in1d(data[c]['TARGETID'],common_targetids)
+            w = np.in1d(data[c]['SPEC_ID'],common_spec_ids)
             data[c] = data[c][w]
-            data[c].sort(order='TARGETID')
+            data[c].sort(order='SPEC_ID')
 
         if verbose:
-            print('INFO: {} common targetids'.format(len(common_targetids)))
+            print('INFO: {} common spectra'.format(len(common_spec_ids)))
 
-        ## Assert that all TARGETID columns are identical before proceeding.
+        ## Assert that all SPEC_ID columns are identical before proceeding.
         ref = nonVI_datasets[0]
         for c in nonVI_datasets:
-            assert (len(data[ref]['TARGETID'])==len(data[c]['TARGETID']))
-            assert (data[ref]['TARGETID']==data[c]['TARGETID']).all()
+            assert (len(data[ref]['SPEC_ID'])==len(data[c]['SPEC_ID']))
+            assert (data[ref]['SPEC_ID']==data[c]['SPEC_ID']).all()
 
-        ## For each TARGETID, extract the VI data from the VI dataset.
+        ## For each SPEC_ID, extract the VI data from the VI dataset.
         new_vi_data = []
 
         # Dict for converting to text class.
         conv_class = {0: 'BAD', 1: 'STAR', 2: 'GALAXY', 3: 'QSO'}
-        for i,thing_id in enumerate(data[ref]['THING_ID']):
-            new_vi_data += [(truth[thing_id].z_conf,
-                             truth[thing_id].z,
-                             conv_class[truth[thing_id].objclass],
-                             truth[thing_id].objclass==3)]
+        for i,obj_id in enumerate(data[ref]['OBJ_ID']):
+            new_vi_data += [(truth[obj_id].z_conf,
+                             truth[obj_id].z,
+                             conv_class[truth[obj_id].objclass],
+                             truth[obj_id].objclass==3)]
         dtype = [('ZCONF_PERSON','i8'),('Z_VI','f8'),('CLASS_VI','U8'),('ISQSO_VI','bool')]
         new_vi_data = np.array(new_vi_data,dtype=dtype)
 
@@ -465,14 +472,9 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_cmax_qn=False,incl
         colnames = []
 
         # First the ID columns.
-        for k in ['THING_ID','TARGETID']:
+        for k in ['OBJ_ID','SPEC_ID']:
             cols += [data[ref][k]]
             colnames += [k]
-
-        """# Now add plate, MJD, FIBERID columns.
-        plate,mjd,fiberid = targetid2platemjdfiber(data[ref]['TARGETID'])
-        cols += [plate,mjd,fiberid]
-        colnames += ['PLATE','MJD','FIBERID']"""
 
         # Now the VI columns.
         for k in ['ZCONF_PERSON','Z_VI','CLASS_VI','ISQSO_VI']:

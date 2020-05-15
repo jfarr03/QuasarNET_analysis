@@ -476,7 +476,7 @@ def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,
     return fig, axs
 
 ## Function for Figure 4.
-def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(12,6),eff_area=None,dv_max=6000.,zcut=2.1,ymin=0.94,xmin=47.,xmax=52.,verbose=False,n_highz_desi=50,nydec=0,filters=None,marker_size=100):
+def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(12,6),eff_area=None,dv_max=6000.,zcut=2.1,ymin=0.94,xmin=47.,xmax=52.,verbose=False,n_highz_desi=50,nydec=0,filters=None,marker_size=100,strategies_to_plot=None):
 
     if filters is None:
         filters = {None: np.ones(len(data_table)).astype(bool)}
@@ -563,17 +563,41 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                     print('lowz qso selected:',(isqso_truth&(~highz_truth)&w).sum())
                     print('')
 
-            reobs_dens = filt_strategies[s]['nhighz_flagged']/eff_area
-            pli = filt_strategies[s]['nhighz_truth_flagged']/nhighz_truth
+        if strategies_to_plot is None:
 
-            if len(reobs_dens)>1:
-                axs[0,k].plot(reobs_dens,pli,c='grey',marker=filt_strategies[s]['marker'],label=s,zorder=2,ms=np.sqrt(marker_size))
-                points = axs[0,k].scatter(reobs_dens,pli,c=filt_strategies[s]['color'],marker=filt_strategies[s]['marker'],s=marker_size,zorder=3)
-            else:
-                while (reobs_dens,pli) in points_occupied:
-                    reobs_dens *= 1.004
-                points = axs[0,k].scatter(reobs_dens,pli,c=filt_strategies[s]['color'],marker=filt_strategies[s]['marker'],s=marker_size,label=s,zorder=3)
-                points_occupied += [(reobs_dens,pli)]
+            for s in filt_strategies.keys():
+
+                reobs_dens = filt_strategies[s]['nhighz_flagged']/eff_area
+                pli = filt_strategies[s]['nhighz_truth_flagged']/nhighz_truth
+
+                if len(reobs_dens)>1:
+                    axs[0,k].plot(reobs_dens,pli,c='grey',marker=filt_strategies[s]['marker'],label=s,zorder=2,ms=np.sqrt(marker_size))
+                    points = axs[0,k].scatter(reobs_dens,pli,c=filt_strategies[s]['color'],marker=filt_strategies[s]['marker'],s=marker_size,zorder=3)
+                else:
+                    while (reobs_dens,pli) in points_occupied:
+                        reobs_dens *= 1.004
+                    points = axs[0,k].scatter(reobs_dens,pli,c=filt_strategies[s]['color'],marker=filt_strategies[s]['marker'],s=marker_size,label=s,zorder=3)
+                    points_occupied += [(reobs_dens,pli)]
+
+        else:
+
+            for s in strategies_to_plot[filt_name].keys():
+
+                nhighz_flagged = []
+                nhighz_truth_flagged = []
+
+                for ss in strategies_to_plot[filtname][s]:
+
+                    nhighz_flagged.append(filt_strategies[s]['nhighz_flagged'])
+                    nhighz_truth_flagged.append(filt_strategies[s]['nhighz_truth_flagged'])
+
+                nhighz_flagged = np.vstack(nhighz_flagged)
+                nhighz_truth_flagged = np.vstack(nhighz_truth_flagged)
+
+                reobs_dens = nhighz_flagged/(eff_area*len(strategies_to_plot[filtname][s]))
+                pli = nhighz_truth_flagged/(nhighz_truth*len(strategies_to_plot[filtname][s]))
+
+                ## THEN NEED To PLOT
 
         axs[0,k].axvline(x=n_highz_desi_filt,c='k',zorder=1,ls='--')
 
