@@ -12,9 +12,9 @@ class Strategy():
 
         return
 
-    def predict(self,specid,**kwargs):
+    def predict(self,**kwargs):
 
-        isqso, z = self.classifying_fn(specid,**kwargs)
+        isqso, z = self.classifying_fn(**kwargs)
 
         return isqso, z
 
