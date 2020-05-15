@@ -370,7 +370,7 @@ def load_qn_data(f_qn,n_detect=1,c_th=0.8,include_c=False,mode='BOSS',n_lines=6)
 
     if include_c:
         qn_data = list(zip(obj_id, data['ZBEST'], objclass, isqso, spec_id, data['C_LINES']))
-        dtype = [('OBJ_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('SPEC_ID','i8'),('C','f8')]
+        dtype = [('OBJ_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('SPEC_ID','i8'),('C','f8',(n_lines,))]
         qn_data = np.array(qn_data, dtype=dtype)
     else:
         qn_data = list(zip(obj_id, data['ZBEST'], objclass, isqso, spec_id))
