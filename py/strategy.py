@@ -35,21 +35,16 @@ def get_dv(z1,z2,ztrue):
 
 def get_cf_qn(data_table,qn_name='QN',specid_name='SPEC_ID'):
 
-    def cf(specid,c_th=0.6,n_detect=1):
+    def cf(c_th=0.6,n_detect=1,filter=None):
 
-        # Set up arrays.
-        specid = check_specid_array(specid)
-        isqso = np.zeros(len(specid)).astype(bool)
-        z = np.zeros(len(specid))
+        if filter is not None:
+            temp_data_table = data_table[filter]
+        else:
+            temp_data_table = data_table
 
-        # For each spectrum:
-        zcopy = copy.deepcopy(data_table['Z_{}'.format(qn_name)])
-        for i,s in enumerate(specid):
-
-            # Locate in the table, and extract z/isqso values.
-            w = np.in1d(data_table[specid_name],s)
-            z[i] = zcopy[w][0]
-            isqso[i] = ((data_table['C_{}'.format(qn_name)]>c_th).sum(axis=1)>=n_detect)[w][0]
+        # Extract z/isqso values.
+        z = copy.deepcopy(temp_data_table['Z_{}'.format(qn_name)])
+        isqso = ((temp_data_table['C_{}'.format(qn_name)]>c_th).sum(axis=1)>=n_detect)
 
         return isqso, z
 
@@ -132,7 +127,7 @@ def get_cf_qnorrr(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
 
 def get_cf_qnandrr(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
 
-    def cf(specid,qn_kwargs={},rr_kwargs={},dv_max=None,zchoice='QN'):
+    def cf(specid,qn_kwargs={},rr_kwargs={},dv_max=6000.,zchoice='QN'):
 
         # Set up arrays.
         specid = check_specid_array(specid)
@@ -145,9 +140,8 @@ def get_cf_qnandrr(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
 
         # Combine using &, and choosing z based on zchoice.
         isqso = isqso_qn & isqso_rr
-        if dv_max is not None:
-            dv = get_dv(z_qn,z_rr,data_table['Z_VI'])
-            isqso &= (dv_rrqn<=dv_max)
+        dv = get_dv(z_qn,z_rr,data_table['Z_VI'])
+        isqso &= (dv_rrqn<=dv_max)
         z = z_rr
         if zchoice=='QN':
             z[isqso_qn] = z_qn[isqso_qn]
@@ -210,7 +204,7 @@ def get_cf_rrplusvi(data_table,rr_name='RR',specid_name='SPEC_ID'):
 
 def get_cf_qnandrrplusvi(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
 
-    def cf(specid,qn_kwargs={},rr_kwargs={},dv_max=None,zchoice='QN'):
+    def cf(specid,qn_kwargs={},rr_kwargs={},dv_max=6000.,zchoice='QN'):
 
         # Set up arrays.
         specid = check_specid_array(specid)
@@ -240,7 +234,7 @@ def get_cf_qnandrrplusvi(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_
 
 def get_cf_qnandrrplusviadv(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
 
-    def cf(specid,c_th_lo=0.1,c_th_hi=0.9,n_detect=1,dv_max=None,zchoice='QN'):
+    def cf(specid,c_th_lo=0.1,c_th_hi=0.9,n_detect=1,dv_max=6000.,zchoice='QN'):
 
         # Set up arrays.
         specid = check_specid_array(specid)
