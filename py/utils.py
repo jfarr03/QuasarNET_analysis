@@ -337,7 +337,7 @@ def load_rr_data(f_rr):
 
     return rr_data
 
-def load_qn_data(f_qn,n_lines=1,c_th=0.8,include_cmax=False,include_cmax2=False):
+def load_qn_data(f_qn,n_lines=1,c_th=0.8,include_c=False,include_cmax=False,include_cmax2=False):
 
     qn = fits.open(f_qn)
 
@@ -359,7 +359,11 @@ def load_qn_data(f_qn,n_lines=1,c_th=0.8,include_cmax=False,include_cmax2=False)
     cmax = csort[:,-1]
     cmax2 = csort[:,-2]
 
-    if include_cmax & include_cmax2:
+    if include_c:
+        qn_data = list(zip(data['THING_ID'], data['ZBEST'], objclass, isqso, targetid, data['C_LINES']))
+        dtype = [('THING_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('TARGETID','i8'),('C','f8')]
+        qn_data = np.array(qn_data, dtype=dtype)
+    elif include_cmax & include_cmax2:
         qn_data = list(zip(data['THING_ID'], data['ZBEST'], objclass, isqso, targetid, cmax, cmax2))
         dtype = [('THING_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('TARGETID','i8'),('CMAX','f8'),('CMAX2','f8')]
         qn_data = np.array(qn_data, dtype=dtype)
