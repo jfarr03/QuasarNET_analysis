@@ -594,8 +594,8 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                 nhighz_flagged = np.vstack(nhighz_flagged)
                 nhighz_truth_flagged = np.vstack(nhighz_truth_flagged)
 
-                reobs_dens = nhighz_flagged/(eff_area*len(strategies_to_plot[filtname][s]))
-                pli = nhighz_truth_flagged/(nhighz_truth*len(strategies_to_plot[filtname][s]))
+                reobs_dens = nhighz_flagged/(eff_area*len(strategies_to_plot[filt_name][s]))
+                pli = nhighz_truth_flagged/(nhighz_truth*len(strategies_to_plot[filt_name][s]))
 
                 ## THEN NEED To PLOT
 
