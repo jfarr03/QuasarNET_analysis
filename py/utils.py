@@ -402,9 +402,9 @@ def load_sq_data(f_sq,p_min=0.32,include_p=False,mode='BOSS'):
         spec_id = targetid
         z = data['z_try']
     elif mode == 'DESI':
-        obj_id = data['THING_ID']
+        obj_id = data['TARGETID']
         # Need to come up with a spectrum ID
-        spec_id = data['THING_ID']
+        spec_id = data['SPECID']
         z = data['Z_TRY']
 
     if include_p:
