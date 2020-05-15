@@ -43,11 +43,12 @@ def get_cf_qn(data_table,qn_name='QN',specid_name='SPEC_ID'):
         z = np.zeros(len(specid))
 
         # For each spectrum:
+        zcopy = copy.deepcopy(data_table['Z_{}'.format(qn_name)])
         for i,s in enumerate(specid):
 
             # Locate in the table, and extract z/isqso values.
             w = np.in1d(data_table[specid_name],s)
-            z[i] = copy.deepcopy(data_table['Z_{}'.format(qn_name)])[w][0]
+            z[i] = zcopy[w][0]
             isqso[i] = ((data_table['C_{}'.format(qn_name)]>c_th).sum(axis=1)>=n_detect)[w][0]
 
         return isqso, z
