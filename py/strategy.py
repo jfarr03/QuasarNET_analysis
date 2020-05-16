@@ -251,7 +251,7 @@ def get_cf_qnandrrplusviadv(data_table,qn_name='QN',rr_name='RR',specid_name='SP
         # Construct outputs.
         isqso = isqso_qn_hi & isqso_rr_zwf
         isqso[use_vi] = copy.deepcopy(data_table['ISQSO_VI'].data[use_vi])
-        z = z_rr
+        z = z_rr_zwf
         if zchoice=='QN':
             z[isqso_qn_hi] = z_qn_hi[isqso_qn_hi]
         z[use_vi] = copy.deepcopy(data_table['Z_VI'].data[use_vi])
