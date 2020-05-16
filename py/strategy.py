@@ -239,13 +239,13 @@ def get_cf_qnandrrplusviadv(data_table,qn_name='QN',rr_name='RR',specid_name='SP
         cf_rr = get_cf_rr(data_table,rr_name=rr_name,specid_name=specid_name)
         isqso_qn_lo, z_qn_lo = cf_qn(c_th=c_th_lo,n_detect=n_detect,filter=filter)
         isqso_qn_hi, z_qn_hi = cf_qn(c_th=c_th_hi,n_detect=n_detect,filter=filter)
-        isqso_rr, z_rr = cf_rr(zwarn=None,filter=filter)
         isqso_rr_zwf, z_rr_zwf = cf_rr(zwarn=False,filter=filter)
+        zwarn_nonzero = (data_table['ZWARN_{}'.format(rr_name)]>0)
 
         # Asks for VI if:
         # 1. RR says QSO without zwarn, and QN says cth_lo<c<cth_hi
-        # 2. QN says c>cth_hi but RR says QSO with zwarn.
-        use_vi = ((isqso_qn_lo & (~isqso_qn_hi)) & (isqso_rr_zwf)) | (isqso_qn_hi & (isqso_rr & (~isqso_rr_zwf)))
+        # 2. QN says c>cth_hi but RR gives zwarn.
+        use_vi = ((isqso_qn_lo & (~isqso_qn_hi)) & (isqso_rr_zwf)) | (isqso_qn_hi & zwarn_nonzero)
         print('INFO: RR&QN+VI adv. sends {}/{} ({:2.1%}) spectra to VI'.format(use_vi.sum(),len(data_table),use_vi.sum()/len(data_table)))
 
         # Construct outputs.
