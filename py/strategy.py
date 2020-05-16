@@ -249,11 +249,11 @@ def get_cf_qnandrrplusviadv(data_table,qn_name='QN',rr_name='RR',specid_name='SP
         print('INFO: RR&QN+VI adv. sends {}/{} ({:2.1%}) spectra to VI'.format(use_vi.sum(),len(data_table),use_vi.sum()/len(data_table)))
 
         # Construct outputs.
-        isqso = isqso_qn_hi | isqso_rr_zwf
+        isqso = isqso_qn_hi & isqso_rr_zwf
         isqso[use_vi] = copy.deepcopy(data_table['ISQSO_VI'].data[use_vi])
         z = z_rr
         if zchoice=='QN':
-            z[isqso_qn] = z_qn_hi[isqso_qn]
+            z[isqso_qn_hi] = z_qn_hi[isqso_qn_hi]
         z[use_vi] = copy.deepcopy(data_table['Z_VI'].data[use_vi])
 
         return isqso, z
