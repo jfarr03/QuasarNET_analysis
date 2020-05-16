@@ -135,9 +135,8 @@ def get_cf_qnandrr(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
         isqso_rr, z_rr = cf_rr(**rr_kwargs,filter=filter)
 
         # Combine using &, and choosing z based on zchoice.
-        isqso = isqso_qn & isqso_rr
         dv = get_dv(z_qn,z_rr,data_table['Z_VI'])
-        isqso &= (dv_rrqn<=dv_max)
+        isqso = isqso_qn & isqso_rr & (dv<=dv_max)
         z = z_rr
         if zchoice=='QN':
             z[isqso_qn] = z_qn[isqso_qn]
@@ -217,7 +216,7 @@ def get_cf_qnandrrplusvi(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_
         print('INFO: QN&RR+VI sends {}/{} ({:2.1%}) spectra to VI'.format(use_vi.sum(),len(data_table),use_vi.sum()/len(data_table)))
 
         # Construct outputs.
-        isqso = isqso_qn & isqso_rr
+        isqso = isqso_qn & isqso_rr & (dv<=dv_max)
         isqso[use_vi] = copy.deepcopy(data_table['ISQSO_VI'].data[use_vi])
         z = z_rr
         if zchoice=='QN':
