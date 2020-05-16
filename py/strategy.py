@@ -18,6 +18,16 @@ class Strategy():
 
         return isqso, z
 
+def filter_table(data_table,filter):
+
+    if filter is not None:
+        filtered_table = data_table[filter]
+    else:
+        filtered_table = data_table
+
+    return filtered_table
+
+## Obsolete for now.
 def check_specid_array(specid):
 
     if isinstance(specid,float) or isinstance(specid,int):
@@ -37,13 +47,11 @@ def get_cf_qn(data_table,qn_name='QN',specid_name='SPEC_ID'):
 
     def cf(c_th=0.6,n_detect=1,filter=None):
 
-        if filter is not None:
-            temp_data_table = data_table[filter]
-        else:
-            temp_data_table = data_table
+        # Apply filter to the data table.
+        temp_data_table = filter_table(data_table,filter)
 
         # Extract z/isqso values.
-        z = copy.deepcopy(temp_data_table['Z_{}'.format(qn_name)])
+        z = copy.deepcopy(temp_data_table['Z_{}'.format(qn_name)].data)
         isqso = ((temp_data_table['C_{}'.format(qn_name)]>c_th).sum(axis=1)>=n_detect)
 
         return isqso, z
@@ -52,20 +60,14 @@ def get_cf_qn(data_table,qn_name='QN',specid_name='SPEC_ID'):
 
 def get_cf_sq(data_table,sq_name='SQ',specid_name='SPEC_ID'):
 
-    def cf(specid,p_min=0.32):
+    def cf(p_min=0.32,filter=None):
 
-        # Set up arrays.
-        specid = check_specid_array(specid)
-        isqso = np.zeros(len(specid)).astype(bool)
-        z = np.zeros(len(specid))
+        # Apply filter to the data table.
+        temp_data_table = filter_table(data_table,filter)
 
-        # For each spectrum:
-        for i,s in enumerate(specid):
-
-            # Locate in the table, and extract z/isqso values.
-            w = np.in1d(data_table[specid_name],s)
-            z[i] = copy.deepcopy(data_table['Z_{}'.format(sq_name)])[w][0]
-            isqso[i] = (data_table['P_{}'.format(sq_name)]>p_min)[w][0]
+        # Extract z/isqso values.
+        z = copy.deepcopy(temp_data_table['Z_{}'.format(sq_name)].data)
+        isqso = (temp_data_table['P_{}'.format(sq_name)]>p_min)
 
         return isqso, z
 
@@ -73,27 +75,21 @@ def get_cf_sq(data_table,sq_name='SQ',specid_name='SPEC_ID'):
 
 def get_cf_rr(data_table,rr_name='RR',specid_name='SPEC_ID'):
 
-    def cf(specid,zwarn=None):
+    def cf(zwarn=None,filter=None):
 
-        # Set up arrays.
-        specid = check_specid_array(specid)
-        isqso = np.zeros(len(specid)).astype(bool)
-        z = np.zeros(len(specid))
+        # Apply filter to the data table.
+        temp_data_table = filter_table(data_table,filter)
 
-        # For each spectrum:
-        for i,s in enumerate(specid):
+        # Extract z/isqso values.
+        z = copy.deepcopy(data_table['Z_{}'.format(rr_name)].data)
+        isqso = copy.deepcopy(data_table['ISQSO_{}'.format(rr_name)].data)
 
-            # Locate in the table, and extract z/isqso values.
-            w = np.in1d(data_table[specid_name],s)
-            z[i] = copy.deepcopy(data_table['Z_{}'.format(rr_name)])[w][0]
-            isqso[i] = copy.deepcopy(data_table['ISQSO_{}'.format(rr_name)])[w][0]
-
-            # If zwarn==True, set all spectra with zwarn>0 to have isqso=True.
-            # If zwarn==False, set all spectra with zwarn>0 to have isqso=False.
-            # Otherwise, leave alone (i.e. ignore zwarn and use best fit).
-            if zwarn is not None:
-                if data_table['ZWARN_{}'.format(rr_name)][w][0]>0:
-                    isqso[i] = zwarn
+        # If zwarn==True, set all spectra with zwarn>0 to have isqso=True.
+        # If zwarn==False, set all spectra with zwarn>0 to have isqso=False.
+        # Otherwise, leave alone (i.e. ignore zwarn and use best fit).
+        if zwarn is not None:
+            zwarn_nonzero = (data_table['ZWARN_{}'.format(rr_name)]>0)
+            isqso[zwarn_nonzero] = zwarn
 
         return isqso, z
 
@@ -101,16 +97,16 @@ def get_cf_rr(data_table,rr_name='RR',specid_name='SPEC_ID'):
 
 def get_cf_qnorrr(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
 
-    def cf(specid,qn_kwargs={},rr_kwargs={},zchoice='QN'):
+    def cf(qn_kwargs={},rr_kwargs={},zchoice='QN',filter=None):
 
-        # Set up arrays.
-        specid = check_specid_array(specid)
+        # Apply filter to the data table.
+        temp_data_table = filter_table(data_table,filter)
 
         # Get classifications from both QN and RR.
         cf_qn = get_cf_qn(data_table,qn_name=qn_name,specid_name=specid_name)
         cf_rr = get_cf_rr(data_table,rr_name=rr_name,specid_name=specid_name)
-        isqso_qn, z_qn = cf_qn(specid,**qn_kwargs)
-        isqso_rr, z_rr = cf_rr(specid,**rr_kwargs)
+        isqso_qn, z_qn = cf_qn(**qn_kwargs,filter=filter)
+        isqso_rr, z_rr = cf_rr(**rr_kwargs,filter=filter)
 
         # Combine using |, and choosing z based on zchoice.
         isqso = isqso_qn | isqso_rr
@@ -127,16 +123,16 @@ def get_cf_qnorrr(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
 
 def get_cf_qnandrr(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
 
-    def cf(specid,qn_kwargs={},rr_kwargs={},dv_max=6000.,zchoice='QN'):
+    def cf(qn_kwargs={},rr_kwargs={},dv_max=6000.,zchoice='QN',filter=None):
 
-        # Set up arrays.
-        specid = check_specid_array(specid)
+        # Apply filter to the data table.
+        temp_data_table = filter_table(data_table,filter)
 
         # Get classifications from both QN and RR.
         cf_qn = get_cf_qn(data_table,qn_name=qn_name,specid_name=specid_name)
         cf_rr = get_cf_rr(data_table,rr_name=rr_name,specid_name=specid_name)
-        isqso_qn, z_qn = cf_qn(specid,**qn_kwargs)
-        isqso_rr, z_rr = cf_rr(specid,**rr_kwargs)
+        isqso_qn, z_qn = cf_qn(**qn_kwargs,filter=filter)
+        isqso_rr, z_rr = cf_rr(**rr_kwargs,filter=filter)
 
         # Combine using &, and choosing z based on zchoice.
         isqso = isqso_qn & isqso_rr
@@ -152,26 +148,26 @@ def get_cf_qnandrr(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
 
 def get_cf_qnplusvi(data_table,qn_name='QN',specid_name='SPEC_ID'):
 
-    def cf(specid,c_th_lo=0.1,c_th_hi=0.9,n_detect=1):
+    def cf(c_th_lo=0.1,c_th_hi=0.9,n_detect=1,filter=None):
 
-        # Set up arrays.
-        specid = check_specid_array(specid)
+        # Apply filter to the data table.
+        temp_data_table = filter_table(data_table,filter)
 
         # Get lo and hi classifications from QN.
         cf_qn = get_cf_qn(data_table,qn_name=qn_name,specid_name=specid_name)
-        isqso_qn_lo, z_qn_lo = cf_qn(specid,c_th=c_th_lo,n_detect=n_detect)
-        isqso_qn_hi, z_qn_hi = cf_qn(specid,c_th=c_th_hi,n_detect=n_detect)
+        isqso_qn_lo, z_qn_lo = cf_qn(c_th=c_th_lo,n_detect=n_detect,filter=filter)
+        isqso_qn_hi, z_qn_hi = cf_qn(c_th=c_th_hi,n_detect=n_detect,filter=filter)
 
         # Select to use VI when spectra have middling confidence (i.e. when the
         # lo threshold would give True, but hi would give False).
         use_vi = isqso_qn_lo & (~isqso_qn_hi)
-        print('INFO: QN+VI sends {}/{} ({:2.1%}) spectra to VI'.format(use_vi.sum(),len(data_table),use_vi.sum()/len(data_table)))
+        print('INFO: QN+VI sends {}/{} ({:2.2%}) spectra to VI'.format(use_vi.sum(),len(data_table),use_vi.sum()/len(data_table)))
 
         # Construct outputs.
         isqso = isqso_qn_hi
-        isqso[use_vi] = copy.deepcopy(data_table['ISQSO_VI'])[use_vi]
+        isqso[use_vi] = copy.deepcopy(data_table['ISQSO_VI'].data[use_vi])
         z = z_qn_hi
-        z[use_vi] = copy.deepcopy(data_table['Z_VI'])[use_vi]
+        z[use_vi] = copy.deepcopy(data_table['Z_VI'].data[use_vi])
 
         return isqso, z
 
@@ -179,14 +175,14 @@ def get_cf_qnplusvi(data_table,qn_name='QN',specid_name='SPEC_ID'):
 
 def get_cf_rrplusvi(data_table,rr_name='RR',specid_name='SPEC_ID'):
 
-    def cf(specid):
+    def cf(filter=None):
 
-        # Set up arrays.
-        specid = check_specid_array(specid)
+        # Apply filter to the data table.
+        temp_data_table = filter_table(data_table,filter)
 
         # Get classifications from RR.
         cf_rr = get_cf_rr(data_table,rr_name=rr_name,specid_name=specid_name)
-        isqso_rr, z_rr = cf_rr(specid,zwarn=False)
+        isqso_rr, z_rr = cf_rr(zwarn=False,filter=filter)
 
         # Select to use VI when a zwarn flag is raised.
         use_vi = (data_table['ZWARN_{}'.format(rr_name)]>0)
@@ -194,9 +190,9 @@ def get_cf_rrplusvi(data_table,rr_name='RR',specid_name='SPEC_ID'):
 
         # Construct outputs.
         isqso = isqso_rr
-        isqso[use_vi] = copy.deepcopy(data_table['ISQSO_VI'])[use_vi]
+        isqso[use_vi] = copy.deepcopy(data_table['ISQSO_VI'].data[use_vi])
         z = z_rr
-        z[use_vi] = copy.deepcopy(data_table['Z_VI'])[use_vi]
+        z[use_vi] = copy.deepcopy(data_table['Z_VI'].data[use_vi])
 
         return isqso, z
 
@@ -204,16 +200,16 @@ def get_cf_rrplusvi(data_table,rr_name='RR',specid_name='SPEC_ID'):
 
 def get_cf_qnandrrplusvi(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
 
-    def cf(specid,qn_kwargs={},rr_kwargs={},dv_max=6000.,zchoice='QN'):
+    def cf(qn_kwargs={},rr_kwargs={},dv_max=6000.,zchoice='QN',filter=None):
 
-        # Set up arrays.
-        specid = check_specid_array(specid)
+        # Apply filter to the data table.
+        temp_data_table = filter_table(data_table,filter)
 
         # Get classifications from both QN and RR.
         cf_qn = get_cf_qn(data_table,qn_name=qn_name,specid_name=specid_name)
         cf_rr = get_cf_rr(data_table,rr_name=rr_name,specid_name=specid_name)
-        isqso_qn, z_qn = cf_qn(specid,**qn_kwargs)
-        isqso_rr, z_rr = cf_rr(specid,**rr_kwargs)
+        isqso_qn, z_qn = cf_qn(**qn_kwargs,filter=filter)
+        isqso_rr, z_rr = cf_rr(**rr_kwargs,filter=filter)
 
         # Select to use VI when RR and QN disagree.
         dv = get_dv(z_qn,z_rr,data_table['Z_VI'])
@@ -222,11 +218,11 @@ def get_cf_qnandrrplusvi(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_
 
         # Construct outputs.
         isqso = isqso_qn & isqso_rr
-        isqso[use_vi] = copy.deepcopy(data_table['ISQSO_VI'])[use_vi]
+        isqso[use_vi] = copy.deepcopy(data_table['ISQSO_VI'].data[use_vi])
         z = z_rr
         if zchoice=='QN':
             z[isqso_qn] = z_qn[isqso_qn]
-        z[use_vi] = copy.deepcopy(data_table['Z_VI'])[use_vi]
+        z[use_vi] = copy.deepcopy(data_table['Z_VI'].data[use_vi])
 
         return isqso, z
 
@@ -234,31 +230,32 @@ def get_cf_qnandrrplusvi(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_
 
 def get_cf_qnandrrplusviadv(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
 
-    def cf(specid,c_th_lo=0.1,c_th_hi=0.9,n_detect=1,dv_max=6000.,zchoice='QN'):
+    def cf(c_th_lo=0.1,c_th_hi=0.9,n_detect=1,dv_max=6000.,zchoice='QN',filter=None):
 
-        # Set up arrays.
-        specid = check_specid_array(specid)
+        # Apply filter to the data table.
+        temp_data_table = filter_table(data_table,filter)
 
         # Get classifications from both QN and RR.
         cf_qn = get_cf_qn(data_table,qn_name=qn_name,specid_name=specid_name)
         cf_rr = get_cf_rr(data_table,rr_name=rr_name,specid_name=specid_name)
-        isqso_qn_lo, z_qn_lo = cf_qn(specid,c_th=c_th_lo,n_detect=n_detect)
-        isqso_qn_hi, z_qn_hi = cf_qn(specid,c_th=c_th_hi,n_detect=n_detect)
-        isqso_rr, z_rr = cf_rr(specid,zwarn=None)
-        isqso_rr_zwf, z_rr_zwf = cf_rr(specid,zwarn=False)
+        isqso_qn_lo, z_qn_lo = cf_qn(c_th=c_th_lo,n_detect=n_detect,filter=filter)
+        isqso_qn_hi, z_qn_hi = cf_qn(c_th=c_th_hi,n_detect=n_detect,filter=filter)
+        isqso_rr, z_rr = cf_rr(zwarn=None,filter=filter)
+        isqso_rr_zwf, z_rr_zwf = cf_rr(zwarn=False,filter=filter)
 
-        # Asks for VI if QN says c>cth_hi but RR has a zwarn.
-        # Also if RR says QSO without zwarn, and QN says cth_lo<c<cth_hi.
+        # Asks for VI if:
+        # 1. RR says QSO without zwarn, and QN says cth_lo<c<cth_hi
+        # 2. QN says c>cth_hi but RR says QSO with zwarn.
         use_vi = ((isqso_qn_lo & (~isqso_qn_hi)) & (isqso_rr_zwf)) | (isqso_qn_hi & (isqso_rr & (~isqso_rr_zwf)))
         print('INFO: RR&QN+VI adv. sends {}/{} ({:2.1%}) spectra to VI'.format(use_vi.sum(),len(data_table),use_vi.sum()/len(data_table)))
 
         # Construct outputs.
         isqso = isqso_qn_hi | isqso_rr_zwf
-        isqso[use_vi] = copy.deepcopy(data_table['ISQSO_VI'])[use_vi]
+        isqso[use_vi] = copy.deepcopy(data_table['ISQSO_VI'].data[use_vi])
         z = z_rr
         if zchoice=='QN':
             z[isqso_qn] = z_qn[isqso_qn]
-        z[use_vi] = copy.deepcopy(data_table['Z_VI'])[use_vi]
+        z[use_vi] = copy.deepcopy(data_table['Z_VI'].data[use_vi])
 
         return isqso, z
 
