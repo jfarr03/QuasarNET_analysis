@@ -446,7 +446,7 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include
         data[c] = data[c][w]
 
     ## For each non-VI dataset, also make a table.
-    nonVI_tables = {}
+    nonVI_tables = []
     for c in nonVI_datasets:
         cols = []
         colnames = []
@@ -471,18 +471,16 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include
             cols += [data[c]['ZWARN']]
             colnames += ['ZWARN_{}'.format(c)]
         for i,col in enumerate(cols):
-            print(colnames[i],len(col))
-        nonVI_tables[c] = Table(cols,names=colnames)
+        nonVI_tables.append(Table(cols,names=colnames))
 
     ## Join each table.
     if common_specids:
         join_type = 'inner'
     else:
         join_type = 'outer'
-    ref = nonVI_tables.keys()[0]
-    table = nonVI_tables[ref]
-    for c in nonVI_tables.keys():
-        if c!=ref:
+    table = nonVI_tables[0]
+    if len(nonVI_tables)>1:
+        for c in nonVI_tables[1:]:
             table = join(table,nonVI_tables[c],keys=['OBJ_ID','SPEC_ID'],join_type=join_type)
 
     ## For each SPEC_ID, extract the VI data from the VI dataset.
