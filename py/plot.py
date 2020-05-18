@@ -563,8 +563,9 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                 nhighz_flagged += (filt_strategies[ss]['nhighz_flagged'])
                 nhighz_truth_flagged += (filt_strategies[ss]['nhighz_truth_flagged'])
 
-            reobs_dens = nhighz_flagged/(eff_area*len(strategies_to_plot[filt_name][s]))
-            pli = nhighz_truth_flagged/(nhighz_truth*len(strategies_to_plot[filt_name][s]))
+            n_strategies_combined = len(strategies_to_plot[filt_name][s]['strategies'])
+            reobs_dens = nhighz_flagged/(eff_area*n_strategies_combined)
+            pli = nhighz_truth_flagged/(nhighz_truth*n_strategies_combined)
 
             print(reobs_dens,pli)
             if len(reobs_dens)>1:
