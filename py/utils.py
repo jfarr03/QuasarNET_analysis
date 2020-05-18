@@ -445,31 +445,6 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include
         w = np.in1d(data[c]['OBJ_ID'],obj_ids_truth)
         data[c] = data[c][w]
 
-    ## For each SPEC_ID, extract the VI data from the VI dataset.
-    new_vi_data = []
-    # Dict for converting to text class.
-    conv_class = {0: 'BAD', 1: 'STAR', 2: 'GALAXY', 3: 'QSO'}
-    for i,obj_id in enumerate(obj_ids_truth):
-        new_vi_data += [(truth[obj_id].z_conf,
-                         truth[obj_id].z,
-                         conv_class[truth[obj_id].objclass],
-                         truth[obj_id].objclass==3)]
-    dtype = [('ZCONF_PERSON','i8'),('Z_VI','f8'),('CLASS_VI','U8'),('ISQSO_VI','bool')]
-    new_vi_data = np.array(new_vi_data,dtype=dtype)
-
-    ## Make a table of the VI results.
-    cols = []
-    colnames = []
-    # First the ID columns.
-    for k in ['OBJ_ID','SPEC_ID']:
-        cols += [data[ref][k]]
-        colnames += [k]
-    # Now the VI columns.
-    for k in ['ZCONF_PERSON','Z_VI','CLASS_VI','ISQSO_VI']:
-        cols += [new_vi_data[k]]
-        colnames += [k]
-    table = Table(cols,names=colnames)
-
     ## For each non-VI dataset, also make a table.
     nonVI_tables = {}
     for c in nonVI_datasets:
@@ -505,8 +480,29 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include
         join_type = 'inner'
     else:
         join_type = 'outer'
+    ref = nonVI_tables.keys()[0]
+    table = nonVI_tables[ref]
     for c in nonVI_tables.keys():
-        table = join(table,nonVI_tables[c],keys=['OBJ_ID','SPEC_ID'],join_type=join_type)
+        if c!=ref:
+            table = join(table,nonVI_tables[c],keys=['OBJ_ID','SPEC_ID'],join_type=join_type)
+
+    ## For each SPEC_ID, extract the VI data from the VI dataset.
+    new_vi_data = []
+    # Dict for converting to text class.
+    conv_class = {0: 'BAD', 1: 'STAR', 2: 'GALAXY', 3: 'QSO'}
+    for i,obj_id in enumerate(table['OBJID'].data):
+        new_vi_data += [(table['SPEC_ID'].data[i],
+                         obj_id,
+                         truth[obj_id].z_conf,
+                         truth[obj_id].z,
+                         conv_class[truth[obj_id].objclass],
+                         truth[obj_id].objclass==3)]
+    dtype = [('SPEC_ID','i8'),('OBJ_ID','i8'),('ZCONF_PERSON','i8'),('Z_VI','f8'),('CLASS_VI','U8'),('ISQSO_VI','bool')]
+    new_vi_data = np.array(new_vi_data,dtype=dtype)
+    vi_table = Table(new_vi_data)
+
+    ## Join the VI table to the full table.
+    table = join(vi_table,table,keys=['OBJ_ID','SPEC_ID'])
 
     ## Only show a reduced number of digits for redshifts, and other floats.
     ks = [cn for cn in table.colnames if ('Z_' in cn)]
