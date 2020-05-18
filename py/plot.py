@@ -476,7 +476,7 @@ def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,
     return fig, axs
 
 ## Function for Figure 4.
-def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(12,6),eff_area=None,dv_max=6000.,zcut=2.1,ymin=0.94,xmin=47.,xmax=52.,verbose=False,n_highz_desi=50,nydec=0,filters=None,marker_size=100,strategies_to_plot=None):
+def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(12,6),eff_area=None,dv_max=6000.,zcut=2.1,ymin=0.94,xmin=47.,xmax=52.,verbose=False,n_highz_desi=50,nydec=0,filters=None,marker_size=100,strategies_to_plot=None,npoints_plot=None):
 
     if filters is None:
         filters = {None: np.ones(len(data_table)).astype(bool)}
@@ -567,10 +567,21 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
             reobs_dens = nhighz_flagged/(eff_area*n_strategies_combined)
             pli = nhighz_truth_flagged/(nhighz_truth*n_strategies_combined)
 
-            print(reobs_dens,pli)
-            if len(reobs_dens)>1:
+            npoints = len(reobs_dens)
+            if npoints>1:
+                if npoints_plot is not None:
+                    if npoints_plot<2:
+                        raise ValueError('Need at least 2 points to plot!')
+                    else:
+                        x = np.arange(npoints)//(npoints/(npoints_plot-1))
+                        inds = [0]
+                        for i in range(1,npoints_plot-1):
+                            inds.append(np.argmax(x==i)-1)
+                        inds.append(-1)
+                else:
+                    inds = np.arange(npoints)
                 axs[0,k].plot(reobs_dens,pli,c='grey',marker=strategies_to_plot[filt_name][s]['marker'],label=s,zorder=2,ms=np.sqrt(marker_size))
-                points = axs[0,k].scatter(reobs_dens,pli,c=strategies_to_plot[filt_name][s]['color'],marker=strategies_to_plot[filt_name][s]['marker'],s=marker_size,zorder=3)
+                points = axs[0,k].scatter(reobs_dens[inds],pli[inds],c=strategies_to_plot[filt_name][s]['color'],marker=strategies_to_plot[filt_name][s]['marker'],s=marker_size,zorder=3)
             else:
                 while (reobs_dens,pli) in points_occupied:
                     reobs_dens *= 1.004
