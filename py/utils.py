@@ -1,6 +1,6 @@
 import numpy as np
 from astropy.io import fits
-from astropy.table import Table
+from astropy.table import join, Table
 import matplotlib.pyplot as plt
 
 import glob
@@ -418,16 +418,15 @@ def load_sq_data(f_sq,p_min=0.32,include_p=False,mode='BOSS'):
 
     return sq_data
 
-def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include_p_sq=False):
+def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include_p_sq=False,common_specids=True):
 
-    # If no truth provided, make one from VI data.
+    ## If no truth provided, make one from VI data.
     if truth is None:
         print('INFO: No truth provided, using VI in data instead.')
         try:
             test = data['VI']
         except KeyError:
             raise KeyError('No VI data found: check entry is labelled as "VI"!')
-
         # Cycle through each tid.
         truth = {}
         class metadata:
@@ -446,35 +445,11 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include
         w = np.in1d(data[c]['OBJ_ID'],obj_ids_truth)
         data[c] = data[c][w]
 
-    ## Find the set of common spec_ids in the reduced non-VI datasets.
-    cs_set = set(data[nonVI_datasets[0]]['SPEC_ID'])
-    if len(nonVI_datasets)>1:
-        for c in nonVI_datasets[1:]:
-            cs_set = cs_set.intersection(set(data[c]['SPEC_ID']))
-    common_spec_ids = np.array(list(cs_set))
-
-    ## In each non-VI dataset, reduce to the set of common spec_ids.
-    ## Sort the data by SPEC_ID in each of the reduced non-VI datasets.
-    for c in nonVI_datasets:
-        w = np.in1d(data[c]['SPEC_ID'],common_spec_ids)
-        data[c] = data[c][w]
-        data[c].sort(order='SPEC_ID')
-
-    if verbose:
-        print('INFO: {} common spectra'.format(len(common_spec_ids)))
-
-    ## Assert that all SPEC_ID columns are identical before proceeding.
-    ref = nonVI_datasets[0]
-    for c in nonVI_datasets:
-        assert (len(data[ref]['SPEC_ID'])==len(data[c]['SPEC_ID']))
-        assert (data[ref]['SPEC_ID']==data[c]['SPEC_ID']).all()
-
     ## For each SPEC_ID, extract the VI data from the VI dataset.
     new_vi_data = []
-
     # Dict for converting to text class.
     conv_class = {0: 'BAD', 1: 'STAR', 2: 'GALAXY', 3: 'QSO'}
-    for i,obj_id in enumerate(data[ref]['OBJ_ID']):
+    for i,obj_id in enumerate(obj_ids_truth):
         new_vi_data += [(truth[obj_id].z_conf,
                          truth[obj_id].z,
                          conv_class[truth[obj_id].objclass],
@@ -482,43 +457,56 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include
     dtype = [('ZCONF_PERSON','i8'),('Z_VI','f8'),('CLASS_VI','U8'),('ISQSO_VI','bool')]
     new_vi_data = np.array(new_vi_data,dtype=dtype)
 
-    ## Now make a table by assembling columns.
+    ## Make a table of the VI results.
     cols = []
     colnames = []
-
     # First the ID columns.
     for k in ['OBJ_ID','SPEC_ID']:
         cols += [data[ref][k]]
         colnames += [k]
-
     # Now the VI columns.
     for k in ['ZCONF_PERSON','Z_VI','CLASS_VI','ISQSO_VI']:
         cols += [new_vi_data[k]]
         colnames += [k]
+    table = Table(cols,names=colnames)
 
-    # Now the data columns.
-    for k in ['Z','CLASS','ISQSO']:
-        for c in data.keys():
+    ## For each non-VI dataset, also make a table.
+    nonVI_tables = {}
+    for c in nonVI_datasets:
+        cols = []
+        colnames = []
+        # First the ID columns.
+        for k in ['OBJ_ID','SPEC_ID']:
+            cols += [data[c][k]]
+            colnames += [k]
+        # Now the data columns.
+        for k in ['Z','CLASS','ISQSO']:
             cols += [data[c][k]]
             colnames += ['{}_{}'.format(k,c)]
-
-    # Now optional extras.
-    if include_c_qn:
+        # Now optional extras.
+        if include_c_qn:
+            for c in data.keys():
+                if 'QN' in c:
+                    cols += [data[c]['C']]
+                    colnames += ['C_{}'.format(c)]
+        if include_p_sq:
+            for c in data.keys():
+                if 'SQ' in c:
+                    cols += [data[c]['P']]
+                    colnames += ['P_{}'.format(c)]
         for c in data.keys():
-            if 'QN' in c:
-                cols += [data[c]['C']]
-                colnames += ['C_{}'.format(c)]
-    if include_p_sq:
-        for c in data.keys():
-            if 'SQ' in c:
-                cols += [data[c]['P']]
-                colnames += ['P_{}'.format(c)]
-    for c in data.keys():
-        if ('RR' in c) or ('PIPE' in c):
-            cols += [data[c]['ZWARN']]
-            colnames += ['ZWARN_{}'.format(c)]
+            if ('RR' in c) or ('PIPE' in c):
+                cols += [data[c]['ZWARN']]
+                colnames += ['ZWARN_{}'.format(c)]
+        nonVI_tables[c] = Table(cols,names=colnames)
 
-    table = Table(cols,names=colnames)
+    ## Join each table.
+    if common_specids:
+        join_type = 'inner'
+    else:
+        join_type = 'outer'
+    for c in nonVI_tables.keys():
+        table = join(table,nonVI_tables[c],keys=['OBJ_ID','SPEC_ID'],join_type=join_type)
 
     ## Only show a reduced number of digits for redshifts, and other floats.
     ks = [cn for cn in table.colnames if ('Z_' in cn)]
