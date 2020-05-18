@@ -2,9 +2,8 @@ import numpy as np
 import copy
 
 class Strategy():
-    def __init__(self,data_table,cf_type,cf_kwargs={},name=None,c=None,ls=None,marker=None):
+    def __init__(self,cf_type,cf_kwargs={},name=None,c=None,ls=None,marker=None):
 
-        self.data_table = data_table
         self.classifying_fn = get_cf(cf_type,cf_kwargs)
         self.name = name
         self.c = c
