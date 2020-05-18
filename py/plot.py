@@ -301,8 +301,6 @@ def plot_qn_model_compare_2panel(data_table,strategies,filename=None,dv_max=6000
     n_dv = 51
     dv_bins = np.linspace(-3000.,3000,n_dv)
 
-    isqso_truth, isgal_truth, isstar_truth, isbad = get_truths(data_table)
-
     artists = []
     labels = []
 
@@ -316,6 +314,8 @@ def plot_qn_model_compare_2panel(data_table,strategies,filename=None,dv_max=6000
         else:
             filt = np.ones(len(data_table)).astype(bool)
         temp_data_table = data_table[filt]
+
+        isqso_truth, isgal_truth, isstar_truth, isbad = get_truths(temp_data_table)
 
         z_s = strategies[s]['z']
 
