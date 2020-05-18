@@ -470,7 +470,6 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include
         if ('RR' in c) or ('PIPE' in c):
             cols += [data[c]['ZWARN']]
             colnames += ['ZWARN_{}'.format(c)]
-        for i,col in enumerate(cols):
         nonVI_tables.append(Table(cols,names=colnames))
 
     ## Join each table.
