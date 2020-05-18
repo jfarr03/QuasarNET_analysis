@@ -479,8 +479,8 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include
         join_type = 'outer'
     table = nonVI_tables[0]
     if len(nonVI_tables)>1:
-        for c in nonVI_tables[1:]:
-            table = join(table,nonVI_tables[c],keys=['OBJ_ID','SPEC_ID'],join_type=join_type)
+        for t in nonVI_tables[1:]:
+            table = join(table,t,keys=['OBJ_ID','SPEC_ID'],join_type=join_type)
 
     ## For each SPEC_ID, extract the VI data from the VI dataset.
     new_vi_data = []
