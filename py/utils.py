@@ -486,7 +486,7 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include
     new_vi_data = []
     # Dict for converting to text class.
     conv_class = {0: 'BAD', 1: 'STAR', 2: 'GALAXY', 3: 'QSO'}
-    for i,obj_id in enumerate(table['OBJID'].data):
+    for i,obj_id in enumerate(table['OBJ_ID'].data):
         new_vi_data += [(table['SPEC_ID'].data[i],
                          obj_id,
                          truth[obj_id].z_conf,
