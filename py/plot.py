@@ -1,3 +1,4 @@
+import astropy
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
@@ -310,7 +311,13 @@ def plot_qn_model_compare_2panel(data_table,strategies,filename=None,dv_max=6000
         com = []
         pur = []
 
-        z_s = data_table['Z_{}'.format(s)]
+        if type(data_table['ISQSO_{}'.format(s)])==astropy.table.column.MaskedColumn:
+            filt = (~data_table['ISQSO_{}'.format(s)].data.mask)
+        else:
+            filt = np.ones(len(data_table)).astype(bool)
+        temp_data_table = data_table[filt]
+
+        z_s = strategies[s]['z']
 
         for cth in c_th:
 
@@ -322,7 +329,7 @@ def plot_qn_model_compare_2panel(data_table,strategies,filename=None,dv_max=6000
 
             # Calculate purity and completeness.
             p,c = get_pur_com(isqso_s,z_s,isqso_truth,isgal_truth,isbad,
-                data_table['Z_VI'],dv_max=dv_max)
+                temp_data_table['Z_VI'],dv_max=dv_max)
 
             # Add to purity/completeness lists.
             pur += [p]
@@ -350,7 +357,7 @@ def plot_qn_model_compare_2panel(data_table,strategies,filename=None,dv_max=6000
         axs[0,0].plot(c_th,com,label=labelc,color=utils.colours['C1'],ls=strategies[s]['ls'])
 
         ## Plot the dv histogram.
-        dv = 300000. * (z_s-data_table['Z_VI']) / (1+data_table['Z_VI'])
+        dv = 300000. * (z_s-temp_data_table['Z_VI']) / (1+temp_data_table['Z_VI'])
         axs[1,0].hist(dv,bins=dv_bins,histtype='step',ls=strategies[s]['ls'],color=utils.colours['C2'])
 
         if verbose:
