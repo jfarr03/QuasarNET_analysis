@@ -34,6 +34,12 @@ class Prediction():
 
         return
 
+    def get_ishighzqso(self,zcut=2.1):
+
+        ishighzqso = (self.isqso) & (self.z>=zcut)
+
+        return ishighzqso
+
 def get_cf(data_table,cf_type,cf_kwargs):
 
     if cf_type == 'qn':
