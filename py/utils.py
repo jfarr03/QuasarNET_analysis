@@ -460,19 +460,18 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include
             colnames += ['{}_{}'.format(k,c)]
         # Now optional extras.
         if include_c_qn:
-            for c in data.keys():
-                if 'QN' in c:
-                    cols += [data[c]['C']]
-                    colnames += ['C_{}'.format(c)]
+            if 'QN' in c:
+                cols += [data[c]['C']]
+                colnames += ['C_{}'.format(c)]
         if include_p_sq:
-            for c in data.keys():
-                if 'SQ' in c:
-                    cols += [data[c]['P']]
-                    colnames += ['P_{}'.format(c)]
-        for c in data.keys():
-            if ('RR' in c) or ('PIPE' in c):
-                cols += [data[c]['ZWARN']]
-                colnames += ['ZWARN_{}'.format(c)]
+            if 'SQ' in c:
+                cols += [data[c]['P']]
+                colnames += ['P_{}'.format(c)]
+        if ('RR' in c) or ('PIPE' in c):
+            cols += [data[c]['ZWARN']]
+            colnames += ['ZWARN_{}'.format(c)]
+        for i,col in enumerate(cols):
+            print(colnames[i],len(col))
         nonVI_tables[c] = Table(cols,names=colnames)
 
     ## Join each table.
