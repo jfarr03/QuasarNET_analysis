@@ -77,7 +77,7 @@ def plot_pur_com_vs_z(data_table,strategies,filename=None,zmin=0.,zmax=5.,dz_int
         pur = []
 
         # Extract data from strategy.
-        isqso_s = strategies[s]['w']
+        isqso_s = strategies[s]['isqso']
         z_s = strategies[s]['z']
 
         # For each z bin:
@@ -163,7 +163,7 @@ def plot_pur_com_vs_cth_zbin(data_table,strategies,filename=None,zbins=[(None,2.
                 try:
                     isqso_s = strategies[s]['confs']>cth
                 except KeyError:
-                    isqso_s = strategies[s]['w']
+                    isqso_s = strategies[s]['isqso']
 
                 # Calculate purity and completeness.
                 p,c = get_pur_com(isqso_s,z_s,isqso_truth,isgal_truth,isbad,
