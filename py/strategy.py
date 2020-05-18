@@ -2,9 +2,10 @@ import numpy as np
 import copy
 
 class Strategy():
-    def __init__(self,classifying_fn,name=None,c=None,ls=None,marker=None):
+    def __init__(self,data_table,cf_type,cf_kwargs={},name=None,c=None,ls=None,marker=None):
 
-        self.classifying_fn = classifying_fn
+        self.data_table = data_table
+        self.classifying_fn = get_cf(data_table,cf_type,cf_kwargs)
         self.name = name
         self.c = c
         self.ls = ls
@@ -12,11 +13,48 @@ class Strategy():
 
         return
 
-    def predict(self,**kwargs):
+    def predict(self,filter=None,classification_kwargs={},class_true_name='CLASS_VI',z_true_name='Z_VI'):
 
-        isqso, z = self.classifying_fn(**kwargs)
+        isqso, z = self.classifying_fn(filter=filter,**classification_kwargs)
 
-        return isqso, z
+        class_true = self.data_table[class_true_name]
+        z_true = self.data_table[z_true_name]
+        prediction = Prediction(isqso,z,class_true,z_true)
+
+        return prediction
+
+class Prediction():
+    def __init__(self,isqso,z,class_true,z_true):
+
+        self.isqso = isqso
+        self.z = z
+        self.class_true = class_true
+        self.z_true = z_true
+
+        return
+
+def get_cf(data_table,cf_type,cf_kwargs):
+
+    if cf_type == 'qn':
+        return get_cf_qn(data_table,**cf_kwargs)
+    if cf_type == 'rr':
+        return get_cf_rr(data_table,**cf_kwargs)
+    if cf_type == 'sq':
+        return get_cf_sq(data_table,**cf_kwargs)
+    if cf_type == 'qnorrr':
+        return get_cf_qnorrr(data_table,**cf_kwargs)
+    if cf_type == 'qnandrr':
+        return get_cf_qnandrr(data_table,**cf_kwargs)
+    if cf_type == 'qnplusvi':
+        return get_cf_qnplusvi(data_table,**cf_kwargs)
+    if cf_type == 'rrplusvi':
+        return get_cf_rrplusvi(data_table,**cf_kwargs)
+    if cf_type == 'qnandrrplusvi':
+        return get_cf_qnandrrplusvi(data_table,**cf_kwargs)
+    if cf_type == 'qnandrrplusviadv':
+        return get_cf_qnandrrplusviadv(data_table,**cf_kwargs)
+
+    return
 
 def filter_table(data_table,filter):
 
@@ -26,16 +64,6 @@ def filter_table(data_table,filter):
         filtered_table = data_table
 
     return filtered_table
-
-## Obsolete for now.
-def check_specid_array(specid):
-
-    if isinstance(specid,float) or isinstance(specid,int):
-        specid = np.array([specid])
-    if isinstance(specid,list):
-        specid = np.array(specid)
-
-    return specid
 
 def get_dv(z1,z2,ztrue):
 
@@ -259,3 +287,13 @@ def get_cf_qnandrrplusviadv(data_table,qn_name='QN',rr_name='RR',specid_name='SP
         return isqso, z
 
     return cf
+
+## Obsolete for now.
+def check_specid_array(specid):
+
+    if isinstance(specid,float) or isinstance(specid,int):
+        specid = np.array([specid])
+    if isinstance(specid,list):
+        specid = np.array(specid)
+
+    return specid
