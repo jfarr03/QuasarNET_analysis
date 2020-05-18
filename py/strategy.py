@@ -17,8 +17,9 @@ class Strategy():
 
         isqso, z = self.classifying_fn(filter=filter,**classification_kwargs)
 
-        class_true = copy.deepcopy(self.data_table[class_true_name].data)
-        z_true = copy.deepcopy(self.data_table[z_true_name].data)
+        temp_data_table = filter_table(self.data_table,filter)
+        class_true = copy.deepcopy(temp_data_table[class_true_name].data)
+        z_true = copy.deepcopy(temp_data_table[z_true_name].data)
         prediction = Prediction(isqso,z,class_true,z_true)
 
         return prediction
