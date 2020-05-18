@@ -42,23 +42,23 @@ class Prediction():
 def get_cf(cf_type,cf_kwargs):
 
     if cf_type == 'qn':
-        return get_cf_qn(data_table,**cf_kwargs)
+        return get_cf_qn(**cf_kwargs)
     if cf_type == 'rr':
-        return get_cf_rr(data_table,**cf_kwargs)
+        return get_cf_rr(**cf_kwargs)
     if cf_type == 'sq':
-        return get_cf_sq(data_table,**cf_kwargs)
+        return get_cf_sq(**cf_kwargs)
     if cf_type == 'qnorrr':
-        return get_cf_qnorrr(data_table,**cf_kwargs)
+        return get_cf_qnorrr(**cf_kwargs)
     if cf_type == 'qnandrr':
-        return get_cf_qnandrr(data_table,**cf_kwargs)
+        return get_cf_qnandrr(**cf_kwargs)
     if cf_type == 'qnplusvi':
-        return get_cf_qnplusvi(data_table,**cf_kwargs)
+        return get_cf_qnplusvi(**cf_kwargs)
     if cf_type == 'rrplusvi':
-        return get_cf_rrplusvi(data_table,**cf_kwargs)
+        return get_cf_rrplusvi(**cf_kwargs)
     if cf_type == 'qnandrrplusvi':
-        return get_cf_qnandrrplusvi(data_table,**cf_kwargs)
+        return get_cf_qnandrrplusvi(**cf_kwargs)
     if cf_type == 'qnandrrplusviadv':
-        return get_cf_qnandrrplusviadv(data_table,**cf_kwargs)
+        return get_cf_qnandrrplusviadv(**cf_kwargs)
 
     return
 
