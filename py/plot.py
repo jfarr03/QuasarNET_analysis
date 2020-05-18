@@ -567,6 +567,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
             reobs_dens = nhighz_flagged/(eff_area*n_strategies_combined)
             pli = nhighz_truth_flagged/(nhighz_truth*n_strategies_combined)
 
+            print(reobs_dens,pli)
             if len(reobs_dens)>1:
                 axs[0,k].plot(reobs_dens,pli,c='grey',marker=strategies_to_plot[filt_name][s]['marker'],label=s,zorder=2,ms=np.sqrt(marker_size))
                 points = axs[0,k].scatter(reobs_dens,pli,c=strategies_to_plot[filt_name][s]['color'],marker=strategies_to_plot[filt_name][s]['marker'],s=marker_size,zorder=3)
