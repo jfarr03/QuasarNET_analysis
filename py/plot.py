@@ -675,7 +675,7 @@ def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6
         for s in strategies.keys():
 
             z_s = strategies[s]['z']
-            w_s = strategies[s]['w']
+            w_s = strategies[s]['isqso']
 
             in_zbin_zvi = np.ones(data_table['Z_VI'].shape).astype(bool)
             in_zbin_zs = np.ones(z_s.shape).astype(bool)
