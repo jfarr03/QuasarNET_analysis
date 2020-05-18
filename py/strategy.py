@@ -13,9 +13,9 @@ class Strategy():
 
         return
 
-    def predict(self,filter=None,classification_kwargs={},class_true_name='CLASS_VI',z_true_name='Z_VI'):
+    def predict(self,filter=None,c_kwargs={},class_true_name='CLASS_VI',z_true_name='Z_VI'):
 
-        isqso, z = self.classifying_fn(filter=filter,**classification_kwargs)
+        isqso, z = self.classifying_fn(filter=filter,**c_kwargs)
 
         temp_data_table = filter_table(self.data_table,filter)
         class_true = copy.deepcopy(temp_data_table[class_true_name].data)
