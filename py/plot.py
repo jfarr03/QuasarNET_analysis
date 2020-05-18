@@ -568,17 +568,21 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
 
         if strategies_to_plot is None:
 
-            strategies_to_plot[filt_name] = {}
+            filt_strategies_to_plot = {}
 
             for s in filt_strategies.keys():
 
                 reobs_dens = filt_strategies[s]['nhighz_flagged']/eff_area
                 pli = filt_strategies[s]['nhighz_truth_flagged']/nhighz_truth
 
-                strategies_to_plot[filt_name][s]['reobs_dens'] = reobs_dens
-                strategies_to_plot[filt_name][s]['pli'] = pli
-                strategies_to_plot[filt_name][s]['marker'] = filt_strategies[s]['marker']
-                strategies_to_plot[filt_name][s]['color'] = filt_strategies[s]['color']
+                temp = {}
+                temp['reobs_dens'] = reobs_dens
+                temp['pli'] = pli
+                temp['marker'] = filt_strategies[s]['marker']
+                temp['color'] = filt_strategies[s]['color']
+                filt_strategies_to_plot[s] = temp
+
+            strategies_to_plot[filt_name] = filt_strategies_to_plot
 
         else:
 
