@@ -5,7 +5,7 @@ class Strategy():
     def __init__(self,data_table,cf_type,cf_kwargs={},name=None,c=None,ls=None,marker=None):
 
         self.data_table = data_table
-        self.classifying_fn = get_cf(data_table,cf_type,cf_kwargs)
+        self.classifying_fn = get_cf(cf_type,cf_kwargs)
         self.name = name
         self.c = c
         self.ls = ls
@@ -13,11 +13,11 @@ class Strategy():
 
         return
 
-    def predict(self,filter=None,c_kwargs={},class_true_name='CLASS_VI',z_true_name='Z_VI'):
+    def predict(self,data_table,filter=None,c_kwargs={},class_true_name='CLASS_VI',z_true_name='Z_VI'):
 
-        isqso, z = self.classifying_fn(filter=filter,**c_kwargs)
+        isqso, z = self.classifying_fn(data_table,filter=filter,**c_kwargs)
 
-        temp_data_table = filter_table(self.data_table,filter)
+        temp_data_table = filter_table(data_table,filter)
         class_true = copy.deepcopy(temp_data_table[class_true_name].data)
         z_true = copy.deepcopy(temp_data_table[z_true_name].data)
         prediction = Prediction(isqso,z,class_true,z_true)
@@ -40,7 +40,7 @@ class Prediction():
 
         return ishighzqso
 
-def get_cf(data_table,cf_type,cf_kwargs):
+def get_cf(cf_type,cf_kwargs):
 
     if cf_type == 'qn':
         return get_cf_qn(data_table,**cf_kwargs)
@@ -78,9 +78,9 @@ def get_dv(z1,z2,ztrue):
 
     return dv
 
-def get_cf_qn(data_table,qn_name='QN',specid_name='SPEC_ID'):
+def get_cf_qn(qn_name='QN',specid_name='SPEC_ID'):
 
-    def cf(c_th=0.6,n_detect=1,filter=None):
+    def cf(data_table,c_th=0.6,n_detect=1,filter=None):
 
         # Apply filter to the data table.
         temp_data_table = filter_table(data_table,filter)
@@ -93,9 +93,9 @@ def get_cf_qn(data_table,qn_name='QN',specid_name='SPEC_ID'):
 
     return cf
 
-def get_cf_sq(data_table,sq_name='SQ',specid_name='SPEC_ID'):
+def get_cf_sq(sq_name='SQ',specid_name='SPEC_ID'):
 
-    def cf(p_min=0.32,filter=None):
+    def cf(data_table,p_min=0.32,filter=None):
 
         # Apply filter to the data table.
         temp_data_table = filter_table(data_table,filter)
@@ -108,9 +108,9 @@ def get_cf_sq(data_table,sq_name='SQ',specid_name='SPEC_ID'):
 
     return cf
 
-def get_cf_rr(data_table,rr_name='RR',specid_name='SPEC_ID'):
+def get_cf_rr(rr_name='RR',specid_name='SPEC_ID'):
 
-    def cf(zwarn=None,filter=None):
+    def cf(data_table,zwarn=None,filter=None):
 
         # Apply filter to the data table.
         temp_data_table = filter_table(data_table,filter)
@@ -130,9 +130,9 @@ def get_cf_rr(data_table,rr_name='RR',specid_name='SPEC_ID'):
 
     return cf
 
-def get_cf_qnorrr(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
+def get_cf_qnorrr(qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
 
-    def cf(qn_kwargs={},rr_kwargs={},zchoice='QN',filter=None):
+    def cf(data_table,qn_kwargs={},rr_kwargs={},zchoice='QN',filter=None):
 
         # Apply filter to the data table.
         temp_data_table = filter_table(data_table,filter)
@@ -156,9 +156,9 @@ def get_cf_qnorrr(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
 
     return cf
 
-def get_cf_qnandrr(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
+def get_cf_qnandrr(qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
 
-    def cf(qn_kwargs={},rr_kwargs={},dv_max=6000.,zchoice='QN',filter=None):
+    def cf(data_table,qn_kwargs={},rr_kwargs={},dv_max=6000.,zchoice='QN',filter=None):
 
         # Apply filter to the data table.
         temp_data_table = filter_table(data_table,filter)
@@ -180,9 +180,9 @@ def get_cf_qnandrr(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
 
     return cf
 
-def get_cf_qnplusvi(data_table,qn_name='QN',specid_name='SPEC_ID'):
+def get_cf_qnplusvi(qn_name='QN',specid_name='SPEC_ID'):
 
-    def cf(c_th_lo=0.1,c_th_hi=0.9,n_detect=1,filter=None):
+    def cf(data_table,c_th_lo=0.1,c_th_hi=0.9,n_detect=1,filter=None):
 
         # Apply filter to the data table.
         temp_data_table = filter_table(data_table,filter)
@@ -207,9 +207,9 @@ def get_cf_qnplusvi(data_table,qn_name='QN',specid_name='SPEC_ID'):
 
     return cf
 
-def get_cf_rrplusvi(data_table,rr_name='RR',specid_name='SPEC_ID'):
+def get_cf_rrplusvi(rr_name='RR',specid_name='SPEC_ID'):
 
-    def cf(filter=None):
+    def cf(data_table,filter=None):
 
         # Apply filter to the data table.
         temp_data_table = filter_table(data_table,filter)
@@ -232,9 +232,9 @@ def get_cf_rrplusvi(data_table,rr_name='RR',specid_name='SPEC_ID'):
 
     return cf
 
-def get_cf_qnandrrplusvi(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
+def get_cf_qnandrrplusvi(qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
 
-    def cf(qn_kwargs={},rr_kwargs={},dv_max=6000.,zchoice='QN',filter=None):
+    def cf(data_table,qn_kwargs={},rr_kwargs={},dv_max=6000.,zchoice='QN',filter=None):
 
         # Apply filter to the data table.
         temp_data_table = filter_table(data_table,filter)
@@ -262,9 +262,9 @@ def get_cf_qnandrrplusvi(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_
 
     return cf
 
-def get_cf_qnandrrplusviadv(data_table,qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
+def get_cf_qnandrrplusviadv(qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
 
-    def cf(c_th_lo=0.1,c_th_hi=0.9,n_detect=1,dv_max=6000.,zchoice='QN',filter=None):
+    def cf(data_table,c_th_lo=0.1,c_th_hi=0.9,n_detect=1,dv_max=6000.,zchoice='QN',filter=None):
 
         # Apply filter to the data table.
         temp_data_table = filter_table(data_table,filter)
