@@ -342,7 +342,7 @@ def load_rr_data(f_rr,mode='BOSS'):
 
     return rr_data
 
-def load_qn_data(f_qn,n_detect=1,c_th=0.8,include_c=False,mode='BOSS',n_lines=6):
+def load_qn_data(f_qn,n_detect=1,c_th=0.8,include_c=False,mode='BOSS',n_lines=6,n_lines_bal=1):
 
     qn = fits.open(f_qn)
 
@@ -367,15 +367,18 @@ def load_qn_data(f_qn,n_detect=1,c_th=0.8,include_c=False,mode='BOSS',n_lines=6)
         # Need to come up with a spectrum ID
         spec_id = data['THING_ID']
 
+    cols = [obj_id, data['ZBEST'], objclass, isqso, spec_id]
+    dtypes = [('OBJ_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('SPEC_ID','i8')]
 
     if include_c:
-        qn_data = list(zip(obj_id, data['ZBEST'], objclass, isqso, spec_id, data['C_LINES']))
-        dtype = [('OBJ_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('SPEC_ID','i8'),('C','f8',(n_lines,))]
-        qn_data = np.array(qn_data, dtype=dtype)
-    else:
-        qn_data = list(zip(obj_id, data['ZBEST'], objclass, isqso, spec_id))
-        dtype = [('OBJ_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('SPEC_ID','i8')]
-        qn_data = np.array(qn_data, dtype=dtype)
+        cols += [data['C_LINES']]
+        dtypes += [('C','f8',(n_lines,)]
+    if include_cbal:
+        cols += [data['C_LINES_BAL']]
+        dtypes += [('CBAL','f8',(n_lines_bal,)]
+
+    qn_data = np.vstack(cols).T
+    qn_data = np.array(qn_data, dtype=dtype)
 
     return qn_data
 
