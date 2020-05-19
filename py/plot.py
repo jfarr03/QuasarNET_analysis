@@ -283,7 +283,7 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
 
         ## Plot the dv histogram.
         dv = strategy.get_dv(z_s,temp_data_table['Z_VI'],temp_data_table['Z_VI'],abs=False)
-        axs[dv_panel].hist(dv,bins=dv_bins,histtype='step',ls=strategies[s]['ls'],color=utils.colours['C2'],normed=norm_dvhist)
+        axs[dv_panel].hist(dv,bins=dv_bins,histtype='step',ls=strategies[s]['ls'],color=utils.colours['C2'],density=norm_dvhist)
 
         if verbose:
             dv_med = np.median(dv[abs(dv)<dv_max])
