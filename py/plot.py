@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import matplotlib.table as mp_table
 
-from qn_analysis import utils
+from qn_analysis import strategy, utils
 
 def get_pur_com(isqso_s,z_s,isqso_truth,isgal_truth,isbad,z_truth,zbin=None,dv_max=6000.):
 
