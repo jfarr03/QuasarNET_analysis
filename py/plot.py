@@ -235,7 +235,7 @@ def plot_qn_model_compare_3panel(data_table,strategies,filename=None,dv_max=6000
 
         isqso_truth, isgal_truth, isstar_truth, isbad = get_truths(temp_data_table)
 
-        for i,isqso_s in strategies[s]['isqso']:
+        for i,isqso_s in enumerate(strategies[s]['isqso']):
 
             z_s = strategies[s]['z'][i]
 
@@ -306,7 +306,7 @@ def plot_qn_model_compare_2panel(data_table,strategies,filename=None,dv_max=6000
 
         isqso_truth, isgal_truth, isstar_truth, isbad = get_truths(temp_data_table)
 
-        for i,isqso_s in strategies[s]['isqso']:
+        for i,isqso_s in enumerate(strategies[s]['isqso']):
 
             z_s = strategies[s]['z'][i]
 
