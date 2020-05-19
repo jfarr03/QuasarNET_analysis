@@ -46,7 +46,7 @@ for a in RANDEXP_ABS_TRAINSIZES:
 
 for dll in DLL_VALUES:
     run_file_text += 'echo "Making coadded training sets with training proportion {}, dll {}..."\n'.format(DLL_PROP_TRAINSIZE,dll)
-    run_file_text += 'split_data --data {}/data/coadd/full_datasets/data_dr12_coadd_dll{}.fits --nsplits 1 --training-proportion {} --auto-independent --out-prefix {}/data/coadd/training_datasets/prop_{}/data_dr12_coadd_train_dll{}\n'.format(OUTDIR,dll,DLL_PROP_TRAINSIZE,OUTDIR,DLL_PROP_TRAINSIZE,dll)
+    run_file_text += 'split_data --data {}/data/coadd/full_datasets/data_dr12_coadd_dll{}.fits --nsplits 1 --training-proportion {} --auto-independent --out-prefix {}/data/coadd/training_datasets/prop_{}/data_dr12_coadd_dll{}_train\n'.format(OUTDIR,dll,DLL_PROP_TRAINSIZE,OUTDIR,DLL_PROP_TRAINSIZE,dll)
     run_file_text += 'echo " -> Done!"\n'
     run_file_text += 'echo " "\n\n'
 
