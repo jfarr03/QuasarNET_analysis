@@ -23,7 +23,7 @@ for p in COADD_PROP_TRAINSIZES:
     for split in splits:
         output_dir = '{}/qn_models/main_setup/coadd/prop_{}/model_{}'.format(OUTDIR,p,split)
         output_prefix = 'qn_train_coadd'
-        run_file_text += './prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix)
+        run_file_text += './prepare_batch/prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix)
     run_file_text += 'echo " -> Done!"\n'
     run_file_text += 'echo " "\n\n'
 
@@ -38,7 +38,7 @@ for a in COADD_ABS_TRAINSIZES:
     for split in splits:
         output_dir = '{}/qn_models/main_setup/coadd/abs_{}/model_{}'.format(OUTDIR,a,split)
         output_prefix = 'qn_train_coadd'
-        run_file_text += './prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix)
+        run_file_text += './prepare_batch/prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix)
     run_file_text += 'echo " -> Done!"\n'
     run_file_text += 'echo " "\n\n'
 
@@ -53,7 +53,7 @@ for p in BESTEXP_PROP_TRAINSIZES:
     for split in splits:
         output_dir = '{}/qn_models/main_setup/bestexp/prop_{}/model_{}'.format(OUTDIR,p,split)
         output_prefix = 'qn_train_bestexp'
-        run_file_text += './prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix)
+        run_file_text += './prepare_batch/prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix)
     run_file_text += 'echo " -> Done!"\n'
     run_file_text += 'echo " "\n\n'
 
@@ -68,7 +68,7 @@ for a in BESTEXP_ABS_TRAINSIZES:
     for split in splits:
         output_dir = '{}/qn_models/main_setup/bestexp/abs_{}/model_{}'.format(OUTDIR,a,split)
         output_prefix = 'qn_train_bestexp'
-        run_file_text += './prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix)
+        run_file_text += './prepare_batch/prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix)
     run_file_text += 'echo " -> Done!"\n'
     run_file_text += 'echo " "\n\n'
 
@@ -83,7 +83,7 @@ for p in RANDEXP_PROP_TRAINSIZES:
     for split in splits:
         output_dir = '{}/qn_models/main_setup/randexp/prop_{}/model_{}'.format(OUTDIR,p,split)
         output_prefix = 'qn_train_randexp'
-        run_file_text += './prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix)
+        run_file_text += './prepare_batch/prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix)
     run_file_text += 'echo " -> Done!"\n'
     run_file_text += 'echo " "\n\n'
 
@@ -98,7 +98,7 @@ for a in RANDEXP_ABS_TRAINSIZES:
     for split in splits:
         output_dir = '{}/qn_models/main_setup/randexp/abs_{}/model_{}'.format(OUTDIR,a,split)
         output_prefix = 'qn_train_randexp'
-        run_file_text += './prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix)
+        run_file_text += './prepare_batch/prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix)
     run_file_text += 'echo " -> Done!"\n'
     run_file_text += 'echo " "\n\n'
 
@@ -113,7 +113,7 @@ for oaf in OFFSET_ACT_FNS:
     nhours = PROP_JOB_TIMES[OFFSET_ACT_PROP_TRAINSIZE]
     output_dir = '{}/qn_models/additional_setups/offset_act/{}'.format(OUTDIR,oaf)
     output_prefix = 'qn_train_coadd'
-    run_file_text += './prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} --offset-activation-function {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,oaf)
+    run_file_text += './prepare_batch/prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} --offset-activation-function {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,oaf)
 run_file_text += 'echo " -> Done!"\n'
 run_file_text += 'echo " "\n\n'
 
@@ -128,7 +128,7 @@ for p in NEPOCH_PROP_TRAINSIZES:
     nhours = int(PROP_JOB_TIMES[p]*(NEPOCH_MAX/200))
     output_dir = '{}/qn_models/additional_setups/nepochs/prop_{}/'.format(OUTDIR,p)
     output_prefix = 'qn_train_coadd'
-    run_file_text += './prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} --nepochs {} --save-epoch-checkpoints\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,NEPOCH_MAX)
+    run_file_text += './prepare_batch/prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} --nepochs {} --save-epoch-checkpoints\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,NEPOCH_MAX)
 run_file_text += 'echo " -> Done!"\n'
 run_file_text += 'echo " "\n\n'
 
@@ -143,7 +143,7 @@ for dll in DLL_VALUES:
     nhours = PROP_JOB_TIMES[DLL_PROP_TRAINSIZE]*(0.001/dll)
     output_dir = '{}/qn_models/additional_setups/dll_values/dll_{}'.format(OUTDIR,dll)
     output_prefix = 'qn_train_coadd'
-    run_file_text += './prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} --dll {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,dll)
+    run_file_text += './prepare_batch/prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} --dll {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,dll)
 run_file_text += 'echo " -> Done!"\n'
 run_file_text += 'echo " "\n\n'
 
@@ -158,7 +158,7 @@ for nchunk in NCHUNK_VALUES:
     nhours = PROP_JOB_TIMES[NCHUNK_PROP_TRAINSIZE]
     output_dir = '{}/qn_models/additional_setups/nchunks/nchunks_{}'.format(OUTDIR,nchunk)
     output_prefix = 'qn_train_coadd'
-    run_file_text += './prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} --nchunks {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,nchunk)
+    run_file_text += './prepare_batch/prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} --nchunks {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,nchunk)
 run_file_text += 'echo " -> Done!"\n'
 run_file_text += 'echo " "\n\n'
 
