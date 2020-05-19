@@ -219,30 +219,25 @@ def plot_qn_model_compare_3panel(data_table,strategies,filename=None,dv_max=6000
 
     fig, axs = plt.subplots(1,3,figsize=figsize,squeeze=False)
 
-    cth_min = 0.0
-    cth_max = 1.0
-    n_int = 101
-    c_th = np.arange(cth_min,cth_max,(1/n_int)*(cth_max-cth_min))
-
     n_dv = 51
     dv_bins = np.linspace(-3000.,3000,n_dv)
-
-    isqso_truth, isgal_truth, isstar_truth, isbad = get_truths(data_table)
 
     for j,s in enumerate(strategies.keys()):
 
         com = []
         pur = []
 
-        z_s = data_table['Z_{}'.format(s)]
+        if type(data_table['ISQSO_{}'.format(s)])==astropy.table.column.MaskedColumn:
+            filt = (~data_table['ISQSO_{}'.format(s)].data.mask)
+        else:
+            filt = np.ones(len(data_table)).astype(bool)
+        temp_data_table = data_table[filt]
 
-        for cth in c_th:
+        isqso_truth, isgal_truth, isstar_truth, isbad = get_truths(temp_data_table)
 
-            # Try to use confidences, otherwise raise error.
-            try:
-                isqso_s = strategies[s]['confs']>cth
-            except KeyError:
-                raise KeyError('Confidences not found for strategy {}'.format(s))
+        for i,isqso_s in strategies[s]['isqso']:
+
+            z_s = strategies[s]['z'][i]
 
             # Calculate purity and completeness.
             p,c = get_pur_com(isqso_s,z_s,isqso_truth,isgal_truth,isbad,
@@ -292,12 +287,6 @@ def plot_qn_model_compare_2panel(data_table,strategies,filename=None,dv_max=6000
 
     fig, axs = plt.subplots(2,1,figsize=figsize,squeeze=False)
 
-    cth_min = 0.0
-    cth_max = 1.0
-    n_int = 100
-    c_th = np.arange(cth_min,cth_max,(1/n_int)*(cth_max-cth_min))
-    ndetect = 1
-
     n_dv = 51
     dv_bins = np.linspace(-3000.,3000,n_dv)
 
@@ -317,15 +306,9 @@ def plot_qn_model_compare_2panel(data_table,strategies,filename=None,dv_max=6000
 
         isqso_truth, isgal_truth, isstar_truth, isbad = get_truths(temp_data_table)
 
-        z_s = strategies[s]['z']
+        for i,isqso_s in strategies[s]['isqso']:
 
-        for cth in c_th:
-
-            # Try to use confidences, otherwise raise error.
-            try:
-                isqso_s = strategies[s]['confs']>cth
-            except KeyError:
-                raise KeyError('Confidences not found for strategy {}'.format(s))
+            z_s = strategies[s]['z'][i]
 
             # Calculate purity and completeness.
             p,c = get_pur_com(isqso_s,z_s,isqso_truth,isgal_truth,isbad,
