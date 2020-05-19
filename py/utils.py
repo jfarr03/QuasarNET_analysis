@@ -423,7 +423,7 @@ def load_sq_data(f_sq,p_min=0.32,include_p=False,mode='BOSS'):
 
     return sq_data
 
-def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include_p_sq=False,common_specids=True):
+def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include_cbal_qn=False,include_p_sq=False,common_specids=True):
 
     ## If no truth provided, make one from VI data.
     if truth is None:
@@ -468,6 +468,10 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include
             if 'QN' in c:
                 cols += [data[c]['C']]
                 colnames += ['C_{}'.format(c)]
+        if include_cbal_qn:
+            if 'QN' in c:
+                cols += [data[c]['CBAL']]
+                colnames += ['CBAL_{}'.format(c)]
         if include_p_sq:
             if 'SQ' in c:
                 cols += [data[c]['P']]
@@ -513,6 +517,10 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include
         for c in data.keys():
             if 'QN' in c:
                 table['C_{}'.format(c)].format = '1.3f'
+    if include_cbal_qn:
+        for c in data.keys():
+            if 'QN' in c:
+                table['CBAL_{}'.format(c)].format = '1.3f'
     if include_p_sq:
         for c in data.keys():
             if 'SQ' in c:
