@@ -135,7 +135,7 @@ run_file_text += 'echo " "\n\n'
 run_file_text += 'echo "Preparing for training models on coadd data with training size {} with varying dll values..."\n'.format(DLL_PROP_TRAINSIZE)
 for dll in DLL_VALUES:
     train_dir = '{}/data/coadd/training_datasets/prop_{}/'.format(OUTDIR,DLL_PROP_TRAINSIZE)
-    train_prefix = 'data_dr12_coadd_train_dll{}'.format(dll)
+    train_prefix = 'data_dr12_coadd_dll{}_train'.format(dll)
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
     splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
     splits.sort()
