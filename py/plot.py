@@ -283,9 +283,19 @@ def plot_qn_model_compare_3panel(data_table,strategies,filename=None,dv_max=6000
     return fig, axs
 
 ## Function for Figure 2 (2 panel).
-def plot_qn_model_compare_2panel(data_table,strategies,filename=None,dv_max=6000.,nydec=2,figsize=(12,12),ymin=0.98,ymax=1.,verbose=False):
+def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec=2,figsize=(12,12),ymin=0.98,ymax=1.,verbose=False,npanel=2,norm_dvhist=True):
 
-    fig, axs = plt.subplots(2,1,figsize=figsize,squeeze=False)
+    if npanel==2:
+        panel_dims = (2,1)
+        pur_panel = (0,0)
+        com_panel = (0,0)
+        dv_panel = (1,0)
+    elif npanel==3:
+        panel_dims = (1,3)
+        pur_panel = (0,0)
+        com_panel = (0,1)
+        dv_panel = (0,2)
+    fig, axs = plt.subplots(*panel_dims,figsize=figsize,squeeze=False)
 
     n_dv = 51
     dv_bins = np.linspace(-3000.,3000,n_dv)
@@ -336,12 +346,12 @@ def plot_qn_model_compare_2panel(data_table,strategies,filename=None,dv_max=6000
             labelp = None
             labelc = None
 
-        axs[0,0].plot(strategies[s]['c_th'],pur,label=labelp,color=utils.colours['C0'],ls=strategies[s]['ls'])
-        axs[0,0].plot(strategies[s]['c_th'],com,label=labelc,color=utils.colours['C1'],ls=strategies[s]['ls'])
+        axs[pur_panel].plot(strategies[s]['c_th'],pur,label=labelp,color=utils.colours['C0'],ls=strategies[s]['ls'])
+        axs[com_panel].plot(strategies[s]['c_th'],com,label=labelc,color=utils.colours['C1'],ls=strategies[s]['ls'])
 
         ## Plot the dv histogram.
-        dv = 300000. * (z_s-temp_data_table['Z_VI']) / (1+temp_data_table['Z_VI'])
-        axs[1,0].hist(dv,bins=dv_bins,histtype='step',ls=strategies[s]['ls'],color=utils.colours['C2'])
+        dv = get_dv(z_s,temp_data_table['Z_VI'],temp_data_table['Z_VI'])
+        axs[dv_panel].hist(dv,bins=dv_bins,histtype='step',ls=strategies[s]['ls'],color=utils.colours['C2'],normed=norm_dvhist)
 
         if verbose:
             dv_med = np.median(dv[abs(dv)<dv_max])
@@ -352,16 +362,22 @@ def plot_qn_model_compare_2panel(data_table,strategies,filename=None,dv_max=6000
         artists += [axs[0,0].plot([0],[0],color='grey',ls=strategies[s]['ls'])[0]]
         labels += [strategies[s]['n']]
 
-    axs[0,0].set_xlabel(r'confidence threshold')
-    axs[0,0].set_xlim(0.,1.)
-    axs[0,0].set_ylim(ymin,ymax)
-    axs[0,0].yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec))
-    axs[0,0].legend()
+    for panel in [pur_panel,com_panel]:
+        axs[panel].set_xlabel(r'confidence threshold')
+        axs[panel].set_xlim(0.,1.)
+        axs[panel].set_ylim(ymin,ymax)
+        axs[panel].yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec))
 
-    axs[1,0].axvline(x=0,c='lightgrey',zorder=-1)
-    axs[1,0].set_ylabel(r'#')
-    axs[1,0].set_xlabel(r'd$v$ [km/s]')
-    axs[1,0].set_xlim(-3000.,3000.)
+    if pur_panel==com_panel:
+        axs[pur_panel].legend()
+    else:
+        axs[pur_panel].set_ylabel('Purity')
+        axs[com_panel].set_ylabel('Completeness')
+
+    axs[dv_panel].axvline(x=0,c='lightgrey',zorder=-1)
+    axs[dv_panel].set_ylabel(r'#')
+    axs[dv_panel].set_xlabel(r'd$v$ [km/s]')
+    axs[dv_panel].set_xlim(-3000.,3000.)
 
     fig.legend(artists,labels,loc='lower center',borderaxespad=0,bbox_to_anchor=(0.5,0.03),ncol=len(artists))
     rect = (0,0.13,1.,1.)
