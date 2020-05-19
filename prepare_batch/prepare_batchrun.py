@@ -140,7 +140,7 @@ for dll in DLL_VALUES:
     splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
     splits.sort()
     split = splits[0]
-    nhours = PROP_JOB_TIMES[DLL_PROP_TRAINSIZE]*(0.001/dll)
+    nhours = int(PROP_JOB_TIMES[DLL_PROP_TRAINSIZE]*(0.001/dll))
     output_dir = '{}/qn_models/additional_setups/dll_values/dll_{}'.format(OUTDIR,dll)
     output_prefix = 'qn_train_coadd'
     run_file_text += './prepare_batch/prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} --dll {}\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,dll)
