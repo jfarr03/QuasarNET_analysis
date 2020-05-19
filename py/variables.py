@@ -4,7 +4,7 @@ SPALL="/global/projecta/projectdirs/sdss/data/sdss/dr12/boss/spectro/redux/spAll
 SDRQ="/global/projecta/projectdirs/sdss/data/sdss/dr12/boss/qso/DR12Q/Superset_DR12Q.fits"
 DRQ="/global/projecta/projectdirs/sdss/data/sdss/dr12/boss/qso/DR12Q/DR12Q.fits"
 OUTDIR="/global/cfs/projectdirs/desi/users/jfarr/QuasarNET_paper/"
-
+PREPDIR="/global/homes/j/jfarr/Projects/QuasarNET_analysis/"
 
 ## Variables for main setup.
 # Set parameters for coadded models to train.

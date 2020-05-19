@@ -4,7 +4,7 @@ from qn_analysis.variables import *
 from os.path import stat
 import os
 
-run_file = '../run_batch/make_full_datasets.sh'
+run_file = PREPDIR+'/run_batch/make_full_datasets.sh'
 
 run_file_text = '#!/usr/bin/env bash\n\n'
 
