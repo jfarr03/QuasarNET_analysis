@@ -214,75 +214,7 @@ def plot_pur_com_vs_cth_zbin(data_table,strategies,filename=None,zbins=[(None,2.
 
     return fig, axs
 
-## Function for Figure 2 (3 panel).
-def plot_qn_model_compare_3panel(data_table,strategies,filename=None,dv_max=6000.,nydec=1,figsize=(18,6),ymin=0.97,ymax=1.):
-
-    fig, axs = plt.subplots(1,3,figsize=figsize,squeeze=False)
-
-    n_dv = 51
-    dv_bins = np.linspace(-3000.,3000,n_dv)
-
-    for j,s in enumerate(strategies.keys()):
-
-        com = []
-        pur = []
-
-        if type(data_table['ISQSO_{}'.format(s)])==astropy.table.column.MaskedColumn:
-            filt = (~data_table['ISQSO_{}'.format(s)].data.mask)
-        else:
-            filt = np.ones(len(data_table)).astype(bool)
-        temp_data_table = data_table[filt]
-
-        isqso_truth, isgal_truth, isstar_truth, isbad = get_truths(temp_data_table)
-
-        for i,isqso_s in enumerate(strategies[s]['isqso']):
-
-            z_s = strategies[s]['z'][i]
-
-            # Calculate purity and completeness.
-            p,c = get_pur_com(isqso_s,z_s,isqso_truth,isgal_truth,isbad,
-                temp_data_table['Z_VI'],dv_max=dv_max)
-
-            # Add to purity/completeness lists.
-            pur += [p]
-            com += [c]
-
-        axs[0,0].plot(strategies[s]['c_th'],pur,label='pur',color=utils.colours['C0'],ls=strategies[s]['ls'])
-        axs[0,1].plot(strategies[s]['c_th'],com,label='com',color=utils.colours['C1'],ls=strategies[s]['ls'])
-
-        ## Plot the dv histogram.
-        dv = 300000. * (z_s-data_table['Z_VI']) / (1+data_table['Z_VI'])
-        axs[0,2].hist(dv,bins=dv_bins,histtype='step',ls=strategies[s]['ls'],color=utils.colours['C2'])
-
-    for ax in axs[0,:2]:
-        ax.set_xlabel(r'$c_{th}$')
-        ax.set_xlim(0.,1.)
-        ax.set_ylim(ymin,ymax)
-        ax.yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec))
-
-    axs[0,0].set_ylabel('Purity')
-    axs[0,1].set_ylabel('Completeness')
-    axs[0,2].axvline(x=0,c='lightgrey',zorder=-1)
-    axs[0,2].set_ylabel(r'#')
-    axs[0,2].set_xlabel(r'd$v$ [km/s]')
-    axs[0,2].set_xlim(-3000.,3000.)
-
-    artists = []
-    labels = []
-    for j,s in enumerate(strategies.keys()):
-        artists += [axs[0,0].plot([0],[0],color='grey',ls=strategies[s]['ls'])[0]]
-        labels += [strategies[s]['n']]
-
-    fig.legend(artists,labels,loc='lower center',borderaxespad=0,bbox_to_anchor=(0.5,0.03),ncol=len(artists))
-    rect = (0,0.12,1,1.0)
-    plt.tight_layout(rect=rect)
-
-    if filename is not None:
-        plt.savefig(filename)
-
-    return fig, axs
-
-## Function for Figure 2 (2 panel).
+## Function for Figure 2.
 def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec=2,figsize=(12,12),ymin=0.98,ymax=1.,verbose=False,npanel=2,norm_dvhist=True):
 
     if npanel==2:
@@ -350,7 +282,7 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
         axs[com_panel].plot(strategies[s]['c_th'],com,label=labelc,color=utils.colours['C1'],ls=strategies[s]['ls'])
 
         ## Plot the dv histogram.
-        dv = strategy.get_dv(z_s,temp_data_table['Z_VI'],temp_data_table['Z_VI'])
+        dv = strategy.get_dv(z_s,temp_data_table['Z_VI'],temp_data_table['Z_VI'],abs=False)
         axs[dv_panel].hist(dv,bins=dv_bins,histtype='step',ls=strategies[s]['ls'],color=utils.colours['C2'],normed=norm_dvhist)
 
         if verbose:
@@ -775,3 +707,75 @@ def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6
         plt.savefig(filename)
 
     return fig, axs
+
+
+## DEFUNCT.
+"""
+## Function for Figure 2 (3 panel).
+def plot_qn_model_compare_3panel(data_table,strategies,filename=None,dv_max=6000.,nydec=1,figsize=(18,6),ymin=0.97,ymax=1.):
+
+    fig, axs = plt.subplots(1,3,figsize=figsize,squeeze=False)
+
+    n_dv = 51
+    dv_bins = np.linspace(-3000.,3000,n_dv)
+
+    for j,s in enumerate(strategies.keys()):
+
+        com = []
+        pur = []
+
+        if type(data_table['ISQSO_{}'.format(s)])==astropy.table.column.MaskedColumn:
+            filt = (~data_table['ISQSO_{}'.format(s)].data.mask)
+        else:
+            filt = np.ones(len(data_table)).astype(bool)
+        temp_data_table = data_table[filt]
+
+        isqso_truth, isgal_truth, isstar_truth, isbad = get_truths(temp_data_table)
+
+        for i,isqso_s in enumerate(strategies[s]['isqso']):
+
+            z_s = strategies[s]['z'][i]
+
+            # Calculate purity and completeness.
+            p,c = get_pur_com(isqso_s,z_s,isqso_truth,isgal_truth,isbad,
+                temp_data_table['Z_VI'],dv_max=dv_max)
+
+            # Add to purity/completeness lists.
+            pur += [p]
+            com += [c]
+
+        axs[0,0].plot(strategies[s]['c_th'],pur,label='pur',color=utils.colours['C0'],ls=strategies[s]['ls'])
+        axs[0,1].plot(strategies[s]['c_th'],com,label='com',color=utils.colours['C1'],ls=strategies[s]['ls'])
+
+        ## Plot the dv histogram.
+        dv = 300000. * (z_s-data_table['Z_VI']) / (1+data_table['Z_VI'])
+        axs[0,2].hist(dv,bins=dv_bins,histtype='step',ls=strategies[s]['ls'],color=utils.colours['C2'])
+
+    for ax in axs[0,:2]:
+        ax.set_xlabel(r'$c_{th}$')
+        ax.set_xlim(0.,1.)
+        ax.set_ylim(ymin,ymax)
+        ax.yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec))
+
+    axs[0,0].set_ylabel('Purity')
+    axs[0,1].set_ylabel('Completeness')
+    axs[0,2].axvline(x=0,c='lightgrey',zorder=-1)
+    axs[0,2].set_ylabel(r'#')
+    axs[0,2].set_xlabel(r'd$v$ [km/s]')
+    axs[0,2].set_xlim(-3000.,3000.)
+
+    artists = []
+    labels = []
+    for j,s in enumerate(strategies.keys()):
+        artists += [axs[0,0].plot([0],[0],color='grey',ls=strategies[s]['ls'])[0]]
+        labels += [strategies[s]['n']]
+
+    fig.legend(artists,labels,loc='lower center',borderaxespad=0,bbox_to_anchor=(0.5,0.03),ncol=len(artists))
+    rect = (0,0.12,1,1.0)
+    plt.tight_layout(rect=rect)
+
+    if filename is not None:
+        plt.savefig(filename)
+
+    return fig, axs
+"""
