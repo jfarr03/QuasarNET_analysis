@@ -241,14 +241,14 @@ def plot_qn_model_compare_3panel(data_table,strategies,filename=None,dv_max=6000
 
             # Calculate purity and completeness.
             p,c = get_pur_com(isqso_s,z_s,isqso_truth,isgal_truth,isbad,
-                data_table['Z_VI'],dv_max=dv_max)
+                temp_data_table['Z_VI'],dv_max=dv_max)
 
             # Add to purity/completeness lists.
             pur += [p]
             com += [c]
 
-        axs[0,0].plot(c_th,pur,label='pur',color=utils.colours['C0'],ls=strategies[s]['ls'])
-        axs[0,1].plot(c_th,com,label='com',color=utils.colours['C1'],ls=strategies[s]['ls'])
+        axs[0,0].plot(strategies[s]['c_th'],pur,label='pur',color=utils.colours['C0'],ls=strategies[s]['ls'])
+        axs[0,1].plot(strategies[s]['c_th'],com,label='com',color=utils.colours['C1'],ls=strategies[s]['ls'])
 
         ## Plot the dv histogram.
         dv = 300000. * (z_s-data_table['Z_VI']) / (1+data_table['Z_VI'])
@@ -325,7 +325,7 @@ def plot_qn_model_compare_2panel(data_table,strategies,filename=None,dv_max=6000
         if verbose:
             print('Strategy {}:'.format(s))
             print('Crossover occurs at:')
-            print('cth:',c_th[ind-2:ind+2].round(4))
+            print('cth:',strategies[s]['c_th'][ind-2:ind+2].round(4))
             print('pur:',pur[ind-2:ind+2].round(4))
             print('com:',com[ind-2:ind+2].round(4))
 
@@ -336,8 +336,8 @@ def plot_qn_model_compare_2panel(data_table,strategies,filename=None,dv_max=6000
             labelp = None
             labelc = None
 
-        axs[0,0].plot(c_th,pur,label=labelp,color=utils.colours['C0'],ls=strategies[s]['ls'])
-        axs[0,0].plot(c_th,com,label=labelc,color=utils.colours['C1'],ls=strategies[s]['ls'])
+        axs[0,0].plot(strategies[s]['c_th'],pur,label=labelp,color=utils.colours['C0'],ls=strategies[s]['ls'])
+        axs[0,0].plot(strategies[s]['c_th'],com,label=labelc,color=utils.colours['C1'],ls=strategies[s]['ls'])
 
         ## Plot the dv histogram.
         dv = 300000. * (z_s-temp_data_table['Z_VI']) / (1+temp_data_table['Z_VI'])
