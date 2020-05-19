@@ -342,7 +342,7 @@ def load_rr_data(f_rr,mode='BOSS'):
 
     return rr_data
 
-def load_qn_data(f_qn,n_detect=1,c_th=0.8,include_c=False,mode='BOSS',n_lines=6,n_lines_bal=1):
+def load_qn_data(f_qn,n_detect=1,c_th=0.8,include_c=False,include_cbal=False,mode='BOSS',n_lines=6,n_lines_bal=1):
 
     qn = fits.open(f_qn)
 
