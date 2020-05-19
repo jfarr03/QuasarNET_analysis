@@ -24,6 +24,11 @@ run_file_text += '## Make randexp dataset.\n'
 run_file_text += 'cmd="parse_data --spplates {}/*/spPlate-*.fits --spall {} --sdrq {} --out {}/data/randexp/full_datasets/data_dr12_randexp_seed0.fits --use-random-exp --random-seed 0"\n'.format(REDUXDIR,SPALL,SDRQ,OUTDIR)
 run_file_text += '$cmd\n\n'
 
+for dll in DLL_VALUES:
+    run_file_text += '## Make coadded dataset with dll={}.\n'.format(dll)
+    run_file_text += 'cmd="parse_data --spplates {}/*/spPlate-*.fits --spall {} --sdrq {} --out {}/data/coadd/full_datasets/data_dr12_coadd_dll{}.fits --dll {}"\n'.format(REDUXDIR,SPALL,SDRQ,OUTDIR,dll,dll)
+    run_file_text += '$cmd\n\n'
+
 with open(run_file, 'w') as file:
     file.write(run_file_text)
 os.chmod(run_file, stat.S_IRWXU | stat.S_IRWXG)
