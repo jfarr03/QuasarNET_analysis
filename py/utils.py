@@ -372,10 +372,10 @@ def load_qn_data(f_qn,n_detect=1,c_th=0.8,include_c=False,mode='BOSS',n_lines=6,
 
     if include_c:
         cols += [data['C_LINES']]
-        dtypes += [('C','f8',(n_lines,)]
+        dtypes += [('C','f8',(n_lines,))]
     if include_cbal:
         cols += [data['C_LINES_BAL']]
-        dtypes += [('CBAL','f8',(n_lines_bal,)]
+        dtypes += [('CBAL','f8',(n_lines_bal,))]
 
     qn_data = np.vstack(cols).T
     qn_data = np.array(qn_data, dtype=dtype)
