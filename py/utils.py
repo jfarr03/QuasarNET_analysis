@@ -368,17 +368,19 @@ def load_qn_data(f_qn,n_detect=1,c_th=0.8,include_c=False,include_cbal=False,mod
         spec_id = data['THING_ID']
 
     cols = [obj_id, data['ZBEST'], objclass, isqso, spec_id]
-    dtypes = [('OBJ_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('SPEC_ID','i8')]
+    colnames = ['OBJ_ID','Z','CLASS','ISQSO','SPEC_ID']
+    dtypes = ['i8','f8','U8','bool','i8']
 
     if include_c:
         cols += [data['C_LINES']]
-        dtypes += [('C','f8',(n_lines,))]
+        colnames += ['C']
+        dtypes += ['f8']
     if include_cbal:
         cols += [data['C_LINES_BAL']]
-        dtypes += [('CBAL','f8',(n_lines_bal,))]
+        colnames += ['CBAL']
+        dtypes += ['f8']
 
-    qn_data = np.vstack(cols).T
-    qn_data = np.array(qn_data, dtype=dtype)
+    qn_data = Table(cols,names=colnames,dtype=dtypes)
 
     return qn_data
 
