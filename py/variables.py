@@ -27,7 +27,7 @@ RANDEXP_NMODEL=10
 # General variables
 
 # Offset activation function choices.
-OFFSET_ACT_FNS=['sigmoid', 'linear']
+OFFSET_ACT_FNS=['sigmoid', 'rescaled_sigmoid', 'linear']
 OFFSET_ACT_PROP_TRAINSIZE=0.1
 
 # Max number of epochs to look at.
@@ -35,11 +35,11 @@ NEPOCH_MAX=300
 NEPOCH_PROP_TRAINSIZES=[0.9, 0.5, 0.2, 0.1, 0.05]
 
 # Values of dll to test.
-DLL_VALUES=[0.002, 0.0005]
+DLL_VALUES=[0.002, 0.001, 0.0005]
 DLL_PROP_TRAINSIZE=0.1
 
 # Number of chunks to test.
-NCHUNK_VALUES=[7, 10, 16, 19]
+NCHUNK_VALUES=[7, 10, 13, 16, 19]
 NCHUNK_PROP_TRAINSIZE=0.1
 
 

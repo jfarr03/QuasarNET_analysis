@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+data-training#!/usr/bin/env bash
 
 BASE="/global/cfs/projectdirs/desi/users/jfarr/QuasarNET_paper/"
 
@@ -13,7 +13,7 @@ for DLL in 0.002 0.0005; do
     mkdir $OUTDIR
   fi
   echo "Exporting coadd data, using a coadd data-trained model for training split 0, all using dll=${DLL}"
-  cmd="qn_export --model $MODEL --data $DATA --training_data $TRAINING_DATA --dll $DLL --out-dir $OUTDIR --out-suffix $OUTSUFFIX"
+  cmd="qn_export --model $MODEL --data $DATA --data-training $TRAINING_DATA --dll $DLL --out-dir $OUTDIR --out-suffix $OUTSUFFIX"
   echo $cmd
   echo " "
 done
@@ -29,8 +29,11 @@ for OAF in linear sigmoid; do
     mkdir $OUTDIR
   fi
   echo "Exporting coadd data, using a coadd data-trained model for training split 0, all using offset activation=${OAF}"
-  cmd="qn_export --model $MODEL --data $DATA --training_data $TRAINING_DATA --dll $DLL --out-dir $OUTDIR --out-suffix $OUTSUFFIX"
+  cmd="qn_export --model $MODEL --data $DATA --data-training $TRAINING_DATA --dll $DLL --out-dir $OUTDIR --out-suffix $OUTSUFFIX"
   echo $cmd
+  date
+  $cmd
+  date
   echo " "
 done
 
@@ -45,8 +48,12 @@ for NCHUNKS in 7 10 16 19; do
     mkdir $OUTDIR
   fi
   echo "Exporting coadd data, using a coadd data-trained model for training split 0, all using offset activation=${OAF}"
-  cmd="qn_export --model $MODEL --data $DATA --training_data $TRAINING_DATA --dll $DLL --out-dir $OUTDIR --out-suffix $OUTSUFFIX"
+  cmd="qn_export --model $MODEL --data $DATA --data-training $TRAINING_DATA --dll $DLL --out-dir $OUTDIR --out-suffix $OUTSUFFIX"
   echo $cmd
+  echo " "
+  date
+  $cmd
+  date
   echo " "
 done
 
@@ -54,11 +61,11 @@ done
 for split in `seq 0 9`; do
   traintype=coadd
   testtype=coadd
-  traintype_file=traintype
+  traintype_file=$traintype
   if [ $traintype == randexp ]; then
     traintype_file=randexp_seed0
   fi
-  testtype_file=testtype
+  testtype_file=$testtype
   if [ $testtype == randexp ]; then
     testtype_file=randexp_seed0
   fi
@@ -74,20 +81,23 @@ for split in `seq 0 9`; do
   fi
 
   echo "Exporting $testtype data, using a $traintype data-trained model for training split $split"
-  cmd="qn_export --model $MODEL --data $DATA --training_data $TRAINING_DATA --dll $DLL --out-dir $OUTDIR --out-suffix $OUTSUFFIX"
+  cmd="qn_export --model $MODEL --data $DATA --data-training $TRAINING_DATA --dll $DLL --out-dir $OUTDIR --out-suffix $OUTSUFFIX"
   echo $cmd
+  date
+  $cmd
+  date
   echo " "
 done
 
 # Export all 10% models.
-for split in `seq 0 9`; do
+for split in `seq 2 3`; do
   for traintype in coadd bestexp randexp; do
     for testtype in coadd bestexp randexp; do
-      traintype_file=traintype
+      traintype_file=$traintype
       if [ $traintype == randexp ]; then
         traintype_file=randexp_seed0
       fi
-      testtype_file=testtype
+      testtype_file=$testtype
       if [ $testtype == randexp ]; then
         testtype_file=randexp_seed0
       fi
@@ -103,9 +113,12 @@ for split in `seq 0 9`; do
       fi
 
       echo "Exporting $testtype data, using a $traintype data-trained model for training split $split"
-      cmd="qn_export --model $MODEL --data $DATA --training_data $TRAINING_DATA --dll $DLL --out-dir $OUTDIR --out-suffix $OUTSUFFIX"
+      cmd="qn_export --model $MODEL --data $DATA --data-training $TRAINING_DATA --dll $DLL --out-dir $OUTDIR --out-suffix $OUTSUFFIX"
       echo $cmd
       echo " "
+      date
+      $cmd
+      date
     done
   done
 done
