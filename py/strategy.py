@@ -71,10 +71,10 @@ def filter_table(data_table,filter):
 
     return filtered_table
 
-def get_dv(z1,z2,ztrue,abs=True):
+def get_dv(z1,z2,ztrue,use_abs=True):
 
     dv = (300000.*(z1-z2)/(1+ztrue))
-    if abs:
+    if use_abs:
         dv = abs(dv)
 
     return dv
