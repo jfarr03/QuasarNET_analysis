@@ -225,7 +225,7 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
         strategies_to_plot = {s: {'strategies': [s],
                                   'n': strategies[s]['n'],
                                   'ls': strategies[s]['ls']}
-                              for s in strategies[filt_name].keys()
+                              for s in strategies.keys()
                              }
 
     if npanel==2:
@@ -279,7 +279,7 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
         if verbose:
             print('Strategy {}:'.format(s))
             print('Crossover occurs at:')
-            print('cth:',strategies[s]['c_th'][ind-2:ind+2].round(4))
+            print('cth:',c_th[ind-2:ind+2].round(4))
             print('pur:',pur[ind-2:ind+2].round(4))
             print('com:',com[ind-2:ind+2].round(4))
 
