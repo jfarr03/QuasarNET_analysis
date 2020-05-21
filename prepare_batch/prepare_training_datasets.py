@@ -34,13 +34,13 @@ for a in BESTEXP_ABS_TRAINSIZES:
 
 for p in RANDEXP_PROP_TRAINSIZES:
     run_file_text += 'echo "Making random exposure training sets with training proportion {}..."\n'.format(p)
-    run_file_text += 'split_data --data {}/data/randexp/full_datasets/data_dr12_randexp_seed0.fits --nsplits {} --training-proportion {} --auto-independent --out-prefix {}/data/randexp/training_datasets/prop_{}/data_dr12_randexp_seed0_train\n'.format(OUTDIR,RANDEXP_NMODEL,p,OUTDIR,p)
+    run_file_text += 'split_data --data {}/data/randexp/full_datasets/data_dr12_randexp.fits --nsplits {} --training-proportion {} --auto-independent --out-prefix {}/data/randexp/training_datasets/prop_{}/data_dr12_randexp_train\n'.format(OUTDIR,RANDEXP_NMODEL,p,OUTDIR,p)
     run_file_text += 'echo " -> Done!"\n'
     run_file_text += 'echo " "\n\n'
 
 for a in RANDEXP_ABS_TRAINSIZES:
     run_file_text += 'echo "Making random exposure training sets with training size {}..."\n'.format(a)
-    run_file_text += 'split_data --data {}/data/randexp/full_datasets/data_dr12_randexp_seed0.fits --nsplits {} --training-number {} --auto-independent --out-prefix {}/data/randexp/training_datasets/abs_{}/data_dr12_randexp_seed0_train\n'.format(OUTDIR,RANDEXP_NMODEL,a,OUTDIR,a)
+    run_file_text += 'split_data --data {}/data/randexp/full_datasets/data_dr12_randexp.fits --nsplits {} --training-number {} --auto-independent --out-prefix {}/data/randexp/training_datasets/abs_{}/data_dr12_randexp_train\n'.format(OUTDIR,RANDEXP_NMODEL,a,OUTDIR,a)
     run_file_text += 'echo " -> Done!"\n'
     run_file_text += 'echo " "\n\n'
 

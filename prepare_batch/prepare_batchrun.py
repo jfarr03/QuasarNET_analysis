@@ -75,7 +75,7 @@ for a in BESTEXP_ABS_TRAINSIZES:
 for p in RANDEXP_PROP_TRAINSIZES:
     run_file_text += 'echo "Preparing for training models on random exposure data with training proportion {}..."\n'.format(p)
     train_dir = '{}/data/randexp/training_datasets/prop_{}/'.format(OUTDIR,p)
-    train_prefix = 'data_dr12_randexp_seed0_train'
+    train_prefix = 'data_dr12_randexp_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
     splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
     splits.sort()
@@ -90,7 +90,7 @@ for p in RANDEXP_PROP_TRAINSIZES:
 for a in RANDEXP_ABS_TRAINSIZES:
     run_file_text += 'echo "Preparing for training models on random exposure data with training size {}..."\n'.format(a)
     train_dir = '{}/data/randexp/training_datasets/abs_{}/'.format(OUTDIR,a)
-    train_prefix = 'data_dr12_randexp_seed0_train'
+    train_prefix = 'data_dr12_randexp_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
     splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
     splits.sort()
@@ -118,7 +118,7 @@ run_file_text += 'echo " -> Done!"\n'
 run_file_text += 'echo " "\n\n'
 
 run_file_text += 'echo "Preparing for training models on coadd data with training size {}, outputting models at each epoch..."\n'.format(p)
-for p in NEPOCH_PROP_TRAINSIZES:
+for p in NEPOCH_COADD_PROP_TRAINSIZES:
     train_dir = '{}/data/coadd/training_datasets/prop_{}/'.format(OUTDIR,p)
     train_prefix = 'data_dr12_coadd_train'
     training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
@@ -126,8 +126,38 @@ for p in NEPOCH_PROP_TRAINSIZES:
     splits.sort()
     split = splits[0]
     nhours = int(PROP_JOB_TIMES[p]*(NEPOCH_MAX/200))
-    output_dir = '{}/qn_models/additional_setups/nepochs/prop_{}/'.format(OUTDIR,p)
+    output_dir = '{}/qn_models/additional_setups/nepochs/coadd/prop_{}/'.format(OUTDIR,p)
     output_prefix = 'qn_train_coadd'
+    run_file_text += './prepare_batch/prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} --nepochs {} --save-epoch-checkpoints\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,NEPOCH_MAX)
+run_file_text += 'echo " -> Done!"\n'
+run_file_text += 'echo " "\n\n'
+
+run_file_text += 'echo "Preparing for training models on bestexp data with training size {}, outputting models at each epoch..."\n'.format(p)
+for p in NEPOCH_BESTEXP_PROP_TRAINSIZES:
+    train_dir = '{}/data/bestexp/training_datasets/prop_{}/'.format(OUTDIR,p)
+    train_prefix = 'data_dr12_bestexp_train'
+    training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
+    splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
+    splits.sort()
+    split = splits[0]
+    nhours = int(PROP_JOB_TIMES[p]*(NEPOCH_MAX/200))
+    output_dir = '{}/qn_models/additional_setups/nepochs/bestexp/prop_{}/'.format(OUTDIR,p)
+    output_prefix = 'qn_train_bestexp'
+    run_file_text += './prepare_batch/prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} --nepochs {} --save-epoch-checkpoints\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,NEPOCH_MAX)
+run_file_text += 'echo " -> Done!"\n'
+run_file_text += 'echo " "\n\n'
+
+run_file_text += 'echo "Preparing for training models on randexp data with training size {}, outputting models at each epoch..."\n'.format(p)
+for p in NEPOCH_RANDEXP_PROP_TRAINSIZES:
+    train_dir = '{}/data/randexp/training_datasets/prop_{}/'.format(OUTDIR,p)
+    train_prefix = 'data_dr12_randexp_train'
+    training_sets = glob.glob(train_dir+train_prefix+'_*.fits')
+    splits = [training_set.split(train_prefix)[-1][1:-5] for training_set in training_sets]
+    splits.sort()
+    split = splits[0]
+    nhours = int(PROP_JOB_TIMES[p]*(NEPOCH_MAX/200))
+    output_dir = '{}/qn_models/additional_setups/nepochs/randexp/prop_{}/'.format(OUTDIR,p)
+    output_prefix = 'qn_train_randexp'
     run_file_text += './prepare_batch/prepare_single_model.py --training-dir {} --training-prefix {} --split {} --truth {} --nhours {} --output-dir {} --output-prefix {} --nepochs {} --save-epoch-checkpoints\n'.format(train_dir,train_prefix,split,truth,nhours,output_dir,output_prefix,NEPOCH_MAX)
 run_file_text += 'echo " -> Done!"\n'
 run_file_text += 'echo " "\n\n'

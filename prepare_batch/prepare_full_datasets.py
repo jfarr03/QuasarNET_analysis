@@ -21,7 +21,7 @@ run_file_text += 'cmd="parse_data --spplates {}/*/spPlate-*.fits --spall {} --sd
 run_file_text += '$cmd\n\n'
 
 run_file_text += '## Make randexp dataset.\n'
-run_file_text += 'cmd="parse_data --spplates {}/*/spPlate-*.fits --spall {} --sdrq {} --out {}/data/randexp/full_datasets/data_dr12_randexp_seed0.fits --use-random-exp --random-seed 0"\n'.format(REDUXDIR,SPALL,SDRQ,OUTDIR)
+run_file_text += 'cmd="parse_data --spplates {}/*/spPlate-*.fits --spall {} --sdrq {} --out {}/data/randexp/full_datasets/data_dr12_randexp.fits --use-random-exp --random-seed 0"\n'.format(REDUXDIR,SPALL,SDRQ,OUTDIR)
 run_file_text += '$cmd\n\n'
 
 for dll in DLL_VALUES:
