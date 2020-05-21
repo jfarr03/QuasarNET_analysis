@@ -216,7 +216,17 @@ def plot_pur_com_vs_cth_zbin(data_table,strategies,filename=None,zbins=[(None,2.
     return fig, axs
 
 ## Function for Figure 2.
-def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec=2,figsize=(12,12),ymin=0.98,ymax=1.,verbose=False,npanel=2,norm_dvhist=True):
+def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec=2,figsize=(12,12),ymin=0.98,ymax=1.,verbose=False,npanel=2,norm_dvhist=True,strategies_to_plot=Nonec_th=None):
+
+    if c_th is None:
+        c_th = np.linspace(0.,1.,101)
+
+    if strategies_to_plot is None:
+        strategies_to_plot = {s: {'strategies': [s],
+                                  'n': strategies[s]['n'],
+                                  'ls': strategies[s]['ls']}
+                              for s in strategies[filt_name].keys()
+                             }
 
     if npanel==2:
         panel_dims = (2,1)
@@ -263,6 +273,7 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
 
         pur = np.array(pur)
         com = np.array(com)
+        dv = strategy.get_dv(z_s,temp_data_table['Z_VI'],temp_data_table['Z_VI'],use_abs=False)
 
         ind = np.where(pur>com)[0][0]
         if verbose:
@@ -272,6 +283,12 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
             print('pur:',pur[ind-2:ind+2].round(4))
             print('com:',com[ind-2:ind+2].round(4))
 
+        strategies[s]['pur'] = pur
+        strategies[s]['com'] = com
+        strategies[s]['dv'] = dv
+
+    for j,s in enumerate(strategies_to_plot.keys()):
+
         if j==0:
             labelp = 'purity'
             labelc = 'completeness'
@@ -279,12 +296,32 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
             labelp = None
             labelc = None
 
-        axs[pur_panel].plot(strategies[s]['c_th'],pur,label=labelp,color=utils.colours['C0'],ls=strategies[s]['ls'])
-        axs[com_panel].plot(strategies[s]['c_th'],com,label=labelc,color=utils.colours['C1'],ls=strategies[s]['ls'])
+        pur = []
+        com = []
+        dv = []
 
-        ## Plot the dv histogram.
-        dv = strategy.get_dv(z_s,temp_data_table['Z_VI'],temp_data_table['Z_VI'],use_abs=False)
-        axs[dv_panel].hist(dv,bins=dv_bins,histtype='step',ls=strategies[s]['ls'],color=utils.colours['C2'],density=norm_dvhist)
+        for ss in strategies_to_plot[s]['strategies']:
+
+            pur.append(strategies[ss]['pur'])
+            com.append(strategies[ss]['com'])
+            dv.append(strategies[ss]['dv'])
+
+        pur = np.vstack(pur)
+        com = np.vstack(com)
+        mean_pur = np.mean(pur,axis=0)
+        mean_com = np.mean(com,axis=0)
+
+        axs[pur_panel].plot(c_th,mean_pur,label=labelp,color=utils.colours['C0'],ls=strategies_to_plot[s]['ls'])
+        axs[com_panel].plot(c_th,mean_com,label=labelc,color=utils.colours['C1'],ls=strategies_to_plot[s]['ls'])
+
+        hists = [np.histogram(indiv_dv,bins=dv_bins)[0] for indiv_dv in dv]
+        hists = np.vstack(hists)
+        mean_hist = np.sum(hists,axis=0)
+        if norm_dv_hist:
+            mean_hist = mean_hist/(mean_hist.sum())
+
+        ## Plot the mean .
+        axs[dv_panel].step(dv_bins[1:],dv,ls=strategies_to_plot[s]['ls'],color=utils.colours['C2'])
 
         if verbose:
             dv_med = np.median(dv[abs(dv)<dv_max])
@@ -292,8 +329,8 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
             print('{} has median velocity error {:3.3f} and standard deviation {:3.3f}\n'.format(s,dv_med,dv_std))
 
         ## Add objects to list of artists and labels for legend.
-        artists += [axs[0,0].plot([0],[0],color='grey',ls=strategies[s]['ls'])[0]]
-        labels += [strategies[s]['n']]
+        artists += [axs[0,0].plot([0],[0],color='grey',ls=strategies_to_plot[s]['ls'])[0]]
+        labels += [strategies_to_plot[s]['n']]
 
     for panel in [pur_panel,com_panel]:
         axs[panel].set_xlabel(r'confidence threshold')
