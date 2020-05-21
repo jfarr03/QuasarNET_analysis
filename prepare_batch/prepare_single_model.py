@@ -3,6 +3,7 @@
 from os.path import stat
 import os
 import argparse
+import numpy as np
 
 parser = argparse.ArgumentParser()
 
@@ -11,7 +12,7 @@ parser.add_argument('--training-prefix', type=str, required=True)
 parser.add_argument('--split', type=str, required=True)
 parser.add_argument('--truth', type=str, required=True)
 
-parser.add_argument('--nhours', type=int, required=True)
+parser.add_argument('--hours', type=float, required=True)
 parser.add_argument('--queue', type=str, required=False, default='regular')
 
 parser.add_argument('--lines', type=str, required=False, default='LYA CIV(1548) CIII(1909) MgII(2796) Hbeta Halpha')
@@ -45,6 +46,12 @@ run_script = '{}/run_qn_train_{}.sh'.format(args.output_dir,args.split)
 if args.verbose:
     print(' -> Run script will be written to {}'.format(run_script))
 
+## Convert the time to a string in the format hh:mm:00, rounding up to the
+## nearest minute.
+nhours = np.floor(args.hours).astype(int)
+nmins = np.ceil((args.hours-nhours)*60).astype(int)
+time = '{}:{}:00'.format(nhours,nmins)
+
 command = 'qn_train --truth {} --data {}/{}_{}.fits --out-prefix {}/{}_{} --lines {} --lines-bal {} --decay {} --offset-activation-function {} --epochs {} --dll {} --boxes {}'.format(args.truth,args.training_dir,args.training_prefix,args.split,args.output_dir,args.output_prefix,args.split,args.lines,args.lines_bal,args.decay,args.offset_activation_function,args.nepochs,args.dll,args.nchunks)
 
 if args.save_epoch_checkpoints:
@@ -56,7 +63,7 @@ run_script_text += '#!/bin/bash -l\n\n'
 
 run_script_text += '#SBATCH --partition {}\n'.format(args.queue)
 run_script_text += '#SBATCH --nodes 1\n'
-run_script_text += '#SBATCH --time {}:00:00\n'.format(args.nhours)
+run_script_text += '#SBATCH --time {}\n'.format(time)
 run_script_text += '#SBATCH --job-name qn-train\n'
 run_script_text += '#SBATCH --error "{}/run_files/qn-train-%j.err"\n'.format(args.output_dir)
 run_script_text += '#SBATCH --output "{}/run_files/qn-train-%j.out"\n'.format(args.output_dir)

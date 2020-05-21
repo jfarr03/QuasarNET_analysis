@@ -31,7 +31,7 @@ OFFSET_ACT_FNS=['sigmoid', 'rescaled_sigmoid', 'linear']
 OFFSET_ACT_PROP_TRAINSIZE=0.1
 
 # Max number of epochs to look at.
-NEPOCH_MAX=300
+NEPOCH_MAX=500
 NEPOCH_PROP_TRAINSIZES=[0.9, 0.5, 0.2, 0.1, 0.05]
 
 # Values of dll to test.
@@ -44,17 +44,17 @@ NCHUNK_PROP_TRAINSIZE=0.1
 
 
 ## Job time lookup.
-PROP_JOB_TIMES = {0.9:   30,
-                  0.8:   24,
-                  0.5:   15,
-                  0.2:   8,
-                  0.1:   6,
-                  0.05:  4,
-                  0.025: 3,
-                  0.01:  2,
+PROP_JOB_TIMES = {0.9:   15,
+                  0.8:   12,
+                  0.5:   8,
+                  0.2:   4,
+                  0.1:   2,
+                  0.05:  2,
+                  0.025: 1,
+                  0.01:  1,
                   }
 
-ABS_JOB_TIMES = {100000: 8,
-                 50000:  6,
-                 25000:  4,
+ABS_JOB_TIMES = {100000: 4,
+                 50000:  2,
+                 25000:  2,
                  }
