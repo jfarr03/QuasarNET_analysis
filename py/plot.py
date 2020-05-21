@@ -321,7 +321,7 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
             mean_hist = mean_hist/(mean_hist.sum())
 
         ## Plot the mean .
-        axs[dv_panel].step(dv_bins[1:],dv,ls=strategies_to_plot[s]['ls'],color=utils.colours['C2'])
+        axs[dv_panel].step(dv_bins[1:],mean_hist,ls=strategies_to_plot[s]['ls'],color=utils.colours['C2'])
 
         if verbose:
             dv_med = np.median(dv[abs(dv)<dv_max])
