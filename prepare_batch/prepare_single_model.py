@@ -65,8 +65,13 @@ run_script_text += '#SBATCH -A desi\n\n'
 
 run_script_text += 'source activate qnet\n\n'
 
+run_script_text += '#Settings to optimise TensorFlow (https://software.intel.com/content/www/us/en/develop/articles/maximize-tensorflow-performance-on-cpu-considerations-and-recommendations-for-inference.html)\n'
+run_script_text += 'export KMP_AFFINITY=granularity=fine,compact,1,0\n'
+run_script_text += 'export KMP_BLOCKTIME=0\n'
+run_script_text += 'export OMP_NUM_THREADS=32\n'
+run_script_text += 'export KMP_SETTINGS=TRUE\n\n'
+
 run_script_text += 'umask 0002\n'
-run_script_text += 'export OMP_NUM_THREADS=64\n\n'
 
 run_script_text += '#Fix to bug in HDF5 (https://www.nersc.gov/users/data-analytics/data-management/i-o-libraries/hdf5-2/h5py/)\n'
 run_script_text += 'export HDF5_USE_FILE_LOCKING=FALSE\n\n'
