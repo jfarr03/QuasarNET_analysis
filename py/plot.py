@@ -216,7 +216,7 @@ def plot_pur_com_vs_cth_zbin(data_table,strategies,filename=None,zbins=[(None,2.
     return fig, axs
 
 ## Function for Figure 2.
-def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec=2,figsize=(12,12),ymin=0.98,ymax=1.,verbose=False,npanel=2,norm_dvhist=True,strategies_to_plot=Nonec_th=None):
+def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec=2,figsize=(12,12),ymin=0.98,ymax=1.,verbose=False,npanel=2,norm_dvhist=True,strategies_to_plot=None,c_th=None):
 
     if c_th is None:
         c_th = np.linspace(0.,1.,101)
