@@ -9,7 +9,7 @@ run_file = PREPDIR+'/run_batch/make_full_datasets.sh'
 run_file_text = '#!/usr/bin/env bash\n\n'
 
 run_file_text += '## Make truth file.\n'
-run_file_text += 'cmd="qn_parse_truth --sdrq {} --drq {} --out {}/data/truth/truth_dr12q.fits --mode BOSS --nproc 32"\n'.format(SDRQ,DRQ,OUTDIR)
+run_file_text += 'cmd="qn_parse_truth --sdrq {} --drq {} --out {}/data/truth/truth_dr12q.fits --mode BOSS"\n'.format(SDRQ,DRQ,OUTDIR)
 run_file_text += '$cmd\n\n'
 
 run_file_text += '## Make coadded dataset.\n'
