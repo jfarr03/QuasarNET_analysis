@@ -2,7 +2,8 @@
 
 import glob
 from shutil import copytree
-from os.path import isdir, mkdir
+from os.path import isdir
+from os import mkdir
 from qn_analysis.variables import *
 
 # Check to see if the base output directory exists. Make it if not.
