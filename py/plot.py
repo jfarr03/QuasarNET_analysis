@@ -20,7 +20,8 @@ def get_pur_com(isqso_s,z_s,isqso_truth,isgal_truth,isbad,z_truth,zbin=None,dv_m
             in_zbin_zs &= (z_s<zbin[1])
 
     # See which classifier redshifts are "good".
-    zgood = (z_truth>-1.) & (abs(z_s-z_truth) < dv_max*(1+z_truth)/300000.)
+    dv = get_dv(z_s,z_truth,z_truth)
+    zgood = (dv <= dv_max)
 
     # Calculate the two parts of purity.
     pur_num = (isqso_s & (isqso_truth | isgal_truth) & zgood & (~isbad) & in_zbin_zs).sum()
@@ -364,6 +365,8 @@ def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,
 
             if (cth==0.5) and verbose:
                 print(s)
+                dv = get_dv(z_s,data_table['Z_VI'],data_table['Z_VI'])
+                zgood = (dv <= dv_max)
                 w_contaminants = isqso_s & isstar_truth
                 w_zerr = isqso_s & (isqso_truth | isgal_truth) & (~zgood)
                 print('number of stars is',w_contaminants.sum())
@@ -600,7 +603,8 @@ def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6
                 in_zbin_zvi &= (data_table['Z_VI']<zbin[1])
                 in_zbin_zs &= (z_s<zbin[1])
 
-            zgood = (data_table['Z_VI']>-1) & (abs(z_s-data_table['Z_VI']) < dv_max*(1+data_table['Z_VI'])/300000.)
+            dv = get_dv(z_s,data_table['Z_VI'],data_table['Z_VI'])
+            zgood = (dv <= dv_max)
 
             strategies[s]['ncat'] = (w_s & in_zbin_zs & (~isbad)).sum()
 
