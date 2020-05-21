@@ -317,7 +317,7 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
         hists = [np.histogram(indiv_dv,bins=dv_bins)[0] for indiv_dv in dv]
         hists = np.vstack(hists)
         mean_hist = np.sum(hists,axis=0)
-        if norm_dv_hist:
+        if norm_dvhist:
             mean_hist = mean_hist/(mean_hist.sum())
 
         ## Plot the mean .
