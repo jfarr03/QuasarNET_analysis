@@ -216,7 +216,7 @@ def plot_pur_com_vs_cth_zbin(data_table,strategies,filename=None,zbins=[(None,2.
     return fig, axs
 
 ## Function for Figure 2.
-def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec=2,figsize=(12,12),ymin=0.98,ymax=1.,verbose=False,npanel=2,norm_dvhist=True,strategies_to_plot=None,c_th=None):
+def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec=2,figsize=(12,12),ymin=0.98,ymax=1.,verbose=False,npanel=2,norm_dvhist=True,strategies_to_plot=None,c_th=None,show_std=False):
 
     if c_th is None:
         c_th = np.linspace(0.,1.,101)
@@ -301,7 +301,6 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
         dv = []
 
         for ss in strategies_to_plot[s]['strategies']:
-
             pur.append(strategies[ss]['pur'])
             com.append(strategies[ss]['com'])
             dv.append(strategies[ss]['dv'])
@@ -310,22 +309,33 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
         com = np.vstack(com)
         mean_pur = np.mean(pur,axis=0)
         mean_com = np.mean(com,axis=0)
+        if show_std:
+            std_pur = np.std(pur,axis=0)
+            std_com = np.std(com,axis=0)
 
-        axs[pur_panel].plot(c_th,mean_pur,label=labelp,color=utils.colours['C0'],ls=strategies_to_plot[s]['ls'])
-        axs[com_panel].plot(c_th,mean_com,label=labelc,color=utils.colours['C1'],ls=strategies_to_plot[s]['ls'])
+        axs[pur_panel].plot(c_th,mean_pur,label=labelp,color=utils.colours['C0'],ls=strategies_to_plot[s]['ls'],zorder=2)
+        axs[com_panel].plot(c_th,mean_com,label=labelc,color=utils.colours['C1'],ls=strategies_to_plot[s]['ls'],zorder=2)
+
+        if show_std:
+            axs[pur_panel].fill_between(c_th,mean_pur-std_pur,mean_pur+std_pur,color=utils.colours['C0'],alpha=0.25,zorder=1)
+            axs[com_panel].fill_between(c_th,mean_com-std_com,mean_com+std_com,color=utils.colours['C0'],alpha=0.25,zorder=1)
 
         hists = [np.histogram(indiv_dv,bins=dv_bins)[0] for indiv_dv in dv]
         hists = np.vstack(hists)
-        mean_hist = np.sum(hists,axis=0)
         if norm_dvhist:
-            mean_hist = mean_hist/(mean_hist.sum())
+            hists = hists/(hists.sum(axis=1)[:,None])
+        mean_hist = np.sum(hists,axis=0)
+        if show_std:
+            std_hist = np.std(hists,axis=0)
 
         ## Plot the mean .
-        axs[dv_panel].step(dv_bins[1:],mean_hist,ls=strategies_to_plot[s]['ls'],color=utils.colours['C2'])
+        axs[dv_panel].step(dv_bins[1:],mean_hist,ls=strategies_to_plot[s]['ls'],color=utils.colours['C2'],zorder=2)
+        if show_std:
+            axs[dv_panel].fill_between(dv_bins[1:],mean_hist-std_hist,mean_hist+std_hist,color=utils.colours['C2'],alpha=0.25,zorder=1,step='pre')
 
         if verbose:
-            dv_med = np.median(dv[abs(dv)<dv_max])
-            dv_std = np.std(dv[abs(dv)<dv_max])
+            dv_med = np.median(mean_hist[abs(mean_hist)<dv_max])
+            dv_std = np.std(mean_hist[abs(mean_hist)<dv_max])
             print('{} has median velocity error {:3.3f} and standard deviation {:3.3f}\n'.format(s,dv_med,dv_std))
 
         ## Add objects to list of artists and labels for legend.
