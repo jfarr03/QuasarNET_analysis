@@ -48,6 +48,9 @@ if args.verbose:
 
 ## Convert the time to a string in the format hh:mm:00, rounding up to the
 ## nearest minute.
+if args.hours>48.:
+    print('WARN: Max job length is 48h!')
+    args.hours = 48.
 nhours = np.floor(args.hours).astype(int)
 nmins = np.ceil((args.hours-nhours)*60).astype(int)
 time = '{}:{}:00'.format(nhours,nmins)
