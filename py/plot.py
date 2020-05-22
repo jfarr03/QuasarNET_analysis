@@ -320,7 +320,7 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
 
         if show_std:
             axs[pur_panel].fill_between(c_th,mean_pur-std_pur,mean_pur+std_pur,color=utils.colours['C0'],alpha=0.25,zorder=1)
-            axs[com_panel].fill_between(c_th,mean_com-std_com,mean_com+std_com,color=utils.colours['C0'],alpha=0.25,zorder=1)
+            axs[com_panel].fill_between(c_th,mean_com-std_com,mean_com+std_com,color=utils.colours['C1'],alpha=0.25,zorder=1)
 
         hists = [np.histogram(indiv_dv,bins=dv_bins)[0] for indiv_dv in dv]
         hists = np.vstack(hists)
