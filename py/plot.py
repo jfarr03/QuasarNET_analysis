@@ -251,21 +251,22 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
         com = []
         pur = []
 
-        if type(data_table['ISQSO_{}'.format(s)])==astropy.table.column.MaskedColumn:
-            filt = (~data_table['ISQSO_{}'.format(s)].data.mask)
-        else:
-            filt = np.ones(len(data_table)).astype(bool)
-        temp_data_table = data_table[filt]
+        #if type(data_table['ISQSO_{}'.format(s)])==astropy.table.column.MaskedColumn:
+        #    filt = (~data_table['ISQSO_{}'.format(s)].data.mask)
+        #else:
+        #    filt = np.ones(len(data_table)).astype(bool)
+        #temp_data_table = data_table[filt]
 
-        isqso_truth, isgal_truth, isstar_truth, isbad = get_truths(temp_data_table)
+        #isqso_truth, isgal_truth, isstar_truth, isbad = get_truths(temp_data_table)
 
-        for i,isqso_s in enumerate(strategies[s]['isqso']):
+        for i,pred in enumerate(strategies[s]['predictions']):
 
             z_s = strategies[s]['z'][i]
 
             # Calculate purity and completeness.
-            p,c = get_pur_com(isqso_s,z_s,isqso_truth,isgal_truth,isbad,
-                temp_data_table['Z_VI'],dv_max=dv_max)
+            p,c = pred.calculate_pur_com(dv_max=dv_max)
+            #p,c = get_pur_com(isqso_s,z_s,isqso_truth,isgal_truth,isbad,
+            #    temp_data_table['Z_VI'],dv_max=dv_max)
 
             # Add to purity/completeness lists.
             pur += [p]
@@ -273,7 +274,8 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
 
         pur = np.array(pur)
         com = np.array(com)
-        dv = strategy.get_dv(z_s,temp_data_table['Z_VI'],temp_data_table['Z_VI'],use_abs=False)
+        #dv = strategy.get_dv(z_s,temp_data_table['Z_VI'],temp_data_table['Z_VI'],use_abs=False)
+        dv = pred.calculate_dv(use_abs=False)
 
         ind = np.where(pur>com)[0][0]
         if verbose:

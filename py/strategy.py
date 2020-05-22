@@ -57,12 +57,20 @@ class Prediction():
 
         return ishighzqso
 
-"""    def calculate_pur_com(self,dv_max=6000.):
+    def calculate_pur_com(self,dv_max=6000.):
 
+        isqso_truth = (self.class_true=='QSO')
+        isgal_truth = (self.class_true=='GALAXY')
+        isbad = (self.class_true=='BAD')
+        pur, com = plot.get_pur_com(self.isqso,self.z,isqso_truth,isgal_truth,isbad,self.z_true,dv_max=dv_max)
 
-        pur, com = plot.get_pur_com(self.isqso,z_s,isqso_truth,isgal_truth,isbad,z_truth,zbin=None,dv_max=6000.)
+        return pur, com
 
-        return pur, com"""
+    def calculate_dv(use_abs=False):
+
+        dv = get_dv(self.z,self.z_true,self.z_true,use_abs=use_abs)
+
+        return dv
 
 def get_cf(cf_type,cf_kwargs):
 
