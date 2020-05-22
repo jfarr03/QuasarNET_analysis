@@ -261,7 +261,7 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
 
         for i,pred in enumerate(strategies[s]['predictions']):
 
-            z_s = strategies[s]['z'][i]
+            #z_s = strategies[s]['z'][i]
 
             # Calculate purity and completeness.
             p,c = pred.calculate_pur_com(dv_max=dv_max)
