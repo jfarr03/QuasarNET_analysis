@@ -1,6 +1,8 @@
 import numpy as np
 import copy
 
+from qn_analysis import plot
+
 class Strategy():
     def __init__(self,cf_type,cf_kwargs={},name=None,c=None,ls=None,marker=None):
 
@@ -14,9 +16,10 @@ class Strategy():
 
     def predict(self,data_table,filter=None,c_kwargs={},class_true_name='CLASS_VI',z_true_name='Z_VI'):
 
-        isqso, z = self.classifying_fn(data_table,filter=filter,**c_kwargs)
-
         temp_data_table = filter_table(data_table,filter)
+
+        isqso, z = self.classifying_fn(temp_data_table,filter=None,**c_kwargs)
+
         class_true = copy.deepcopy(temp_data_table[class_true_name].data)
         z_true = copy.deepcopy(temp_data_table[z_true_name].data)
         prediction = Prediction(isqso,z,class_true,z_true)
@@ -38,6 +41,13 @@ class Prediction():
         ishighzqso = (self.isqso) & (self.z>=zcut)
 
         return ishighzqso
+
+"""    def calculate_pur_com(self,dv_max=6000.):
+
+
+        pur, com = plot.get_pur_com(self.isqso,z_s,isqso_truth,isgal_truth,isbad,z_truth,zbin=None,dv_max=6000.)
+
+        return pur, com"""
 
 def get_cf(cf_type,cf_kwargs):
 
