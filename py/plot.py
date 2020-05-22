@@ -318,6 +318,14 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
         axs[pur_panel].plot(c_th,mean_pur,label=labelp,color=utils.colours['C0'],ls=strategies_to_plot[s]['ls'],zorder=2)
         axs[com_panel].plot(c_th,mean_com,label=labelc,color=utils.colours['C1'],ls=strategies_to_plot[s]['ls'],zorder=2)
 
+        ind = np.where(mean_pur>mean_com)[0][0]
+        if verbose:
+            print('Strategy {}:'.format(s))
+            print('Crossover occurs at:')
+            print('cth:',c_th[ind-2:ind+2].round(4))
+            print('pur:',mean_pur[ind-2:ind+2].round(4))
+            print('com:',mean_com[ind-2:ind+2].round(4))
+
         if show_std:
             axs[pur_panel].fill_between(c_th,mean_pur-std_pur,mean_pur+std_pur,color=utils.colours['C0'],alpha=0.25,zorder=1)
             axs[com_panel].fill_between(c_th,mean_com-std_com,mean_com+std_com,color=utils.colours['C1'],alpha=0.25,zorder=1)
