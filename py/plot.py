@@ -336,8 +336,9 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
             axs[dv_panel].fill_between(dv_bins[1:],mean_hist-std_hist,mean_hist+std_hist,color=utils.colours['C2'],alpha=0.25,zorder=1,step='pre')
 
         if verbose:
-            dv_med = np.median(mean_hist[abs(mean_hist)<dv_max])
-            dv_std = np.std(mean_hist[abs(mean_hist)<dv_max])
+            dv_all = np.hstack(dv)
+            dv_med = np.median(dv_all[abs(dv_all)<dv_max])
+            dv_std = np.std(dv_all[abs(dv_all)<dv_max])
             print('{} has median velocity error {:3.3f} and standard deviation {:3.3f}\n'.format(s,dv_med,dv_std))
 
         ## Add objects to list of artists and labels for legend.
