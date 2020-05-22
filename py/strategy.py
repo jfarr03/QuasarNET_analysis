@@ -22,7 +22,7 @@ class Strategy():
         temp_data_table = filter_table(data_table,filter)
         #print('checkpoint: filtered table', time.time()-start)
         start = time.time()
- 
+
         isqso, z = self.classifying_fn(temp_data_table,filter=None,**c_kwargs)
         #print('checkpoint: got isqso,z', time.time()-start)
         start = time.time()
@@ -66,7 +66,7 @@ class Prediction():
 
         return pur, com
 
-    def calculate_dv(use_abs=False):
+    def calculate_dv(self,use_abs=False):
 
         dv = get_dv(self.z,self.z_true,self.z_true,use_abs=use_abs)
 
