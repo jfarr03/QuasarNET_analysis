@@ -52,7 +52,7 @@ nhours = np.floor(args.hours).astype(int)
 nmins = np.ceil((args.hours-nhours)*60).astype(int)
 time = '{}:{}:00'.format(nhours,nmins)
 
-command = 'qn_train --truth {} --data {}/{}_{}.fits --out-prefix {}/{}_{} --lines {} --lines-bal {} --decay {} --offset-activation-function {} --epochs {} --dll {} --boxes {}'.format(args.truth,args.training_dir,args.training_prefix,args.split,args.output_dir,args.output_prefix,args.split,args.lines,args.lines_bal,args.decay,args.offset_activation_function,args.nepochs,args.dll,args.nchunks)
+command = 'qn_train --truth {} --data {}/{}_{}.fits --out-prefix {}/{}_{} --lines {} --lines-bal {} --decay {} --offset-activation-function {} --epochs {} --dll {} --boxes {} --amsgrad'.format(args.truth,args.training_dir,args.training_prefix,args.split,args.output_dir,args.output_prefix,args.split,args.lines,args.lines_bal,args.decay,args.offset_activation_function,args.nepochs,args.dll,args.nchunks)
 
 if args.save_epoch_checkpoints:
     command += ' --save-epoch-checkpoints'
