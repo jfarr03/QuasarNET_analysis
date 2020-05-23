@@ -379,7 +379,7 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
     axs[dv_panel].set_ylabel(r'#')
     axs[dv_panel].set_xlabel(r'd$v$ [km/s]')
     axs[dv_panel].set_xlim(-3000.,3000.)
-    axs[dv_panel].set_ymin(0.)
+    axs[dv_panel].set_ylim(bottom=0.)
 
     fig.legend(artists,labels,loc='lower center',borderaxespad=0,bbox_to_anchor=(0.5,0.03),ncol=len(artists))
     rect = (0,0.13,1.,1.)
