@@ -294,6 +294,9 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
             print('cth:',c_th[ind-2:ind+2].round(4))
             print('pur:',pur[ind-2:ind+2].round(4))
             print('com:',com[ind-2:ind+2].round(4))
+            dv_med = np.median(dv[abs(dv)<dv_max])
+            dv_std = np.std(dv[abs(dv)<dv_max])
+            print('{} has median velocity error {:3.3f} and standard deviation {:3.3f}\n'.format(s,dv_med,dv_std))
 
         strategies[s]['pur'] = pur
         strategies[s]['com'] = com
