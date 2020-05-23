@@ -216,10 +216,13 @@ def plot_pur_com_vs_cth_zbin(data_table,strategies,filename=None,zbins=[(None,2.
     return fig, axs
 
 ## Function for Figure 2.
-def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec=2,figsize=(12,12),ymin=0.98,ymax=1.,verbose=False,npanel=2,norm_dvhist=True,strategies_to_plot=None,c_th=None,show_std=False):
+def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec=2,figsize=(12,12),ymin=0.98,ymax=1.,verbose=False,npanel=2,norm_dvhist=True,strategies_to_plot=None,c_th=None,show_std=False,dv_c_th=0.5):
 
     if c_th is None:
         c_th = np.linspace(0.,1.,101)
+
+    if not (dv_c_th in c_th):
+        raise ValueError('Value of dv_c_th is not contained within c_th!')
 
     if strategies_to_plot is None:
         strategies_to_plot = {s: {'strategies': [s],
@@ -272,10 +275,17 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
             pur += [p]
             com += [c]
 
+            if c_th[i]==dv_c_th:
+                # Get velocity errors on correctly identified QSOs.
+                dv = pred.calculate_dv(use_abs=False)
+                isqso_truth = (pred.class_true=='QSO')
+                isqso = pred.isqso
+                w = (isqso_truth&isqso)
+                dv = dv[w]
+
         pur = np.array(pur)
         com = np.array(com)
         #dv = strategy.get_dv(z_s,temp_data_table['Z_VI'],temp_data_table['Z_VI'],use_abs=False)
-        dv = pred.calculate_dv(use_abs=False)
 
         ind = np.where(pur>com)[0][0]
         if verbose:
