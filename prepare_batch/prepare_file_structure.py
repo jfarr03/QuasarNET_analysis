@@ -141,4 +141,4 @@ if not isdir(d):
 dirs = glob.glob(OUTDIR+'/qn_models/*')
 dirnames = [d.split('/')[-1] for d in dirs]
 for i in range(len(dirs)):
-    _ = copytree(dirs[i],OUTDIR+'/qn_outputs/'+dirnames[i])
+    _ = copytree(dirs[i],OUTDIR+'/outputs/qn_outputs/'+dirnames[i])

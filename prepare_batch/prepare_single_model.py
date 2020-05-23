@@ -20,7 +20,7 @@ parser.add_argument('--lines-bal', type=str, required=False, default='CIV(1548)'
 parser.add_argument('--decay', type=float, required=False, default=0.)
 parser.add_argument('--offset-activation-function', type=str, required=False, default='rescaled_sigmoid')
 parser.add_argument('--nepochs', type=int, required=False, default=200)
-parser.add_argument('--dll', type=float, required=False, default=1e-4)
+parser.add_argument('--dll', type=float, required=False, default=1e-3)
 parser.add_argument('--nchunks', type=int, required=False, default=13)
 parser.add_argument('--save-epoch-checkpoints', action='store_true', default=False, required=False)
 
