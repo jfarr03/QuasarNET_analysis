@@ -76,24 +76,28 @@ def get_cf(cf_type,cf_kwargs):
 
     if cf_type == 'qn':
         return get_cf_qn(**cf_kwargs)
-    if cf_type == 'rr':
+    elif cf_type == 'rr':
         return get_cf_rr(**cf_kwargs)
-    if cf_type == 'sq':
+    elif cf_type == 'sq':
         return get_cf_sq(**cf_kwargs)
-    if cf_type == 'qnorrr':
+    elif cf_type == 'qnorrr':
         return get_cf_qnorrr(**cf_kwargs)
-    if cf_type == 'qnandrr':
+    elif cf_type == 'qnandrr':
         return get_cf_qnandrr(**cf_kwargs)
-    if cf_type == 'qnplusvi':
+    elif cf_type == 'qnplusvi':
         return get_cf_qnplusvi(**cf_kwargs)
-    if cf_type == 'rrplusvi':
+    elif cf_type == 'rrplusvi':
         return get_cf_rrplusvi(**cf_kwargs)
-    if cf_type == 'rrplusvialt':
+    elif cf_type == 'rrplusvialt':
         return get_cf_rrplusvialt(**cf_kwargs)
-    if cf_type == 'qnandrrplusvi':
+    elif cf_type == 'qnandrrplusvi':
         return get_cf_qnandrrplusvi(**cf_kwargs)
-    if cf_type == 'qnandrrplusviadv':
+    elif cf_type == 'qnandrrplusviadv':
         return get_cf_qnandrrplusviadv(**cf_kwargs)
+    elif cf_type == 'qnplusrrplusvi':
+        return get_cf_qnplusrrplusvi(**cf_kwargs)
+    else:
+        raise ValueError('cf_type value of {} not recognised!'.format(cf_type))
 
     return
 
@@ -351,6 +355,40 @@ def get_cf_qnandrrplusviadv(qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
         z = z_rr_zwf
         if zchoice=='QN':
             z[isqso_qn_hi] = z_qn_hi[isqso_qn_hi]
+        z[use_vi] = copy.deepcopy(temp_data_table['Z_VI'].data[use_vi])
+
+        return isqso, z
+
+    return cf
+
+def get_cf_qnplusrrplusvi(qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
+
+    def cf(data_table,c_th_lo=0.1,c_th_hi=0.9,n_detect=1,dv_max=6000.,zchoice='QN',filter=None):
+
+        # Apply filter to the data table.
+        temp_data_table = filter_table(data_table,filter)
+
+        # Get classifications from both QN and RR.
+        cf_qn = get_cf_qn(qn_name=qn_name,specid_name=specid_name)
+        cf_rr = get_cf_rr(rr_name=rr_name,specid_name=specid_name)
+        isqso_qn_lo, z_qn_lo = cf_qn(temp_data_table,c_th=c_th_lo,n_detect=n_detect,filter=filter)
+        isqso_qn_hi, z_qn_hi = cf_qn(temp_data_table,c_th=c_th_hi,n_detect=n_detect,filter=filter)
+        isqso_rr_zwf, z_rr_zwf = cf_rr(temp_data_table,zwarn=False,filter=filter)
+        isqso_rr_zwt, z_rr_zwt = cf_rr(temp_data_table,zwarn=True,filter=filter)
+        zwarn_nonzero = (temp_data_table['ZWARN_{}'.format(rr_name)]>0)
+
+        # Asks for VI if:
+        # 1. RR raises zwarn, and QN says cth_lo<c<cth_hi
+        use_vi = ((isqso_qn_lo & (~isqso_qn_hi)) & zwarn_nonzero)
+        print('INFO: RR+QN+VI sends {}/{} ({:2.1%}) spectra to VI'.format(use_vi.sum(),len(temp_data_table),use_vi.sum()/len(temp_data_table)))
+
+        # Construct outputs.
+        isqso = (isqso_qn_hi & isqso_rr_zwt) | (isqso_rr_zwf & isqso_qn_lo)
+        isqso[use_vi] = copy.deepcopy(temp_data_table['ISQSO_VI'].data[use_vi])
+        z = z_rr_zwf
+        if zchoice=='QN':
+            w_zqn = isqso_qn_hi&(~isqso_rr_zwt)
+            z[w_zqn] = z_qn_hi[w_zqn]
         z[use_vi] = copy.deepcopy(temp_data_table['Z_VI'].data[use_vi])
 
         return isqso, z
