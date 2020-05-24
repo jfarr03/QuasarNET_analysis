@@ -107,6 +107,10 @@ for i in OFFSET_ACT_FNS:
         mkdir(d)
 
 # Make nepochs directories.
+for i in ['coadd', 'bestexp', 'randexp']:
+    d = OUTDIR+'/qn_models/additional_setups/nepochs/'+i
+    if not isdir(d):
+        mkdir(d)
 for i in NEPOCH_COADD_PROP_TRAINSIZES:
     d = OUTDIR+'/qn_models/additional_setups/nepochs/coadd/prop_{}'.format(i)
     if not isdir(d):
