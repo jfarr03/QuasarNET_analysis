@@ -266,6 +266,32 @@ def get_cf_rrplusvi(rr_name='RR',specid_name='SPEC_ID'):
 
     return cf
 
+def get_cf_rrplusvialt(rr_name='RR',specid_name='SPEC_ID'):
+
+    def cf(data_table,filter=None):
+
+        # Apply filter to the data table.
+        temp_data_table = filter_table(data_table,filter)
+
+        # Get classifications from RR.
+        cf_rr = get_cf_rr(rr_name=rr_name,specid_name=specid_name)
+        isqso_rr, z_rr = cf_rr(temp_data_table,zwarn=False,filter=filter)
+        isqso_rr_zwt, z_rr_zwt = cf_rr(temp_data_table,zwarn=True,filter=filter)
+
+        # Select to use VI when a zwarn flag is raised and best fit is QSO.
+        use_vi = (isqso_rr_zwt) & (~isqso_rr)
+        print('INFO: RR+VI alt. sends {}/{} ({:2.1%}) spectra to VI'.format(use_vi.sum(),len(temp_data_table),use_vi.sum()/len(temp_data_table)))
+
+        # Construct outputs.
+        isqso = isqso_rr
+        isqso[use_vi] = copy.deepcopy(temp_data_table['ISQSO_VI'].data[use_vi])
+        z = z_rr
+        z[use_vi] = copy.deepcopy(temp_data_table['Z_VI'].data[use_vi])
+
+        return isqso, z
+
+    return cf
+
 def get_cf_qnandrrplusvi(qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
 
     def cf(data_table,qn_kwargs={},rr_kwargs={},dv_max=6000.,zchoice='QN',filter=None):
