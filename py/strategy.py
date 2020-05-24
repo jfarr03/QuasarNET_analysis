@@ -88,6 +88,8 @@ def get_cf(cf_type,cf_kwargs):
         return get_cf_qnplusvi(**cf_kwargs)
     if cf_type == 'rrplusvi':
         return get_cf_rrplusvi(**cf_kwargs)
+    if cf_type == 'rrplusvialt':
+        return get_cf_rrplusvialt(**cf_kwargs)
     if cf_type == 'qnandrrplusvi':
         return get_cf_qnandrrplusvi(**cf_kwargs)
     if cf_type == 'qnandrrplusviadv':
