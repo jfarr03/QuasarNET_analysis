@@ -419,7 +419,7 @@ def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,
             pur += [p]
             com += [c]
 
-            if (cth==0.5) and verbose:
+            if (c_th[i]==0.5) and verbose:
                 print(s)
                 dv = pred.calculate_dv(use_abs=False)
                 zgood = (abs(dv) <= dv_max)
