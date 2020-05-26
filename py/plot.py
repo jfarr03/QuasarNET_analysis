@@ -385,16 +385,14 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
     return fig, axs
 
 ## Function for Figure 3.
-def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,nydec=0,figsize=(12,12),ymin=0.90,ymax=1.,verbose=False):
+def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,nydec=0,figsize=(12,12),ymin=0.90,ymax=1.,verbose=False,c_th=None):
 
     fig, axs = plt.subplots(2,2,figsize=figsize,sharex=True,sharey=True,squeeze=False)
 
-    cth_min = 0.0
-    cth_max = 1.0
-    n_int = 100
-    c_th = np.arange(cth_min,cth_max,(1/n_int)*(cth_max-cth_min))
+    if c_th is None:
+        c_th = np.linspace(0.,1.,101)
 
-    isqso_truth, isgal_truth, isstar_truth, isbad = get_truths(data_table)
+    #isqso_truth, isgal_truth, isstar_truth, isbad = get_truths(data_table)
 
     # Make sure that we have the right keys.
     keys = np.array(['QN_cc','QN_sc','QN_cs','QN_ss'])
@@ -410,17 +408,12 @@ def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,
 
         z_s = data_table['Z_{}'.format(s)]
 
-        for cth in c_th:
+        for i,pred in enumerate(strategies[s]['predictions']):
 
-            # Try to use confidences, otherwise raise error.
-            try:
-                isqso_s = strategies[s]['confs']>cth
-            except KeyError:
-                raise KeyError('Confidences not found for strategy {}'.format(s))
+            #z_s = strategies[s]['z'][i]
 
             # Calculate purity and completeness.
-            p,c = get_pur_com(isqso_s,z_s,isqso_truth,isgal_truth,isbad,
-                data_table['Z_VI'],dv_max=dv_max)
+            p,c = pred.calculate_pur_com(dv_max=dv_max)
 
             # Add to purity/completeness lists.
             pur += [p]
@@ -428,14 +421,14 @@ def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,
 
             if (cth==0.5) and verbose:
                 print(s)
-                dv = strategy.get_dv(z_s,data_table['Z_VI'],data_table['Z_VI'],use_abs=True)
-                zgood = (dv <= dv_max)
-                w_contaminants = isqso_s & isstar_truth
-                w_zerr = isqso_s & (isqso_truth | isgal_truth) & (~zgood)
+                dv = pred.calculate_dv(use_abs=False)
+                zgood = (abs(dv) <= dv_max)
+                w_contaminants = pred.isqso & (pred.class_true=='STAR')
+                w_zerr = pred.isqso & ((pred.class_true=='QSO') | (pred.class_true=='GALAXY')) & (~zgood)
                 print('number of stars is',w_contaminants.sum())
                 print('number of zerr is',w_zerr.sum())
-                pur_denom = (isqso_s & (~isbad)).sum()
-                pur_num = p*pur_denom
+                pur_denom = (pred.isqso & (~(pred.class_true=='BAD'))).sum()
+                pur_num = (pred.isqso & (~(pred.class_true=='BAD')) & ((pred.class_true=='QSO') | (pred.class_true=='GALAXY')) & zgood)
                 print('number of classified QSOs is',pur_denom)
                 print('number of correctly classified QSOs is',pur_num)
                 print('')
