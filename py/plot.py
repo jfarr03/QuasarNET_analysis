@@ -288,15 +288,6 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
         #dv = strategy.get_dv(z_s,temp_data_table['Z_VI'],temp_data_table['Z_VI'],use_abs=False)
 
         ind = np.where(pur>com)[0][0]
-        if verbose:
-            print('Strategy {}:'.format(s))
-            print('Crossover occurs at:')
-            print('cth:',c_th[ind-2:ind+2].round(4))
-            print('pur:',pur[ind-2:ind+2].round(4))
-            print('com:',com[ind-2:ind+2].round(4))
-            dv_med = np.median(dv[abs(dv)<dv_max])
-            dv_std = np.std(dv[abs(dv)<dv_max])
-            print('{} has median velocity error {:3.3f} and standard deviation {:3.3f}\n'.format(s,dv_med,dv_std))
 
         strategies[s]['pur'] = pur
         strategies[s]['com'] = com
