@@ -428,7 +428,7 @@ def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,
                 print('number of stars is',w_contaminants.sum())
                 print('number of zerr is',w_zerr.sum())
                 pur_denom = (pred.isqso & (~(pred.class_true=='BAD'))).sum()
-                pur_num = (pred.isqso & (~(pred.class_true=='BAD')) & ((pred.class_true=='QSO') | (pred.class_true=='GALAXY')) & zgood)
+                pur_num = (pred.isqso & (~(pred.class_true=='BAD')) & ((pred.class_true=='QSO') | (pred.class_true=='GALAXY')) & zgood).sum()
                 print('number of classified QSOs is',pur_denom)
                 print('number of correctly classified QSOs is',pur_num)
                 print('')
@@ -438,9 +438,11 @@ def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,
 
         ind = np.where(pur>com)[0][0]
         if verbose:
-            print('cth:',c_th[ind-2:ind+2])
-            print('pur:',pur[ind-2:ind+2])
-            print('com:',com[ind-2:ind+2])
+            lo = min(0,ind-2)
+            hi = max(len(c_th),ind+2)
+            print('cth:',c_th[lo:hi])
+            print('pur:',pur[lo:hi])
+            print('com:',com[lo:hi])
             print('')
 
         axs[j//2,j%2].plot(c_th,pur,label='purity',color=utils.colours['C0'])
