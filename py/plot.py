@@ -438,8 +438,8 @@ def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,
 
         ind = np.where(pur>com)[0][0]
         if verbose:
-            lo = min(0,ind-2)
-            hi = max(len(c_th),ind+2)
+            lo = max(0,ind-2)
+            hi = min(len(c_th),ind+2)
             print('cth:',c_th[lo:hi])
             print('pur:',pur[lo:hi])
             print('com:',com[lo:hi])
