@@ -88,7 +88,7 @@ def get_cf(cf_type,cf_kwargs):
         return get_cf_sqorrr(**cf_kwargs)
     elif cf_type == 'sqandrr':
         return get_cf_sqandrr(**cf_kwargs)
-    elif cf_type == 'qplusvi':
+    elif cf_type == 'qnplusvi':
         return get_cf_qnplusvi(**cf_kwargs)
     elif cf_type == 'rrplusvi':
         return get_cf_rrplusvi(**cf_kwargs)
