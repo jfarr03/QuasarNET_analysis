@@ -475,7 +475,7 @@ def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,
     return fig, axs
 
 ## Function for Figure 4.
-def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(12,6),eff_area=None,dv_max=6000.,zcut=2.1,ymin=0.94,xmin=47.,xmax=52.,verbose=False,n_highz_desi=50,nydec=0,filters=None,marker_size=100,strategies_to_plot=None,npoints_plot=None):
+def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(12,6),eff_area=None,dv_max=6000.,zcut=2.1,ymin=0.94,xmin=47.,xmax=52.,verbose=False,n_highz_desi=50,nydec=0,filters=None,marker_size=100,strategies_to_plot=None,npoints_plot=None,point_shift=0.004):
 
     if filters is None:
         filters = {None: np.ones(len(data_table)).astype(bool)}
@@ -583,7 +583,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                 points = axs[0,k].scatter(reobs_dens[inds],pli[inds],c=strategies_to_plot[filt_name][s]['color'],marker=strategies_to_plot[filt_name][s]['marker'],s=marker_size,zorder=3)
             else:
                 while (reobs_dens,pli) in points_occupied:
-                    reobs_dens *= 1.004
+                    reobs_dens *= 1.+point_shift
                 points = axs[0,k].scatter(reobs_dens,pli,c=strategies_to_plot[filt_name][s]['color'],marker=strategies_to_plot[filt_name][s]['marker'],s=marker_size,label=s,zorder=3)
                 points_occupied += [(reobs_dens,pli)]
 
