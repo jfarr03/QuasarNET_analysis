@@ -84,7 +84,11 @@ def get_cf(cf_type,cf_kwargs):
         return get_cf_qnorrr(**cf_kwargs)
     elif cf_type == 'qnandrr':
         return get_cf_qnandrr(**cf_kwargs)
-    elif cf_type == 'qnplusvi':
+    elif cf_type == 'sqorrr':
+        return get_cf_sqorrr(**cf_kwargs)
+    elif cf_type == 'sqandrr':
+        return get_cf_sqandrr(**cf_kwargs)
+    elif cf_type == 'qplusvi':
         return get_cf_qnplusvi(**cf_kwargs)
     elif cf_type == 'rrplusvi':
         return get_cf_rrplusvi(**cf_kwargs)
@@ -197,6 +201,56 @@ def get_cf_qnorrr(qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
     return cf
 
 def get_cf_qnandrr(qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
+
+    def cf(data_table,qn_kwargs={},rr_kwargs={},dv_max=6000.,zchoice='QN',filter=None):
+
+        # Apply filter to the data table.
+        temp_data_table = filter_table(data_table,filter)
+
+        # Get classifications from both QN and RR.
+        cf_qn = get_cf_qn(qn_name=qn_name,specid_name=specid_name)
+        cf_rr = get_cf_rr(rr_name=rr_name,specid_name=specid_name)
+        isqso_qn, z_qn = cf_qn(temp_data_table,**qn_kwargs,filter=filter)
+        isqso_rr, z_rr = cf_rr(temp_data_table,**rr_kwargs,filter=filter)
+
+        # Combine using &, and choosing z based on zchoice.
+        dv = get_dv(z_qn,z_rr,temp_data_table['Z_VI'])
+        isqso = isqso_qn & isqso_rr & (dv<=dv_max)
+        z = z_rr
+        if zchoice=='QN':
+            z[isqso_qn] = z_qn[isqso_qn]
+
+        return isqso, z
+
+    return cf
+
+def get_cf_sqorrr(sq_name='SQ',rr_name='RR',specid_name='SPEC_ID'):
+
+    def cf(data_table,sq_kwargs={},rr_kwargs={},zchoice='SQ',filter=None):
+
+        # Apply filter to the data table.
+        temp_data_table = filter_table(data_table,filter)
+
+        # Get classifications from both QN and RR.
+        cf_qn = get_cf_sq(qn_name=sq_name,specid_name=specid_name)
+        cf_rr = get_cf_rr(rr_name=rr_name,specid_name=specid_name)
+        isqso_qn, z_qn = cf_qn(temp_data_table,**qn_kwargs,filter=filter)
+        isqso_rr, z_rr = cf_rr(temp_data_table,**rr_kwargs,filter=filter)
+
+        # Combine using |, and choosing z based on zchoice.
+        isqso = isqso_qn | isqso_rr
+        z = z_rr
+        if zchoice=='QN':
+            z[isqso_qn] = z_qn[isqso_qn]
+        elif zchoice=='RR':
+            w_zqn = (~isqso_rr)&isqso_qn
+            z[w_zqn] = z_qn[w_zqn]
+
+        return isqso, z
+
+    return cf
+
+def get_cf_sqandrr(qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
 
     def cf(data_table,qn_kwargs={},rr_kwargs={},dv_max=6000.,zchoice='QN',filter=None):
 
