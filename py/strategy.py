@@ -231,44 +231,44 @@ def get_cf_sqorrr(sq_name='SQ',rr_name='RR',specid_name='SPEC_ID'):
         # Apply filter to the data table.
         temp_data_table = filter_table(data_table,filter)
 
-        # Get classifications from both QN and RR.
-        cf_qn = get_cf_sq(qn_name=sq_name,specid_name=specid_name)
+        # Get classifications from both SQ and RR.
+        cf_sq = get_cf_sq(sq_name=sq_name,specid_name=specid_name)
         cf_rr = get_cf_rr(rr_name=rr_name,specid_name=specid_name)
-        isqso_qn, z_qn = cf_qn(temp_data_table,**qn_kwargs,filter=filter)
+        isqso_sq, z_sq = cf_sq(temp_data_table,**sq_kwargs,filter=filter)
         isqso_rr, z_rr = cf_rr(temp_data_table,**rr_kwargs,filter=filter)
 
         # Combine using |, and choosing z based on zchoice.
-        isqso = isqso_qn | isqso_rr
+        isqso = isqso_sq | isqso_rr
         z = z_rr
-        if zchoice=='QN':
-            z[isqso_qn] = z_qn[isqso_qn]
+        if zchoice=='SQ':
+            z[isqso_sq] = z_sq[isqso_sq]
         elif zchoice=='RR':
-            w_zqn = (~isqso_rr)&isqso_qn
-            z[w_zqn] = z_qn[w_zqn]
+            w_zsq = (~isqso_rr)&isqso_sq
+            z[w_zsq] = z_sq[w_zsq]
 
         return isqso, z
 
     return cf
 
-def get_cf_sqandrr(qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
+def get_cf_sqandrr(sq_name='SQ',rr_name='RR',specid_name='SPEC_ID'):
 
-    def cf(data_table,qn_kwargs={},rr_kwargs={},dv_max=6000.,zchoice='QN',filter=None):
+    def cf(data_table,sq_kwargs={},rr_kwargs={},dv_max=6000.,zchoice='SQ',filter=None):
 
         # Apply filter to the data table.
         temp_data_table = filter_table(data_table,filter)
 
-        # Get classifications from both QN and RR.
-        cf_qn = get_cf_qn(qn_name=qn_name,specid_name=specid_name)
+        # Get classifications from both SQ and RR.
+        cf_sq = get_cf_sq(sq_name=sq_name,specid_name=specid_name)
         cf_rr = get_cf_rr(rr_name=rr_name,specid_name=specid_name)
-        isqso_qn, z_qn = cf_qn(temp_data_table,**qn_kwargs,filter=filter)
+        isqso_sq, z_sq = cf_sq(temp_data_table,**sq_kwargs,filter=filter)
         isqso_rr, z_rr = cf_rr(temp_data_table,**rr_kwargs,filter=filter)
 
         # Combine using &, and choosing z based on zchoice.
-        dv = get_dv(z_qn,z_rr,temp_data_table['Z_VI'])
-        isqso = isqso_qn & isqso_rr & (dv<=dv_max)
+        dv = get_dv(z_sq,z_rr,temp_data_table['Z_VI'])
+        isqso = isqso_sq & isqso_rr & (dv<=dv_max)
         z = z_rr
-        if zchoice=='QN':
-            z[isqso_qn] = z_qn[isqso_qn]
+        if zchoice=='SQ':
+            z[isqso_sq] = z_sq[isqso_sq]
 
         return isqso, z
 
