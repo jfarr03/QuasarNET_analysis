@@ -540,7 +540,9 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
             for i,w in enumerate(filt_strategies[s]['w']):
                 w &= filt
                 filt_strategies[s]['nhighz_flagged'][i] = (w).sum()
+                print('pre-nhighz_truth_flagged')
                 filt_strategies[s]['nhighz_truth_flagged'][i] = (isqso_truth&highz_truth&w).sum()
+                print('post-nhighz_truth_flagged')
 
                 if verbose:
                     print(s)
