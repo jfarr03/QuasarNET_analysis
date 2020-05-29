@@ -1,6 +1,7 @@
+import h5py
 import numpy as np
 from astropy.io import fits
-from astropy.table import join, Table
+from astropy.table import Column, join, Table
 import matplotlib.pyplot as plt
 
 import glob
@@ -346,7 +347,6 @@ def load_rr_data(f_rr,mode='BOSS'):
 def read_zscan(filename):
     """Read redrock.zfind results from a file.
     """
-    import h5py
     # zbest = Table.read(filename, format='hdf5', path='zbest')
     with h5py.File(os.path.expandvars(filename), mode='r') as fx:
         targetids = fx['targetids'].value
@@ -394,6 +394,36 @@ def encode_column(c):
         array: an array of strings.
     """
     return c.astype((str, c.dtype.itemsize))
+
+def make_rr_table(f_zbest,f_rr):
+
+    ## Make a table from the zbest data.
+    zbest = fits.open(f_zbest)
+    table = Table(zbest[1].data)
+    zbest.close()
+
+    ## Read the rr h5 file.
+    zscan, zfit = read_zscan(f_rr)
+
+    ## For every targetid, extract the information we want from the h5 file.
+    fit_spectype = []
+    fit_z = []
+    fit_chi2 = []
+    fit_zwarn = []
+    for tid in table['TARGETID']:
+        w = zfit['targetid']==tid
+        fit_spectype += [zfit[w]['spectype'].data]
+        fit_z += [zfit[w]['z'].data]
+        fit_chi2 += [zfit[w]['chi2'].data]
+        fit_zwarn += [zfit[w]['zwarn'].data]
+
+    ## Add columns to the table.
+    table.add_column(Column(data=fit_spectype,name='FIT_SPECTYPE',dtype=str))
+    table.add_column(Column(data=fit_z,name='FIT_Z',dtype=float))
+    table.add_column(Column(data=fit_chi2,name='FIT_CHI2',dtype=float))
+    table.add_column(Column(data=fit_zwarn,name='FIT_ZWARN',dtype=int))
+
+    return table
 
 def load_qn_data(f_qn,n_detect=1,c_th=0.8,include_c=False,include_cbal=False,mode='BOSS',n_lines=6,n_lines_bal=1):
 
