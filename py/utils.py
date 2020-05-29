@@ -323,27 +323,6 @@ def load_sdrq_data(f_sdrq):
 
     return sdrq_data
 
-def load_rr_data(f_rr,mode='BOSS'):
-
-    rr = fits.open(f_rr)
-
-    ## Make a boolean isqso.
-    isqso = (rr[1].data['SPECTYPE']=='QSO')
-
-    if mode == 'BOSS':
-        obj_id = rr[1].data['THING_ID_DR12']
-        spec_id = rr[1].data['TARGETID']
-    elif mode == 'DESI':
-        obj_id = rr[1].data['TARGETID']
-        # Need to come up with a spectrum ID
-        spec_id = rr[1].data['TARGETID']
-
-    rr_data = list(zip(obj_id, rr[1].data['Z'], rr[1].data['SPECTYPE'], isqso, spec_id, rr[1].data['ZWARN']))
-    dtype = [('OBJ_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('SPEC_ID','i8'),('ZWARN','i8')]
-    rr_data = np.array(rr_data, dtype=dtype)
-
-    return rr_data
-
 ## Edited version of function of same name at https://github.com/desihub/redrock/blob/master/py/redrock/results.py.
 def read_zscan(filename):
     """Read redrock.zfind results from a file.
@@ -426,6 +405,38 @@ def make_rr_table(f_zbest,f_rr):
 
     return table
 
+def load_rr_data(f_rr,mode='BOSS',include_fits=False):
+
+    rr = fits.open(f_rr)
+
+    ## Make a boolean isqso.
+    isqso = (rr[1].data['SPECTYPE']=='QSO')
+
+    if mode == 'BOSS':
+        obj_id = rr[1].data['THING_ID_DR12']
+        spec_id = rr[1].data['TARGETID']
+    elif mode == 'DESI':
+        obj_id = rr[1].data['TARGETID']
+        # Need to come up with a spectrum ID
+        spec_id = rr[1].data['TARGETID']
+
+    #rr_data = list(zip(obj_id, rr[1].data['Z'], rr[1].data['SPECTYPE'], isqso, spec_id, rr[1].data['ZWARN']))
+    #dtype = [('OBJ_ID','i8'),('Z','f8'),('CLASS','U8'),('ISQSO','bool'),('SPEC_ID','i8'),('ZWARN','i8')]
+    #rr_data = np.array(rr_data, dtype=dtype)
+
+    cols = [obj_id, rr[1].data['Z'], rr[1].data['SPECTYPE'], isqso, spec_id, rr[1].data['ZWARN']]
+    colnames = ['OBJ_ID','Z','CLASS','ISQSO','SPEC_ID','ZWARN']
+    dtypes = ['i8','f8','U8','bool','i8','i8']
+
+    if include_fits:
+        cols += [data['FIT_SPECTYPE'],data['FIT_Z'],data['FIT_CHI2'],data['FIT_ZWARN']]
+        colnames += ['FIT_SPECTYPE','FIT_Z','FIT_CHI2','FIT_ZWARN']
+        dtypes += [str,'f8','f8','i8']
+
+    rr_data = Table(cols,names=colnames,dtype=dtypes)
+
+    return rr_data
+
 def load_qn_data(f_qn,n_detect=1,c_th=0.8,include_c=False,include_cbal=False,mode='BOSS',n_lines=6,n_lines_bal=1):
 
     qn = fits.open(f_qn)
@@ -507,7 +518,7 @@ def load_sq_data(f_sq,p_min=0.32,include_p=False,mode='BOSS'):
 
     return sq_data
 
-def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include_cbal_qn=False,include_p_sq=False,common_specids=True):
+def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include_cbal_qn=False,include_p_sq=False,include_fits_rr=False,common_specids=True):
 
     ## If no truth provided, make one from VI data.
     if truth is None:
@@ -560,6 +571,10 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include
             if 'SQ' in c:
                 cols += [data[c]['P']]
                 colnames += ['P_{}'.format(c)]
+        if include_fits_rr:
+            if 'RR' in c:
+                cols += [data[c]['FIT_SPECTYPE'],data[c]['FIT_Z'],data[c]['FIT_CHI2'],data[c]['FIT_ZWARN']]
+                colnames += ['FIT_SPECTYPE_{}'.format(c),'FIT_Z_{}'.format(c),'FIT_CHI2_{}'.format(c),'FIT_ZWARN_{}'.format(c)]
         if ('RR' in c) or ('PIPE' in c):
             cols += [data[c]['ZWARN']]
             colnames += ['ZWARN_{}'.format(c)]
