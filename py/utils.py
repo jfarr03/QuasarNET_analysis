@@ -342,6 +342,59 @@ def load_rr_data(f_rr,mode='BOSS'):
 
     return rr_data
 
+## Copied from https://github.com/desihub/redrock/blob/master/py/redrock/results.py.
+def read_zscan(filename):
+    """Read redrock.zfind results from a file.
+    """
+    import h5py
+    # zbest = Table.read(filename, format='hdf5', path='zbest')
+    with h5py.File(os.path.expandvars(filename), mode='r') as fx:
+        targetids = fx['targetids'].value
+        spectypes = list(fx['zscan'].keys())
+
+        zscan = dict()
+        for targetid in targetids:
+            zscan[targetid] = dict()
+            for spectype in spectypes:
+                zscan[targetid][spectype] = dict()
+
+        for spectype in spectypes:
+            zchi2 = fx['/zscan/{}/zchi2'.format(spectype)].value
+            penalty = fx['/zscan/{}/penalty'.format(spectype)].value
+            zcoeff = fx['/zscan/{}/zcoeff'.format(spectype)].value
+            redshifts = fx['/zscan/{}/redshifts'.format(spectype)].value
+            for i, targetid in enumerate(targetids):
+                zscan[targetid][spectype]['redshifts'] = redshifts
+                zscan[targetid][spectype]['zchi2'] = zchi2[i]
+                zscan[targetid][spectype]['penalty'] = penalty[i]
+                zscan[targetid][spectype]['zcoeff'] = zcoeff[i]
+                thiszfit = fx['/zfit/{}/zfit'.format(targetid)].value
+                ii = (thiszfit['spectype'].astype('U') == spectype)
+                thiszfit = Table(thiszfit[ii])
+                thiszfit.remove_columns(['targetid', 'znum', 'deltachi2'])
+                thiszfit.replace_column('spectype',
+                    encode_column(thiszfit['spectype']))
+                thiszfit.replace_column('subtype',
+                    encode_column(thiszfit['subtype']))
+                zscan[targetid][spectype]['zfit'] = thiszfit
+
+        zfit = [fx['zfit/{}/zfit'.format(tid)].value for tid in targetids]
+        zfit = Table(np.hstack(zfit))
+        zfit.replace_column('spectype', encode_column(zfit['spectype']))
+        zfit.replace_column('subtype', encode_column(zfit['subtype']))
+
+    return zscan, zfit
+
+## Copied from https://github.com/desihub/redrock/blob/master/py/redrock/utils.py.
+def encode_column(c):
+    """Returns a bytes column encoded into a string column.
+    Args:
+        c (Table column): a column of a Table.
+    Returns:
+        array: an array of strings.
+    """
+    return c.astype((str, c.dtype.itemsize))
+
 def load_qn_data(f_qn,n_detect=1,c_th=0.8,include_c=False,include_cbal=False,mode='BOSS',n_lines=6,n_lines_bal=1):
 
     qn = fits.open(f_qn)
