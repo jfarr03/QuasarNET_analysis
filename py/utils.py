@@ -561,20 +561,32 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include
         # Now optional extras.
         if include_c_qn:
             if 'QN' in c:
-                cols += [data[c]['C']]
-                colnames += ['C_{}'.format(c)]
+                try:
+                    cols += [data[c]['C']]
+                    colnames += ['C_{}'.format(c)]
+                except:
+                    print('WARN: could not find QuasarNET confidences in {}'.format(c))
         if include_cbal_qn:
             if 'QN' in c:
-                cols += [data[c]['CBAL']]
-                colnames += ['CBAL_{}'.format(c)]
+                try:
+                    cols += [data[c]['CBAL']]
+                    colnames += ['CBAL_{}'.format(c)]
+                except:
+                    print('WARN: could not find QuasarNET BAL confidences in {}'.format(c))
         if include_p_sq:
             if 'SQ' in c:
-                cols += [data[c]['P']]
-                colnames += ['P_{}'.format(c)]
+                try:
+                    cols += [data[c]['P']]
+                    colnames += ['P_{}'.format(c)]
+                except:
+                    print('WARN: could not find SQUEzE confidences in {}'.format(c))
         if include_fits_rr:
             if 'RR' in c:
-                cols += [data[c]['FIT_SPECTYPE'],data[c]['FIT_Z'],data[c]['FIT_CHI2'],data[c]['FIT_ZWARN']]
-                colnames += ['FIT_SPECTYPE_{}'.format(c),'FIT_Z_{}'.format(c),'FIT_CHI2_{}'.format(c),'FIT_ZWARN_{}'.format(c)]
+                try:
+                    cols += [data[c]['FIT_SPECTYPE'],data[c]['FIT_Z'],data[c]['FIT_CHI2'],data[c]['FIT_ZWARN']]
+                    colnames += ['FIT_SPECTYPE_{}'.format(c),'FIT_Z_{}'.format(c),'FIT_CHI2_{}'.format(c),'FIT_ZWARN_{}'.format(c)]
+                except:
+                    print('WARN: could not find redrock fit data in {}'.format(c))
         if ('RR' in c) or ('PIPE' in c):
             cols += [data[c]['ZWARN']]
             colnames += ['ZWARN_{}'.format(c)]
