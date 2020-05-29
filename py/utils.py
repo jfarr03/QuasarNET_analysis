@@ -344,7 +344,7 @@ def load_rr_data(f_rr,mode='BOSS'):
 
     return rr_data
 
-## Copied from https://github.com/desihub/redrock/blob/master/py/redrock/results.py.
+## Edited version of function of same name at https://github.com/desihub/redrock/blob/master/py/redrock/results.py.
 def read_zscan(filename):
     """Read redrock.zfind results from a file.
     """
@@ -353,7 +353,7 @@ def read_zscan(filename):
         targetids = fx['targetids'].value
         spectypes = list(fx['zscan'].keys())
 
-        zscan = dict()
+        """zscan = dict()
         for targetid in targetids:
             zscan[targetid] = dict()
             for spectype in spectypes:
@@ -377,14 +377,14 @@ def read_zscan(filename):
                     encode_column(thiszfit['spectype']))
                 thiszfit.replace_column('subtype',
                     encode_column(thiszfit['subtype']))
-                zscan[targetid][spectype]['zfit'] = thiszfit
+                zscan[targetid][spectype]['zfit'] = thiszfit"""
 
         zfit = [fx['zfit/{}/zfit'.format(tid)].value for tid in targetids]
         zfit = Table(np.hstack(zfit))
         zfit.replace_column('spectype', encode_column(zfit['spectype']))
         zfit.replace_column('subtype', encode_column(zfit['subtype']))
 
-    return zscan, zfit
+    return zfit
 
 ## Copied from https://github.com/desihub/redrock/blob/master/py/redrock/utils.py.
 def encode_column(c):
@@ -404,7 +404,7 @@ def make_rr_table(f_zbest,f_rr):
     zbest.close()
 
     ## Read the rr h5 file.
-    zscan, zfit = read_zscan(f_rr)
+    zfit = read_zscan(f_rr)
 
     ## For every targetid, extract the information we want from the h5 file.
     fit_spectype = []
