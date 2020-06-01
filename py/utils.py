@@ -476,9 +476,9 @@ def load_rr_data(f_rr,mode='BOSS',include_fits=False):
     dtypes = ['i8','f8','U8','bool','i8','i8']
 
     if include_fits:
-        cols += [rr[1].data['FIT_SPECTYPE'],rr[1].data['FIT_Z'],rr[1].data['FIT_CHI2'],rr[1].data['FIT_ZWARN']]
-        colnames += ['FIT_SPECTYPE','FIT_Z','FIT_CHI2','FIT_ZWARN']
-        dtypes += [str,'f8','f8','i8']
+        cols += [rr[1].data['FIT_SPECTYPE'],rr[1].data['FIT_Z'],rr[1].data['FIT_CHI2'],rr[1].data['FIT_ZWARN'],rr[1].data['FIT_RCHI2'],rr[1].data['FIT_DOF']]
+        colnames += ['FIT_SPECTYPE','FIT_Z','FIT_CHI2','FIT_ZWARN','FIT_RCHI2','FIT_DOF']
+        dtypes += [str,'f8','f8','i8','f8','i8']
 
     rr_data = Table(cols,names=colnames,dtype=dtypes)
 
