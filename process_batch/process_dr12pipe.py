@@ -103,7 +103,7 @@ table = join(table,spzall_table,keys=['TARGETID'],join_type='inner')
 ## Make sure that we only have objects that are in sdr12q.
 plate,mjd,fiber = targetid2platemjdfiber(table['TARGETID'])
 pmf = list(zip(plate,mjd,fiber))
-print('{} spectra in DR12 pipeline output'.format(len(pmf_rr)))
+print('{} spectra in DR12 pipeline output'.format(len(pmf)))
 
 # Find spAll entries for objects in SDR12Q
 wqso = np.in1d(spall_dr12[1].data["THING_ID"], sdr12q[1].data["THING_ID"]) & (spall_dr12[1].data["THING_ID"]>0)
@@ -112,7 +112,7 @@ wqso = np.in1d(spall_dr12[1].data["THING_ID"], sdr12q[1].data["THING_ID"]) & (sp
 plates = spall_dr12[1].data['PLATE'][wqso].astype('i8')
 mjds = spall_dr12[1].data['MJD'][wqso].astype('i8')
 fiberids = spall_dr12[1].data['FIBERID'][wqso].astype('i8')
-targetid_sdr12q = platemjdfiber2targetid(plates,mjds,fiberids)
+targetid_sdr12q = targetid
 print('{} spectra corresponding to SDR12Q objects in DR12 spAll'.format(len(targetid_sdr12q)))
 
 # Check that the targetids line up 100%
