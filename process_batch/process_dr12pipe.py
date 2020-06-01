@@ -10,8 +10,8 @@ from multiprocessing import Pool
 
 ################################################################################
 
-reduxdir = '/global/projecta/projectdirs/sdss/data/sdss/dr12/boss/spectro/redux/v5_7_?'
-f_out = variables.OUTDIR+'/dr12pipe_results/dr12pipe_sdr12q.fits'
+reduxdir = '/global/projecta/projectdirs/sdss/data/sdss/dr12/boss/spectro/redux/v5_7_?/'
+f_out = variables.OUTDIR+'/results/dr12pipe_results/dr12pipe_sdr12q_test.fits'
 nproc = 32
 
 f_sdr12q = '/global/projecta/projectdirs/sdss/data/sdss/dr12/boss/qso/DR12Q/Superset_DR12Q.fits'
