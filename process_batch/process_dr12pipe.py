@@ -58,7 +58,7 @@ thing_id = [pmf2tid_dr12[(p,m,f)] for p,m,f in zip(plate,mjd,fiberid)]
 cols = [targetid,spectype,z,zwarn,thing_id]
 colnames = ['TARGETID','SPECTYPE','Z','ZWARN','THING_ID_DR12']
 dtypes = ['i8','U8','f8','i8','i8']
-table = Table(cols,colnames=colnames,dtype=dtypes)
+table = Table(cols,names=colnames,dtype=dtypes)
 print(' -> reduced spAll data to these {} spectra'.format(len(table)))
 
 ## Get which files we care about.
