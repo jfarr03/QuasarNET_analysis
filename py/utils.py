@@ -412,15 +412,14 @@ def make_rr_table(f_zbest,f_rr):
 
     return table
 
-def make_spzall_table(f,nfit,nfit_keep):
+def make_spzall_table(f,fiberids,nfit,nfit_keep):
 
     ## Open the spZAll
     spZall = fits.open(f)
 
     ## Extract the data and reduce to the targetids we want.
     subtable = Table(spZall[1].data)['PLATE','MJD','FIBERID','CLASS','Z','RCHI2','DOF','ZWARNING']
-    f_targetid = platemjdfiber2targetid(subtable['PLATE'].data.astype('i8'),subtable['MJD'].data.astype('i8'),subtable['FIBERID'].data.astype('i8'))
-    w = np.in1d(f_targetid,targetid)
+    w = np.in1d(subtable['FIBERID'],fiberids)
     subtable = subtable[w]
     f_targetid = f_targetid[w]
     nspec = len(set(f_targetid))

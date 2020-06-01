@@ -29,10 +29,6 @@ nfit_keep = 10
 if os.path.isfile(f_out):
     print('WARN: {} already exists, continuing will overwrite!'.format(f_out))
 
-fi = glob.glob(reduxdir+'/{}/v5_7_?/spZall-*.fits')
-fi.sort()
-print('INFO: found {} spZall files'.format(len(fi)))
-
 ## Open Superset and spAll files.
 sdr12q = fits.open(f_sdr12q)
 spall_dr12 = fits.open(f_spall_dr12)
@@ -65,6 +61,24 @@ dtypes = ['i8','U8','f8','i8','i8')]
 table = Table(cols,colnames=colnames,dtype=dtypes)
 print(' -> reduced spAll data to these {} spectra'.format(len(table)))
 
+## Get which files we care about.
+fi = []
+fiberid_dict = {}
+pm_set = list(set(zip(plate,mjd)))
+for p,m in pm_set:
+    pm_fi = glob.glob(reduxdir+'/{}/v5_7_?/spZall-{}-{}.fits'.format(p,p,m))
+    if len(pm_fi)==0:
+        print('WARN: could not find spZall file for plate,mjd={},{}; skipping'.format(p,m))
+        continue
+    elif len(fi)>1:
+        print('WARN: found more than 1 spZall file for plate,mjd={},{}; skipping'.format(p,m))
+        continue
+    else:
+        fi += pm_fi
+        w = np.in1d(plate,p) & np.in1d(mjd,m)
+        fiberid_dict[pm_fi[0]] = fiberid[w]
+print('INFO: found {} spZall files'.format(len(fi)))
+
 #Define a progress- and error-tracking functions.
 def log_result(retval):
     results.append(retval)
@@ -76,7 +90,7 @@ def log_error(retval):
     print('Error:',retval)
     return
 
-tasks = [(f,nfit,nfit_keep) for f in fi]
+tasks = [(f,fiberid_dict[f],nfit,nfit_keep) for f in fi]
 #Run the multiprocessing pool
 if __name__ == '__main__':
     pool = Pool(processes=nproc)
