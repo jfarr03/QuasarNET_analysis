@@ -390,20 +390,68 @@ def make_rr_table(f_zbest,f_rr):
     fit_z = []
     fit_chi2 = []
     fit_zwarn = []
+    fit_dof = []
     for tid in table['TARGETID']:
         w = zfit['targetid']==tid
         fit_spectype += [zfit[w]['spectype'].data]
         fit_z += [zfit[w]['z'].data]
         fit_chi2 += [zfit[w]['chi2'].data]
         fit_zwarn += [zfit[w]['zwarn'].data]
+        fit_dof += [zfit[w]['npixels'].data - zfit[w]['ncoeff'].data]
 
     ## Add columns to the table.
     table.add_column(Column(data=fit_spectype,name='FIT_SPECTYPE',dtype=str))
     table.add_column(Column(data=fit_z,name='FIT_Z',dtype=float))
     table.add_column(Column(data=fit_chi2,name='FIT_CHI2',dtype=float))
     table.add_column(Column(data=fit_zwarn,name='FIT_ZWARN',dtype=int))
+    table.add_column(Column(data=fit_dof,name='FIT_DOF',dtype=int))
+
+    ## Calculate reduced chi2 values and add to table.
+    rchi2 = table['FIT_CHI2'].data/table['FIT_DOF'].data
+    table.add_column(Column(data=rchi2,name='FIT_RCHI2',dtype=float))
 
     return table
+
+def make_spzall_table(f,nfit,nfit_keep):
+
+    ## Open the spZAll
+    spZall = fits.open(f)
+
+    ## Extract the data and reduce to the targetids we want.
+    subtable = Table(spZall[1].data)['PLATE','MJD','FIBERID','CLASS','Z','RCHI2','DOF','ZWARNING']
+    f_targetid = platemjdfiber2targetid(subtable['PLATE'].data.astype('i8'),subtable['MJD'].data.astype('i8'),subtable['FIBERID'].data.astype('i8'))
+    w = np.in1d(f_targetid,targetid)
+    subtable = subtable[w]
+    f_targetid = f_targetid[w]
+    nspec = len(set(f_targetid))
+
+    ## Add a column for targetid.
+    subtable.add_column(Column(data=f_targetid,name='TARGETID',dtype='i8'))
+
+    assert (f_targetid==subtable['TARGETID'].data).all()
+
+    ## Make arrays with all the data we want in.
+    assert len(subtable)==nspec*nfit
+
+    f_targetid_se = f_targetid.reshape((nspec,nfit))[:,0]
+    spectype_arr = subtable['CLASS'].reshape((nspec,nfit))[:,:nfit_keep]
+    z_arr = subtable['Z'].reshape((nspec,nfit))[:,:nfit_keep]
+    rchi2_arr = subtable['RCHI2'].reshape((nspec,nfit))[:,:nfit_keep]
+    dof_arr = subtable['DOF'].reshape((nspec,nfit))[:,:nfit_keep]
+    zwarn_arr = subtable['ZWARNING'].reshape((nspec,nfit))[:,:nfit_keep]
+    chi2_arr = rchi2_arr*dof_arr
+
+    ## Make columns and colnames for the extra data.
+    cols = [f_targetid_se,spectype_arr,z_arr,rchi2_arr,dof_arr,zwarn_arr,chi2_arr]
+    colnames = ['TARGETID','FIT_SPECTYPE','FIT_Z','FIT_RCHI2','FIT_DOF','FIT_ZWARN','FIT_CHI2']
+    dtypes = ['i8',str,'f8','f8','i8','i8','f8']
+
+    ## Add the resultant onto the stack.
+    pm_table = Table(cols,names=colnames,dtype=dtypes)
+
+    spZall.close()
+
+    return pm_table
 
 def load_rr_data(f_rr,mode='BOSS',include_fits=False):
 
