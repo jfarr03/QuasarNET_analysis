@@ -62,22 +62,15 @@ table = Table(cols,colnames=colnames,dtype=dtypes)
 print(' -> reduced spAll data to these {} spectra'.format(len(table)))
 
 ## Get which files we care about.
-fi = []
 fiberid_dict = {}
 pm_set = list(set(zip(plate,mjd)))
 for p,m in pm_set:
-    pm_fi = glob.glob(reduxdir+'/{}/v5_7_?/spZall-{}-{}.fits'.format(p,p,m))
-    if len(pm_fi)==0:
-        print('WARN: could not find spZall file for plate,mjd={},{}; skipping'.format(p,m))
-        continue
-    elif len(fi)>1:
-        print('WARN: found more than 1 spZall file for plate,mjd={},{}; skipping'.format(p,m))
-        continue
-    else:
-        fi += pm_fi
-        w = np.in1d(plate,p) & np.in1d(mjd,m)
-        fiberid_dict[pm_fi[0]] = fiberid[w]
-print('INFO: found {} spZall files'.format(len(fi)))
+    w = (np.in1d(plate,p) & np.in1d(mjd,m))
+    fiberid_dict[(p,m)] = fiberid[w]
+
+def get_spzall_table(p,m,fiberids,nfit,nfit_keep):
+    f = glob.glob(reduxdir+'/{}/v5_7_?/spZall-{}-{}.fits'.format(p,p,m))[0]
+    return make_spzall_table(f,fiberids,nfit,nfit_keep)
 
 #Define a progress- and error-tracking functions.
 def log_result(retval):
@@ -90,13 +83,13 @@ def log_error(retval):
     print('Error:',retval)
     return
 
-tasks = [(f,fiberid_dict[f],nfit,nfit_keep) for f in fi]
+tasks = [(p,m,fiberid_dict[(p,m)],nfit,nfit_keep) for (p,m) in pm_set]
 #Run the multiprocessing pool
 if __name__ == '__main__':
     pool = Pool(processes=nproc)
     results = []
     for task in tasks:
-        pool.apply_async(make_spzall_table,task,callback=log_result,error_callback=log_error)
+        pool.apply_async(get_spzall_table,task,callback=log_result,error_callback=log_error)
     pool.close()
     pool.join()
 
