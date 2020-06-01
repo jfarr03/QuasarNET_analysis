@@ -421,7 +421,7 @@ def make_spzall_table(f,fiberids,nfit,nfit_keep):
     subtable = Table(spZall[1].data)['PLATE','MJD','FIBERID','CLASS','Z','RCHI2','DOF','ZWARNING']
     w = np.in1d(subtable['FIBERID'],fiberids)
     subtable = subtable[w]
-    f_targetid = f_targetid[w]
+    f_targetid = platemjdfiber2targetid(subtable['PLATE'].astype('i8'),subtable['MJD'].astype('i8'),subtable['FIBERID'].astype('i8'))
     nspec = len(set(f_targetid))
 
     ## Add a column for targetid.
