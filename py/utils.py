@@ -629,7 +629,7 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include
                 except:
                     print('WARN: could not find SQUEzE confidences in {}'.format(c))
         if include_fits_rr:
-            if 'RR' in c:
+            if ('RR' in c) or ('PIPE' in c):
                 try:
                     cols += [data[c]['FIT_SPECTYPE'],data[c]['FIT_Z'],data[c]['FIT_CHI2'],data[c]['FIT_ZWARN']]
                     colnames += ['FIT_SPECTYPE_{}'.format(c),'FIT_Z_{}'.format(c),'FIT_CHI2_{}'.format(c),'FIT_ZWARN_{}'.format(c)]
