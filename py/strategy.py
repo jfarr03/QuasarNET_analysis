@@ -427,7 +427,7 @@ def get_cf_qnplusrrplusvi(qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
         isqso[use_vi] = copy.deepcopy(temp_data_table['ISQSO_VI'].data[use_vi])
         z = z_rr_zwf
         if zchoice=='QN':
-            w_zqn = isqso_qn_lo&(~isqso_rr_zwt)
+            w_zqn = isqso_qn_lo&(isqso_rr_zwt)
             z[w_zqn] = z_qn_hi[w_zqn]
         z[use_vi] = copy.deepcopy(temp_data_table['Z_VI'].data[use_vi])
 
