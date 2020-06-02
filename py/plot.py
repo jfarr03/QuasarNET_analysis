@@ -475,7 +475,7 @@ def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,
     return fig, axs
 
 ## Function for Figure 4.
-def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(12,6),eff_area=None,dv_max=6000.,zcut=2.1,ymin=0.94,xmin=47.,xmax=52.,verbose=False,n_highz_desi=50,nydec=0,filters=None,marker_size=100,strategies_to_plot=None,npoints_plot=None,point_shift=0.004):
+def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(12,6),eff_area=None,dv_max=6000.,zcut=2.1,ymin=0.94,xmin=47.,xmax=52.,verbose=False,n_highz_desi=50,nydec=0,filters=None,marker_size=100,strategies_to_plot=None,npoints_plot=None,point_shift=0.004,auto_legend=True):
 
     if filters is None:
         filters = {None: np.ones(len(data_table)).astype(bool)}
@@ -606,27 +606,30 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
     axs[0,0].yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec))
 
     xlabel = r'number density of fibers allocated to reobservations [sqd$^{-1}$]'
-    if len(filters) == 1:
-        axs[0,0].legend(loc=4,ncol=1)
-        axs[0,0].set_xlabel(xlabel)
-    else:
-        artists = []
-        labels = []
-        filt_strategies = strategies[filt_name]
-        try:
-            markers = {filt_strategies[k]['n']: filt_strategies[k]['marker'] for k in filt_strategies.keys()}
-        except KeyError:
-            markers = {k.split(' ')[0]: filt_strategies[k]['marker'] for k in filt_strategies.keys()}
-        for s in markers.keys():
-            ## Add marker shapes for strategy
-            artists += [axs[0,0].scatter([],[],color='grey',marker=markers[s],s=marker_size)]
-            labels += ['{}'.format(s)]
-        fig.legend(artists,labels,loc='lower center',borderaxespad=0,bbox_to_anchor=(0.5,0.03),ncol=len(artists))
-        rect = (0,0.15,1.,1.)
-        plt.tight_layout(rect=rect)
-        fig.text(0.5,0.14,xlabel,ha='center',va='center')
-        for k, filt_name in enumerate(filters.keys()):
-            axs[0,k].set_title(filt_name)
+
+    if auto_legend:
+        if len(filters) == 1:
+            axs[0,0].legend(loc=4,ncol=1)
+            axs[0,0].set_xlabel(xlabel)
+            plt.tight_layout()
+        else:
+            artists = []
+            labels = []
+            filt_strategies = strategies[filt_name]
+            try:
+                markers = {filt_strategies[k]['n']: filt_strategies[k]['marker'] for k in filt_strategies.keys()}
+            except KeyError:
+                markers = {k.split(' ')[0]: filt_strategies[k]['marker'] for k in filt_strategies.keys()}
+            for s in markers.keys():
+                ## Add marker shapes for strategy
+                artists += [axs[0,0].scatter([],[],color='grey',marker=markers[s],s=marker_size)]
+                labels += ['{}'.format(s)]
+            fig.legend(artists,labels,loc='lower center',borderaxespad=0,bbox_to_anchor=(0.5,0.03),ncol=len(artists))
+            rect = (0,0.15,1.,1.)
+            plt.tight_layout(rect=rect)
+            fig.text(0.5,0.14,xlabel,ha='center',va='center')
+            for k, filt_name in enumerate(filters.keys()):
+                axs[0,k].set_title(filt_name)
 
     if need_colourbar:
         # Colour bar
