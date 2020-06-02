@@ -17,27 +17,13 @@ class Strategy():
 
     def predict(self,data_table,filter=None,c_kwargs={},class_true_name='CLASS_VI',z_true_name='Z_VI'):
 
-        start = time.time()
-        #print('start!')
         temp_data_table = filter_table(data_table,filter)
-        #print('checkpoint: filtered table', time.time()-start)
-        start = time.time()
 
         isqso, z = self.classifying_fn(temp_data_table,filter=None,**c_kwargs)
-        #print('checkpoint: got isqso,z', time.time()-start)
-        start = time.time()
 
         class_true = copy.deepcopy(temp_data_table[class_true_name].data)
-        #print('checkpoint: making class_true', time.time()-start)
-        start = time.time()
-
         z_true = copy.deepcopy(temp_data_table[z_true_name].data)
-        #print('checkpoint: making ztrue', time.time()-start)
-        start = time.time()
-
         prediction = Prediction(isqso,z,class_true,z_true)
-        #print('checkpoint: making Prediction obj', time.time()-start)
-        start = time.time()
 
         return prediction
 
@@ -441,7 +427,7 @@ def get_cf_qnplusrrplusvi(qn_name='QN',rr_name='RR',specid_name='SPEC_ID'):
         isqso[use_vi] = copy.deepcopy(temp_data_table['ISQSO_VI'].data[use_vi])
         z = z_rr_zwf
         if zchoice=='QN':
-            w_zqn = isqso_qn_hi&(~isqso_rr_zwt)
+            w_zqn = isqso_qn_lo&(~isqso_rr_zwt)
             z[w_zqn] = z_qn_hi[w_zqn]
         z[use_vi] = copy.deepcopy(temp_data_table['Z_VI'].data[use_vi])
 
