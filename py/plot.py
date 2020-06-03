@@ -636,7 +636,8 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
         cb = fig.colorbar(points,label=r'$c_{th}$',cax=cbar_ax)
         cb.mappable.set_clim(vmin=0.,vmax=1.)
 
-    plt.savefig(filename)
+    if filename is not None:
+        plt.savefig(filename)
 
     return fig, axs
 
