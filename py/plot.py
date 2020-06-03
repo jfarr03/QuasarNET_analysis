@@ -547,8 +547,8 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                 if verbose:
                     print(s)
                     print('true hz qsos:',nhighz_truth)
-                    print('obj flagged:',filt_strategies[s]['nhighz_flagged'][0])
-                    print('true hz qsos flagged:',filt_strategies[s]['nhighz_truth_flagged'][0])
+                    print('obj flagged:',filt_strategies[s]['nhighz_flagged'][i])
+                    print('true hz qsos flagged:',filt_strategies[s]['nhighz_truth_flagged'][i])
                     print('stars selected:',(isstar_truth&w).sum())
                     print('gal selected:',(isgal_truth&w).sum())
                     print('lowz qso selected:',(isqso_truth&(~highz_truth)&w).sum())
