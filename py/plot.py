@@ -537,8 +537,8 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
             if npoints>1:
                 need_colourbar = True
 
-            for i,w in enumerate(filt_strategies[s]['w']):
-                w &= filt
+            for i,w_s in enumerate(filt_strategies[s]['w']):
+                w = (w_s & filt)
                 filt_strategies[s]['nhighz_flagged'][i] = (w).sum()
                 filt_strategies[s]['nhighz_truth_flagged'][i] = (isqso_truth&highz_truth&w).sum()
 
