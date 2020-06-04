@@ -542,7 +542,9 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                 # If no eff_area is provided, normalise such that there are 50/sqd high-z QSOs.
                 n_highz_desi_filt = n_highz_desi[filt_name]
                 if eff_area is None:
-                    eff_area = nhighz_truth/n_highz_desi_filt
+                    eff_area_s = nhighz_truth/n_highz_desi_filt
+                else:
+                    eff_area_s = eff_area
 
                 # Get the filtered weights, compute the number of objects
                 # flagged and the number of highz QSOs flagged
@@ -550,7 +552,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                 filt_strategies[s]['nhighz_flagged'][i] = (w).sum()
                 filt_strategies[s]['nhighz_truth_flagged'][i] = (isqso_truth&highz_truth&w).sum()
                 filt_strategies[s]['nhighz_truth'][i] = nhighz_truth
-                filt_strategies[s]['eff_area'][i] = eff_area
+                filt_strategies[s]['eff_area'][i] = eff_area_s
 
                 if verbose:
                     print(s)
