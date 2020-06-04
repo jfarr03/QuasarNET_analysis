@@ -22,7 +22,7 @@ def get_data_filter(data_table,data_used):
     filt = np.ones(len(data_table)).astype(bool)
     for d in data_used:
         d_filt = (data_table['ISQSO_{}'.format(d)] | True)
-        ffilt = filt & d_filt
+        filt = filt & d_filt
 
     print('INFO: {:6d}/{:6d} ({:3.1%}) spectra used'.format(filt.sum(),len(filt),filt.sum()/len(filt)))
 
