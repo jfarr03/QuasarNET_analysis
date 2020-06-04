@@ -10,8 +10,8 @@ from multiprocessing import Pool
 
 ################################################################################
 
-rrdir = '/global/cfs/projectdirs/desi/users/jfarr/rrboss_dr12/runs/rr_dr12_randexp/output/'
-f_out = variables.OUTDIR+'/results/rr_results/rr_test_randexp.fits'
+rrdir = '/global/cfs/projectdirs/desi/users/jfarr/rrboss_dr12/runs/rr_dr12_coadd/output/'
+f_out = variables.OUTDIR+'/results/rr_results/rr_sdr12q_coadd.fits'
 nproc = 32
 
 f_sdr12q = '/global/projecta/projectdirs/sdss/data/sdss/dr12/boss/qso/DR12Q/Superset_DR12Q.fits'
