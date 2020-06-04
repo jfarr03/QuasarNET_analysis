@@ -657,7 +657,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
     if need_colourbar:
         # Colour bar
         fig.subplots_adjust(right=0.87)
-        bbox = ax.get_position()
+        bbox = axs[0,0].get_position()
         corners = bbox.corners()
         bottom = corners[2][1]
         height = corners[3][1] - corners[2][1]
