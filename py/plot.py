@@ -506,6 +506,10 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                                       }
             strategies_to_plot[filt_name] = filt_strategies_to_plot
 
+    if point_shift==0.:
+        print('WARN: point_shift={} is problematic, changing to 0.004 (use "None" if no shift wanted)'.format(point_shift))
+        point_shift = 0.004
+
     fig, axs = plt.subplots(1,len(filters),figsize=figsize,squeeze=False,sharey=True)
 
     # determine the true classifications
@@ -601,8 +605,10 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                 axs[0,k].plot(reobs_dens,pli,c='grey',marker=strategies_to_plot[filt_name][s]['marker'],label=s,zorder=2,ms=np.sqrt(marker_size))
                 points = axs[0,k].scatter(reobs_dens[inds],pli[inds],c=strategies_to_plot[filt_name][s]['color'],marker=strategies_to_plot[filt_name][s]['marker'],s=marker_size,zorder=3)
             else:
-                while (reobs_dens,pli) in points_occupied:
-                    reobs_dens *= 1.+point_shift
+                if point_shift is not None:
+                    while (reobs_dens,pli) in points_occupied:
+                        print('WARN: strategy {} has been shifted by a factor of {} in reobs dens to avoid point overlap'.format(s,point_shift))
+                        reobs_dens *= 1.+point_shift
                 points = axs[0,k].scatter(reobs_dens,pli,c=strategies_to_plot[filt_name][s]['color'],marker=strategies_to_plot[filt_name][s]['marker'],s=marker_size,label=s,zorder=3)
                 points_occupied += [(reobs_dens,pli)]
 
@@ -651,7 +657,11 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
     if need_colourbar:
         # Colour bar
         fig.subplots_adjust(right=0.87)
-        cbar_ax = fig.add_axes([0.89, 0.15, 0.02, 0.7])
+        bbox = ax.get_position()
+        corners = bbox.corners()
+        bottom = corners[2][1]
+        height = corners[3][1] - corners[2][1]
+        cbar_ax = fig.add_axes([0.89, bottom, 0.02, height])
         cb = fig.colorbar(points,label=r'$c_{th}$',cax=cbar_ax)
         cb.mappable.set_clim(vmin=0.,vmax=1.)
 
