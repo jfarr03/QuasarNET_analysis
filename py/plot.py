@@ -663,7 +663,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
         height = corners[3][1] - corners[2][1]
         bar_height = height*0.9
         bar_bottom = middle - bar_height/2.
-        cbar_ax = fig.add_axes([0.89, bottom, 0.02, height])
+        cbar_ax = fig.add_axes([0.89, bar_bottom, 0.02, bar_height])
         cb = fig.colorbar(points,label=r'$c_{th}$',cax=cbar_ax)
         cb.mappable.set_clim(vmin=0.,vmax=1.)
 
