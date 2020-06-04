@@ -564,7 +564,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                     print('lowz qso selected:',(isqso_truth&(~highz_truth)&w).sum())
                     print('--------------------------------------------------------------------------------')
                     print('frac true hz flagged:',(filt_strategies[s]['nhighz_truth_flagged'][i]/nhighz_truth).round(4))
-                    print('num dens fibres flagged:',(filt_strategies[s]['nhighz_flagged'][i]/eff_area).round(4))
+                    print('num dens fibres flagged:',(filt_strategies[s]['nhighz_flagged'][i]/eff_area_s).round(4))
                     print('')
 
         for s in strategies_to_plot[filt_name].keys():
