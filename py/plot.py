@@ -518,15 +518,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
     for k,filt_name in enumerate(filters.keys()):
 
         filt_strategies = strategies[filt_name]
-
         filt = filters[filt_name] & (~isbad)
-        nhighz_truth = (isqso_truth & highz_truth & filt).sum()
-
-        n_highz_desi_filt = n_highz_desi[filt_name]
-
-        # If no eff_area is provided, normalise such that there are 50/sqd high-z QSOs.
-        if eff_area is None:
-            eff_area = nhighz_truth/n_highz_desi_filt
 
         for s in filt_strategies.keys():
 
@@ -538,7 +530,21 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                 need_colourbar = True
 
             for i,w_s in enumerate(filt_strategies[s]['w']):
-                w = (w_s & filt)
+
+                # Make a strategy filter to allow for masked columns.
+                filt_s = filt & (w_s|True)
+
+                #Calculate the number of true high-z QSOs given the strategy filter.
+                nhighz_truth = (isqso_truth & highz_truth & filt_s).sum()
+
+                # If no eff_area is provided, normalise such that there are 50/sqd high-z QSOs.
+                n_highz_desi_filt = n_highz_desi[filt_name]
+                if eff_area is None:
+                    eff_area = nhighz_truth/n_highz_desi_filt
+
+                # Get the filtered weights, compute the number of objects
+                # flagged and the number of highz QSOs flagged
+                w = (w_s & filt_s)
                 filt_strategies[s]['nhighz_flagged'][i] = (w).sum()
                 filt_strategies[s]['nhighz_truth_flagged'][i] = (isqso_truth&highz_truth&w).sum()
 
@@ -550,6 +556,9 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                     print('stars selected:',(isstar_truth&w).sum())
                     print('gal selected:',(isgal_truth&w).sum())
                     print('lowz qso selected:',(isqso_truth&(~highz_truth)&w).sum())
+                    print('--------------------------------------------------------------------------------')
+                    print('frac true hz flagged:',(filt_strategies[s]['nhighz_flagged'][i]/nhighz_truth).round(4))
+                    print('num dens fibres flagged:',(filt_strategies[s]['nhighz_flagged'][i]/eff_area).round(4))
                     print('')
 
         for s in strategies_to_plot[filt_name].keys():
