@@ -659,8 +659,10 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
         fig.subplots_adjust(right=0.87)
         bbox = axs[0,0].get_position()
         corners = bbox.corners()
-        bottom = corners[2][1]
+        middle = (corners[3][1] + corners[2][1])/2.
         height = corners[3][1] - corners[2][1]
+        bar_height = height*0.9
+        bar_bottom = middle - bar_height/2.
         cbar_ax = fig.add_axes([0.89, bottom, 0.02, height])
         cb = fig.colorbar(points,label=r'$c_{th}$',cax=cbar_ax)
         cb.mappable.set_clim(vmin=0.,vmax=1.)
@@ -682,6 +684,9 @@ def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6
 
         for s in strategies.keys():
 
+            # Make a filter to deal with masked arrays.
+            filt = (strategies[s]['isqso']|True)
+
             z_s = strategies[s]['z']
             w_s = strategies[s]['isqso']
 
@@ -697,18 +702,18 @@ def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6
             dv = strategy.get_dv(z_s,data_table['Z_VI'],data_table['Z_VI'],use_abs=True)
             zgood = (dv <= dv_max)
 
-            strategies[s]['ncat'] = (w_s & in_zbin_zs & (~isbad)).sum()
+            strategies[s]['ncat'] = (w_s & in_zbin_zs & (~isbad) & filt).sum()
 
-            strategies[s]['nstar'] = (w_s & in_zbin_zs & isstar_truth).sum()
-            strategies[s]['ngalwrongz'] = (w_s & ~zgood & in_zbin_zs & isgal_truth).sum()
-            strategies[s]['nqsowrongz'] = (w_s & ~zgood & in_zbin_zs & isqso_truth).sum()
-            strategies[s]['ncorrectwrongzbin'] = (w_s & zgood & in_zbin_zs & (isqso_truth | isgal_truth) & ~in_zbin_zvi).sum()
+            strategies[s]['nstar'] = (w_s & in_zbin_zs & isstar_truth & filt).sum()
+            strategies[s]['ngalwrongz'] = (w_s & ~zgood & in_zbin_zs & isgal_truth & filt).sum()
+            strategies[s]['nqsowrongz'] = (w_s & ~zgood & in_zbin_zs & isqso_truth & filt).sum()
+            strategies[s]['ncorrectwrongzbin'] = (w_s & zgood & in_zbin_zs & (isqso_truth | isgal_truth) & ~in_zbin_zvi & filt).sum()
 
             strategies[s]['nwrong'] = (strategies[s]['nstar'] + strategies[s]['ngalwrongz']
                                         + strategies[s]['nqsowrongz'] + strategies[s]['ncorrectwrongzbin'])
 
-            com_num = (w_s & zgood & in_zbin_zs & isqso_truth & in_zbin_zvi).sum()
-            com_denom = (isqso_truth & in_zbin_zvi).sum()
+            com_num = (w_s & zgood & in_zbin_zs & isqso_truth & in_zbin_zvi & filt).sum()
+            com_denom = (isqso_truth & in_zbin_zvi & filt).sum()
             strategies[s]['completeness'] = com_num/com_denom
 
             if ('RR' in s) and verbose:
