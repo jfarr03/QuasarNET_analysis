@@ -16,6 +16,18 @@ colours = {'C0': '#F5793A',
            'C3': '#0F2080',
           }
 
+def get_data_filter(data_table,data_used):
+
+    # Determine the filter.
+    filt = np.ones(len(data_table)).astype(bool)
+    for d in data_used:
+        d_filt = (data_table['ISQSO_{}'.format(d)] | True)
+        filt &= d_filt
+
+    print('INFO: {:6d}/{:6d} ({:3.1%}) spectra used'.format(filt.sum(),len(filt),filt.sum()/len(filt)))
+
+    return filt
+
 def get_data_dict(data_file,truth_file,train_file,nspec=None,nspec_method='first',seed=0):
 
     ## set nspec to the number of spectra to load or to None for the full sample
