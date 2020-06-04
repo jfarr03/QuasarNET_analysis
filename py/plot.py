@@ -525,6 +525,8 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
             npoints = len(filt_strategies[s]['w'])
             filt_strategies[s]['nhighz_flagged'] = np.zeros(npoints)
             filt_strategies[s]['nhighz_truth_flagged'] = np.zeros(npoints)
+            filt_strategies[s]['nhighz_truth'] = np.zeros(npoints)
+            filt_strategies[s]['eff_area'] = np.zeros(npoints)
 
             if npoints>1:
                 need_colourbar = True
@@ -547,6 +549,8 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                 w = (w_s & filt_s)
                 filt_strategies[s]['nhighz_flagged'][i] = (w).sum()
                 filt_strategies[s]['nhighz_truth_flagged'][i] = (isqso_truth&highz_truth&w).sum()
+                filt_strategies[s]['nhighz_truth'][i] = nhighz_truth
+                filt_strategies[s]['eff_area'][i] = eff_area
 
                 if verbose:
                     print(s)
@@ -557,7 +561,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                     print('gal selected:',(isgal_truth&w).sum())
                     print('lowz qso selected:',(isqso_truth&(~highz_truth)&w).sum())
                     print('--------------------------------------------------------------------------------')
-                    print('frac true hz flagged:',(filt_strategies[s]['nhighz_flagged'][i]/nhighz_truth).round(4))
+                    print('frac true hz flagged:',(filt_strategies[s]['nhighz_truth_flagged'][i]/nhighz_truth).round(4))
                     print('num dens fibres flagged:',(filt_strategies[s]['nhighz_flagged'][i]/eff_area).round(4))
                     print('')
 
@@ -565,15 +569,19 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
 
             nhighz_flagged = 0
             nhighz_truth_flagged = 0
+            nhighz_truth = 0
+            eff_area = 0
 
             for ss in strategies_to_plot[filt_name][s]['strategies']:
 
                 nhighz_flagged += (filt_strategies[ss]['nhighz_flagged'])
                 nhighz_truth_flagged += (filt_strategies[ss]['nhighz_truth_flagged'])
+                nhighz_truth += (filt_strategies[ss]['nhighz_truth'])
+                eff_area += (filt_strategies[ss]['eff_area'])
 
-            n_strategies_combined = len(strategies_to_plot[filt_name][s]['strategies'])
-            reobs_dens = nhighz_flagged/(eff_area*n_strategies_combined)
-            pli = nhighz_truth_flagged/(nhighz_truth*n_strategies_combined)
+            #n_strategies_combined = len(strategies_to_plot[filt_name][s]['strategies'])
+            reobs_dens = nhighz_flagged/(eff_area) #*n_strategies_combined)
+            pli = nhighz_truth_flagged/(nhighz_truth) #*n_strategies_combined)
 
             npoints = len(reobs_dens)
             if npoints>1:
