@@ -103,6 +103,12 @@ rr_data.sort(['TARGETID'])
 targetid_sdr12q.sort()
 assert (rr_data['TARGETID'].data==targetid_sdr12q).all()
 
+# Remove objects that have zwarn bit 9 (i.e. no data)
+w = (rr_data['ZWARN'] & 2**9)==0
+print('INFO: Found {} spectra with zwarn bit 9 activated (i.e. no data as all pixel ivars 0)'.format((~w).sum()))
+rr_data = rr_data[w]
+print(' -> removed these spectra from dataset, {} remain'.format(len(rr_data)))
+
 # Add plate, mjd, fiber back in, and get DR12 THING_IDs
 plate,mjd,fiber = targetid2platemjdfiber(rr_data['TARGETID'])
 platemjdfiber = list(zip(plate,mjd,fiber))
