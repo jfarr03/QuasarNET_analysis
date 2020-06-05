@@ -206,7 +206,7 @@ def plot_pur_com_vs_cth_zbin(data_table,strategies,filename=None,zbins=[(None,2.
         labels += [strategies[s]['n']]
 
     fig.legend(artists,labels,loc='lower center',borderaxespad=0,bbox_to_anchor=(0.5,0.03),ncol=len(artists))
-    rect = (0,0.15,1.,1.)
+    rect = (0,0.1,1.,1.)
     plt.tight_layout(rect=rect)
 
     # Save.
