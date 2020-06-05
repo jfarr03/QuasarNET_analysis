@@ -629,7 +629,7 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include
             if 'QN' in c:
                 try:
                     cols += [data[c]['CBAL'],data[c]['Z_LINES_BAL']]
-                    colnames += ['CBAL_{}'.format(c)'Z_LINES_BAL_{}'.format(c)]
+                    colnames += ['CBAL_{}'.format(c),'Z_LINES_BAL_{}'.format(c)]
                 except:
                     print('WARN: could not find QuasarNET BAL confidences in {}'.format(c))
         if include_p_sq:
