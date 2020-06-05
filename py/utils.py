@@ -412,7 +412,7 @@ def make_rr_table(f_zbest,f_rr):
         fit_dof += [zfit[w]['npixels'].data - zfit[w]['ncoeff'].data]
 
     ## Add columns to the table.
-    table.add_column(Column(data=fit_spectype,name='FIT_SPECTYPE',dtype=str))
+    table.add_column(Column(data=fit_spectype,name='FIT_SPECTYPE',dtype='<U8'))
     table.add_column(Column(data=fit_z,name='FIT_Z',dtype=float))
     table.add_column(Column(data=fit_chi2,name='FIT_CHI2',dtype=float))
     table.add_column(Column(data=fit_zwarn,name='FIT_ZWARN',dtype=int))
@@ -455,7 +455,7 @@ def make_spzall_table(f,fiberids,nfit,nfit_keep):
     ## Make columns and colnames for the extra data.
     cols = [f_targetid_se,spectype_arr,z_arr,rchi2_arr,dof_arr,zwarn_arr,chi2_arr]
     colnames = ['TARGETID','FIT_SPECTYPE','FIT_Z','FIT_RCHI2','FIT_DOF','FIT_ZWARN','FIT_CHI2']
-    dtypes = ['i8',str,'f8','f8','i8','i8','f8']
+    dtypes = ['i8','<U8','f8','f8','i8','i8','f8']
 
     ## Add the resultant onto the stack.
     pm_table = Table(cols,names=colnames,dtype=dtypes)
@@ -490,7 +490,7 @@ def load_rr_data(f_rr,mode='BOSS',include_fits=False):
     if include_fits:
         cols += [rr[1].data['FIT_SPECTYPE'],rr[1].data['FIT_Z'],rr[1].data['FIT_CHI2'],rr[1].data['FIT_ZWARN'],rr[1].data['FIT_RCHI2']]
         colnames += ['FIT_SPECTYPE','FIT_Z','FIT_CHI2','FIT_ZWARN','FIT_RCHI2']
-        dtypes += [str,'f8','f8','i8','f8']
+        dtypes += ['<U8','f8','f8','i8','f8']
 
     rr_data = Table(cols,names=colnames,dtype=dtypes)
 
