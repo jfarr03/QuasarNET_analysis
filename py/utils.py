@@ -416,7 +416,7 @@ def make_rr_table(f_zbest,f_rr):
     table.add_column(Column(data=fit_z,name='FIT_Z',dtype=float))
     table.add_column(Column(data=fit_chi2,name='FIT_CHI2',dtype=float))
     table.add_column(Column(data=fit_zwarn,name='FIT_ZWARN',dtype=int))
-    #table.add_column(Column(data=fit_dof,name='FIT_DOF',dtype=int))
+    table.add_column(Column(data=fit_dof,name='FIT_DOF',dtype=int))
 
     ## Calculate reduced chi2 values and add to table.
     rchi2 = fit_chi2/fit_dof
@@ -488,9 +488,9 @@ def load_rr_data(f_rr,mode='BOSS',include_fits=False):
     dtypes = ['i8','f8','U8','bool','i8','i8']
 
     if include_fits:
-        cols += [rr[1].data['FIT_SPECTYPE'],rr[1].data['FIT_Z'],rr[1].data['FIT_CHI2'],rr[1].data['FIT_ZWARN'],rr[1].data['FIT_RCHI2'],rr[1].data['FIT_DOF']]
-        colnames += ['FIT_SPECTYPE','FIT_Z','FIT_CHI2','FIT_ZWARN','FIT_RCHI2','FIT_DOF']
-        dtypes += [str,'f8','f8','i8','f8','i8']
+        cols += [rr[1].data['FIT_SPECTYPE'],rr[1].data['FIT_Z'],rr[1].data['FIT_CHI2'],rr[1].data['FIT_ZWARN'],rr[1].data['FIT_RCHI2']]
+        colnames += ['FIT_SPECTYPE','FIT_Z','FIT_CHI2','FIT_ZWARN','FIT_RCHI2']
+        dtypes += [str,'f8','f8','i8','f8']
 
     rr_data = Table(cols,names=colnames,dtype=dtypes)
 
