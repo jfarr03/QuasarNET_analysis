@@ -416,10 +416,10 @@ def make_rr_table(f_zbest,f_rr):
     table.add_column(Column(data=fit_z,name='FIT_Z',dtype=float))
     table.add_column(Column(data=fit_chi2,name='FIT_CHI2',dtype=float))
     table.add_column(Column(data=fit_zwarn,name='FIT_ZWARN',dtype=int))
-    table.add_column(Column(data=fit_dof,name='FIT_DOF',dtype=int))
+    #table.add_column(Column(data=fit_dof,name='FIT_DOF',dtype=int))
 
     ## Calculate reduced chi2 values and add to table.
-    rchi2 = table['FIT_CHI2'].data/table['FIT_DOF'].data
+    rchi2 = fit_chi2/fit_dof
     table.add_column(Column(data=rchi2,name='FIT_RCHI2',dtype=float))
 
     return table
@@ -526,13 +526,13 @@ def load_qn_data(f_qn,n_detect=1,c_th=0.8,include_c=False,include_cbal=False,mod
     dtypes = ['i8','f8','U8','bool','i8']
 
     if include_c:
-        cols += [data['C_LINES']]
-        colnames += ['C']
-        dtypes += ['f8']
+        cols += [data['C_LINES'],data['Z_LINES']]
+        colnames += ['C','Z_LINES']
+        dtypes += ['f8','f8']
     if include_cbal:
-        cols += [data['C_LINES_BAL']]
-        colnames += ['CBAL']
-        dtypes += ['f8']
+        cols += [data['C_LINES_BAL'],data['Z_LINES_BAL']]
+        colnames += ['CBAL','Z_LINES_BAL']
+        dtypes += ['f8','f8']
 
     qn_data = Table(cols,names=colnames,dtype=dtypes)
 
