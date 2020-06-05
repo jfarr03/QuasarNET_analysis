@@ -621,15 +621,15 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include
         if include_c_qn:
             if 'QN' in c:
                 try:
-                    cols += [data[c]['C']]
-                    colnames += ['C_{}'.format(c)]
+                    cols += [data[c]['C'],data[c]['Z_LINES']]
+                    colnames += ['C_{}'.format(c),'Z_LINES_{}'.format(c)]
                 except:
                     print('WARN: could not find QuasarNET confidences in {}'.format(c))
         if include_cbal_qn:
             if 'QN' in c:
                 try:
-                    cols += [data[c]['CBAL']]
-                    colnames += ['CBAL_{}'.format(c)]
+                    cols += [data[c]['CBAL'],data[c]['Z_LINES_BAL']]
+                    colnames += ['CBAL_{}'.format(c)'Z_LINES_BAL_{}'.format(c)]
                 except:
                     print('WARN: could not find QuasarNET BAL confidences in {}'.format(c))
         if include_p_sq:
@@ -642,8 +642,8 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include
         if include_fits_rr:
             if ('RR' in c) or ('PIPE' in c):
                 try:
-                    cols += [data[c]['FIT_SPECTYPE'],data[c]['FIT_Z'],data[c]['FIT_CHI2'],data[c]['FIT_ZWARN'],data[c]['FIT_RCHI2'],data[c]['FIT_DOF']]
-                    colnames += ['FIT_SPECTYPE_{}'.format(c),'FIT_Z_{}'.format(c),'FIT_CHI2_{}'.format(c),'FIT_ZWARN_{}'.format(c),'FIT_RCHI2_{}'.format(c),'FIT_DOF_{}'.format(c)]
+                    cols += [data[c]['FIT_SPECTYPE'],data[c]['FIT_Z'],data[c]['FIT_CHI2'],data[c]['FIT_ZWARN'],data[c]['FIT_RCHI2']]
+                    colnames += ['FIT_SPECTYPE_{}'.format(c),'FIT_Z_{}'.format(c),'FIT_CHI2_{}'.format(c),'FIT_ZWARN_{}'.format(c),'FIT_RCHI2_{}'.format(c)]
                 except:
                     print('WARN: could not find redrock fit data in {}'.format(c))
         if ('RR' in c) or ('PIPE' in c):
