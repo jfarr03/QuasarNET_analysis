@@ -216,7 +216,7 @@ def plot_pur_com_vs_cth_zbin(data_table,strategies,filename=None,zbins=[(None,2.
     return fig, axs
 
 ## Function for Figure 2.
-def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec=2,figsize=(12,12),ymin=0.98,ymax=1.,verbose=False,npanel=2,norm_dvhist=True,strategies_to_plot=None,c_th=None,show_std=False,dv_c_th=0.5):
+def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec=2,figsize=(12,12),ymin=0.98,ymax=1.,verbose=False,npanel=2,norm_dvhist=True,strategies_to_plot=None,c_th=None,show_std=False,n_std_scale=None,dv_c_th=0.5):
 
     if c_th is None:
         c_th = np.linspace(0.,1.,101)
@@ -475,7 +475,7 @@ def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,
     return fig, axs
 
 ## Function for Figure 4.
-def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(12,6),eff_area=None,dv_max=6000.,zcut=2.1,ymin=0.94,xmin=47.,xmax=52.,verbose=False,n_highz_desi=50,nydec=0,filters=None,marker_size=100,strategies_to_plot=None,npoints_plot=None,point_shift=0.004,auto_legend=True):
+def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(12,6),eff_area=None,dv_max=6000.,zcut=2.1,ymin=0.94,xmin=47.,xmax=52.,verbose=False,n_highz_desi=50,nydec=0,filters=None,marker_size=100,strategies_to_plot=None,npoints_plot=None,point_shift=0.004,auto_legend=True,vmin=0.,vmax=1.):
 
     if filters is None:
         filters = {None: np.ones(len(data_table)).astype(bool)}
@@ -665,7 +665,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
         bar_bottom = middle - bar_height/2.
         cbar_ax = fig.add_axes([0.89, bar_bottom, 0.02, bar_height])
         cb = fig.colorbar(points,label=r'$c_{th}$',cax=cbar_ax)
-        cb.mappable.set_clim(vmin=0.,vmax=1.)
+        cb.mappable.set_clim(vmin=vmin,vmax=vmax)
 
     if filename is not None:
         plt.savefig(filename)
