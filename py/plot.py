@@ -475,7 +475,7 @@ def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,
     return fig, axs
 
 ## Function for Figure 4.
-def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(12,6),eff_area=None,dv_max=6000.,zcut=2.1,ymin=0.94,xmin=47.,xmax=52.,verbose=False,n_highz_desi=50,nydec=0,filters=None,marker_size=100,strategies_to_plot=None,npoints_plot=None,point_shift=0.004,auto_legend=True,vmin=0.,vmax=1.,legend_loc=4,ncol=1):
+def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(12,6),eff_area=None,dv_max=6000.,zcut=2.1,ymin=0.94,xmin=47.,xmax=52.,verbose=False,n_highz_desi=50,nydec=0,filters=None,marker_size=100,strategies_to_plot=None,npoints_plot=None,point_shift=0.004,auto_legend=True,vmin=0.,vmax=1.,legend_loc=4,ncol=1,cbar_label=r'$c_{th}$'):
 
     if filters is None:
         filters = {None: np.ones(len(data_table)).astype(bool)}
@@ -628,7 +628,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
     axs[0,0].set_ylim(ymin,1.0+0.05*(1.-ymin))
     axs[0,0].yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec))
 
-    xlabel = r'number density of fibers allocated to reobservations [sqd$^{-1}$]'
+    xlabel = r'number density of fibres allocated to reobservations [sqd$^{-1}$]'
 
     if auto_legend:
         if len(filters) == 1:
@@ -664,7 +664,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
         bar_height = height*0.9
         bar_bottom = middle - bar_height/2.
         cbar_ax = fig.add_axes([0.89, bar_bottom, 0.02, bar_height])
-        cb = fig.colorbar(points,label=r'$c_{th}$',cax=cbar_ax)
+        cb = fig.colorbar(points,label=cbar_label,cax=cbar_ax)
         cb.mappable.set_clim(vmin=vmin,vmax=vmax)
 
     if filename is not None:
