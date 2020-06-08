@@ -675,7 +675,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
     return fig, axs
 
 ## Function for Figure 5.
-def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6),zbins=[(0.9,2.1),(2.1,None)],desi_nqso=[1.3*10**6,0.8*10**6],dv_max=6000.,show_correctwrongzbin=False,verbose=False,nydec=0,ymax=0.1,filter=None):
+def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6),zbins=[(0.9,2.1),(2.1,None)],desi_nqso=[1.3*10**6,0.8*10**6],dv_max=6000.,show_correctwrongzbin=False,verbose=False,nydec=0,ymax=0.1,filter=None,bar_heights=True):
 
     fig, axs = plt.subplots(1,len(zbins),figsize=figsize,sharey=True,squeeze=False)
 
@@ -748,11 +748,12 @@ def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6
         if show_correctwrongzbin:
             axs[0,i].bar(range(len(strategies)),pcorrectwrongzbin,bottom=pstar+pgalwrongz+pqsowrongz,color=utils.colours['C3'],label='correct w.\nwrong $z$-bin',width=0.5)
 
-        bar_heights = pstar+pgalwrongz+pqsowrongz
-        if show_correctwrongzbin:
-            bar_heights += pcorrectwrongzbin
-
-        utils.autolabel_bars(axs[0,i],bars,numbers=bar_heights,heights=bar_heights,percentage=True,above=True)
+        if add_bar_heights:
+            bar_heights = pstar+pgalwrongz+pqsowrongz
+            if show_correctwrongzbin:
+                bar_heights += pcorrectwrongzbin
+            utils.autolabel_bars(axs[0,i],bars,numbers=bar_heights,heights=bar_heights,percentage=True,above=True)
+            
         DESI_ncat_presents = []
         for j,c in enumerate(completeness):
             pcon = nwrong[j]/ncat[j]
