@@ -419,7 +419,7 @@ def make_rr_table(f_zbest,f_rr):
     table.add_column(Column(data=fit_dof,name='FIT_DOF',dtype=int))
 
     ## Calculate reduced chi2 values and add to table.
-    rchi2 = fit_chi2/fit_dof
+    rchi2 = table['FIT_CHI2']/table['FIT_DOF']
     table.add_column(Column(data=rchi2,name='FIT_RCHI2',dtype=float))
 
     return table
