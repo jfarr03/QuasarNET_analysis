@@ -888,11 +888,17 @@ def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsiz
 
         completeness = np.array([strategies[s]['completeness'] for s in strategies.keys()])
 
-        axs[0,i].bar(c_th,pstar,color=utils.colours['C0'],label='star',width=0.5)
+        axs[0,i].plot(c_th,pstar,color=utils.colours['C0'],label='star')
+        axs[0,i].plot(c_th,pgalwrongz+pstar,color=utils.colours['C1'],label='galaxy w.\nwrong $z$')
+        bars = axs[0,i].plot(c_th,pqsowrongz+pstar+pgalwrongz,color=utils.colours['C2'],label='QSO w.\nwrong $z$')
+        if show_correctwrongzbin:
+            axs[0,i].plot(c_th,pcorrectwrongzbin+pstar+pgalwrongz+pqsowrongz,color=utils.colours['C3'],label='correct w.\nwrong $z$-bin')
+
+        """axs[0,i].bar(c_th,pstar,color=utils.colours['C0'],label='star',width=0.5)
         axs[0,i].bar(c_th,pgalwrongz,bottom=pstar,color=utils.colours['C1'],label='galaxy w.\nwrong $z$',width=0.5)
         bars = axs[0,i].bar(c_th,pqsowrongz,bottom=pstar+pgalwrongz,color=utils.colours['C2'],label='QSO w.\nwrong $z$',width=0.5)
         if show_correctwrongzbin:
-            axs[0,i].bar(c_th,pcorrectwrongzbin,bottom=pstar+pgalwrongz+pqsowrongz,color=utils.colours['C3'],label='correct w.\nwrong $z$-bin',width=0.5)
+            axs[0,i].bar(c_th,pcorrectwrongzbin,bottom=pstar+pgalwrongz+pqsowrongz,color=utils.colours['C3'],label='correct w.\nwrong $z$-bin',width=0.5)"""
 
         """DESI_ncat_presents = []
         for j,c in enumerate(completeness):
