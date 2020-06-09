@@ -928,10 +928,12 @@ def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsiz
         axs[0,i].set_ylim(0,ymax)
         zbin_label = get_label_from_zbin(zbin)
         axs[0,i].text(0.5,1.05,zbin_label,ha='center',va='center',transform=axs[0,i].transAxes)
+        axs[0,i].axvline(x=0.5,c='lightgrey',ls='--')
 
         axs[1,i].set_xlabel(r'$c_{th}$')
         axs[1,i].yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec2))
         axs[1,i].set_ylim(ymin2,ymax2)
+        axs[1,i].axvline(x=0.5,c='lightgrey',ls='--')
 
         """axs[2,i].set_xlabel(r'$c_{th}$')
         #axs[1,i].yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec2))
