@@ -245,7 +245,7 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
 
     n_dv = 51
     dv_bins = np.linspace(-3000.,3000,n_dv)
-    dv_mids = (dv_bins[1:] + dv_bins[:-1])/2.
+    dv_widths = (dv_bins[1:] - dv_bins[:-1])
 
     artists = []
     labels = []
@@ -335,10 +335,8 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
             axs[pur_panel].fill_between(c_th,mean_pur-std_pur,mean_pur+std_pur,color=utils.colours['C0'],alpha=0.25,zorder=1)
             axs[com_panel].fill_between(c_th,mean_com-std_com,mean_com+std_com,color=utils.colours['C1'],alpha=0.25,zorder=1)
 
-        hists = [np.histogram(indiv_dv,bins=dv_bins)[0] for indiv_dv in dv]
+        hists = [np.histogram(indiv_dv,bins=dv_bins,density=norm_dvhist)[0] for indiv_dv in dv]
         hists = np.vstack(hists)
-        if norm_dvhist:
-            hists = hists/((hists*(dv_mids.reshape(1,len(dv_mids)))).sum(axis=1)[:,None])
         mean_hist = np.mean(hists,axis=0)
         if show_std:
             std_hist = np.std(hists,axis=0)
