@@ -890,12 +890,16 @@ def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsiz
         completeness = np.array([strategies[s]['completeness'] for s in strategies.keys()])
 
         axs[0,i].fill_between(c_th,np.zeros(pstar.shape),pstar,color=utils.colours['C0'],label='star',alpha=0.5,zorder=4)
+        axs[0,i].plot(c_th,pstar,color=utils.colours['C0'],zorder=14)
         axs[0,i].fill_between(c_th,pstar,pgalwrongz+pstar,color=utils.colours['C1'],label='galaxy w.\nwrong $z$',alpha=0.5,zorder=3)
+        axs[0,i].plot(c_th,pgalwrongz+pstar,color=utils.colours['C1'],zorder=13)
         bars = axs[0,i].fill_between(c_th,pstar+pgalwrongz,pqsowrongz+pstar+pgalwrongz,color=utils.colours['C2'],label='QSO w.\nwrong $z$',alpha=0.5,zorder=2)
+        axs[0,i].plot(c_th,pqsowrongz+pgalwrongz+pstar,color=utils.colours['C2'],zorder=12)
         if show_correctwrongzbin:
-            axs[0,i].fill_between(c_th,pstar+pgalwrongz+pqsowrongz,pcorrectwrongzbin+pstar+pgalwrongz+pqsowrongz,color=utils.colours['C3'],label='correct w.\nwrong $z$-bin',alpha=0.5,zorder=1)
+            bars = axs[0,i].fill_between(c_th,pstar+pgalwrongz+pqsowrongz,pcorrectwrongzbin+pstar+pgalwrongz+pqsowrongz,color=utils.colours['C3'],label='correct w.\nwrong $z$-bin',alpha=0.5,zorder=1)
+            axs[0,i].plot(c_th,pcorrectwrongzbin+pqsowrongz+pgalwrongz+pstar,color=utils.colours['C3'],zorder=11)
 
-        axs[1,i].plot(c_th,completeness,color=utils.colours['C3'])
+        axs[1,i].plot(c_th,completeness,color=utils.colours['C3'],zorder=10)
         axs[1,i].axhline(y=1.0,c='lightgrey',zorder=-1)
 
         """axs[0,i].plot(c_th,pstar,color=utils.colours['C0'],label='star')
@@ -928,12 +932,12 @@ def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsiz
         axs[0,i].set_ylim(0,ymax)
         zbin_label = get_label_from_zbin(zbin)
         axs[0,i].text(0.5,1.05,zbin_label,ha='center',va='center',transform=axs[0,i].transAxes)
-        axs[0,i].axvline(x=0.5,c='lightgrey',ls='--')
+        axs[0,i].axvline(x=0.5,c='lightgrey',ls='--',zorder=5)
 
         axs[1,i].set_xlabel(r'$c_{th}$')
         axs[1,i].yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec2))
         axs[1,i].set_ylim(ymin2,ymax2)
-        axs[1,i].axvline(x=0.5,c='lightgrey',ls='--')
+        axs[1,i].axvline(x=0.5,c='lightgrey',ls='--',zorder=5)
 
         """axs[2,i].set_xlabel(r'$c_{th}$')
         #axs[1,i].yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec2))
