@@ -820,7 +820,7 @@ def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6
 def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsize=(12,8),zbins=[(0.9,2.1),(2.1,None)],desi_nqso=[1.3*10**6,0.8*10**6],dv_max=6000.,show_correctwrongzbin=False,verbose=False,nydec=0,nydec2=0,ymax=0.1,ymin2=0.97,ymax2=1.005,filter=None,c_th=None):
 
     fig, axs = plt.subplots(2,len(zbins),figsize=figsize,sharey='row',sharex=True,squeeze=False,
-                            gridspec_kw={'height_ratios': [2, 1, 1]})
+                            gridspec_kw={'height_ratios': [2, 1]})
 
     if filter is None:
         filt = np.ones(len(data_table)).astype(bool)
