@@ -934,12 +934,12 @@ def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsiz
         axs[0,i].text(0.5,1.05,zbin_label,ha='center',va='center',transform=axs[0,i].transAxes)
         axs[0,i].axvline(x=0.5,c='lightgrey',ls='--',zorder=5)
 
-        axs[1,i].set_xlabel(r'$c_{th}$')
+        axs[1,i].set_xlabel('confidence threshold')
         axs[1,i].yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec2))
         axs[1,i].set_ylim(ymin2,ymax2)
         axs[1,i].axvline(x=0.5,c='lightgrey',ls='--',zorder=5)
 
-        """axs[2,i].set_xlabel(r'$c_{th}$')
+        """axs[2,i].set_xlabel('confidence threshold')
         #axs[1,i].yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec2))
         axs[2,i].set_ylim(ymin3,ymax3)"""
 
