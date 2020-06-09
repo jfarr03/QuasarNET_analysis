@@ -298,8 +298,8 @@ def get_cf_rrplusvi(rr_name='RR',specid_name='SPEC_ID'):
         cf_rr = get_cf_rr(rr_name=rr_name,specid_name=specid_name)
         isqso_rr, z_rr = cf_rr(temp_data_table,zwarn=False,filter=filter)
 
-        # Select to use VI when a zwarn flag is raised.
-        use_vi = (temp_data_table['ZWARN_{}'.format(rr_name)]>0)
+        # Select to use VI when a zwarn flag is raised and best fit is QSO.
+        use_vi = (temp_data_table['ZWARN_{}'.format(rr_name)]>0) & (temp_data_table['ISQSO_{}'.format(rr_name)])
         print('INFO: RR+VI sends {}/{} ({:2.1%}) spectra to VI'.format(use_vi.sum(),len(temp_data_table),use_vi.sum()/len(temp_data_table)))
 
         # Construct outputs.
@@ -324,7 +324,7 @@ def get_cf_rrplusvialt(rr_name='RR',specid_name='SPEC_ID'):
         isqso_rr, z_rr = cf_rr(temp_data_table,zwarn=False,filter=filter)
         isqso_rr_zwt, z_rr_zwt = cf_rr(temp_data_table,zwarn=True,filter=filter)
 
-        # Select to use VI when a zwarn flag is raised and best fit is QSO.
+        # Select to use VI when a zwarn flag is raised.
         use_vi = (isqso_rr_zwt) & (~isqso_rr)
         print('INFO: RR+VI alt. sends {}/{} ({:2.1%}) spectra to VI'.format(use_vi.sum(),len(temp_data_table),use_vi.sum()/len(temp_data_table)))
 
