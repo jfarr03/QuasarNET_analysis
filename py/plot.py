@@ -817,9 +817,10 @@ def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6
     return fig, axs
 
 # Function for appendix.
-def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsize=(12,6),zbins=[(0.9,2.1),(2.1,None)],desi_nqso=[1.3*10**6,0.8*10**6],dv_max=6000.,show_correctwrongzbin=False,verbose=False,nydec=0,ymax=0.1,filter=None,c_th=None):
+def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsize=(12,6),zbins=[(0.9,2.1),(2.1,None)],desi_nqso=[1.3*10**6,0.8*10**6],dv_max=6000.,show_correctwrongzbin=False,verbose=False,nydec=0,ymax=0.1,ymin2=0.97,ymax2=1.005,filter=None,c_th=None):
 
-    fig, axs = plt.subplots(1,len(zbins),figsize=figsize,sharey=True,squeeze=False)
+    fig, axs = plt.subplots(2,len(zbins),figsize=figsize,sharey=True,squeeze=False,
+                            gridspec_kw={'height_ratios': [3, 1]})
 
     if filter is None:
         filt = np.ones(len(data_table)).astype(bool)
@@ -894,7 +895,7 @@ def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsiz
         if show_correctwrongzbin:
             axs[0,i].fill_between(c_th,pstar+pgalwrongz+pqsowrongz,pcorrectwrongzbin+pstar+pgalwrongz+pqsowrongz,color=utils.colours['C3'],label='correct w.\nwrong $z$-bin',alpha=0.5,zorder=1)
 
-        axs[0,i].plot(c_th,1-completeness,color='darkgrey',label=r'$1-\mathrm{completeness}$')
+        axs[1,i].plot(c_th,completeness,color='darkgrey')
 
         """axs[0,i].plot(c_th,pstar,color=utils.colours['C0'],label='star')
         axs[0,i].plot(c_th,pgalwrongz+pstar,color=utils.colours['C1'],label='galaxy w.\nwrong $z$')
@@ -922,6 +923,8 @@ def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsiz
         axs[0,i].set_ylim(0,ymax)
         zbin_label = get_label_from_zbin(zbin)
         axs[0,i].text(0.5,1.05,zbin_label,ha='center',va='center',transform=axs[0,i].transAxes)
+
+        axs[1,i].set_ylim(ymin2,ymax2)
 
         """cell_text = []
         extrarow = False
@@ -953,6 +956,7 @@ def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsiz
 
     axs[0,0].set_ylabel('contamination of\nQSO catalogue')
     axs[0,1].legend()
+    axs[1,0].set_ylabel('completeness')
 
     rect = (0.07,0.2,1.0,1.0)
     plt.tight_layout(rect=rect)
