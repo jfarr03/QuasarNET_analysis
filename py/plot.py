@@ -817,7 +817,7 @@ def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6
     return fig, axs
 
 # Function for appendix.
-def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsize=(12,6),zbins=[(0.9,2.1),(2.1,None)],desi_nqso=[1.3*10**6,0.8*10**6],dv_max=6000.,show_correctwrongzbin=False,verbose=False,nydec=0,ymax=0.1,ymin2=0.97,ymax2=1.005,filter=None,c_th=None):
+def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsize=(12,6),zbins=[(0.9,2.1),(2.1,None)],desi_nqso=[1.3*10**6,0.8*10**6],dv_max=6000.,show_correctwrongzbin=False,verbose=False,nydec=0,nydec2=0,ymax=0.1,ymin2=0.97,ymax2=1.005,filter=None,c_th=None):
 
     fig, axs = plt.subplots(2,len(zbins),figsize=figsize,sharex=True,squeeze=False,
                             gridspec_kw={'height_ratios': [2, 1]})
@@ -924,6 +924,7 @@ def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsiz
         axs[0,i].text(0.5,1.05,zbin_label,ha='center',va='center',transform=axs[0,i].transAxes)
 
         axs[1,i].set_xlabel(r'$c_{th}$')
+        axs[1,i].yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec2))
         axs[1,i].set_ylim(ymin2,ymax2)
 
         """cell_text = []
@@ -958,7 +959,7 @@ def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsiz
     axs[0,1].legend()
     axs[1,0].set_ylabel('completeness')
 
-    rect = (0.07,0.2,1.0,1.0)
+    rect = (0.07,0.,1.0,1.0)
     plt.tight_layout(rect=rect)
     if filename is not None:
         plt.savefig(filename)
