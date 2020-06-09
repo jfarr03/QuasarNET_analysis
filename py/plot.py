@@ -895,7 +895,8 @@ def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsiz
         if show_correctwrongzbin:
             axs[0,i].fill_between(c_th,pstar+pgalwrongz+pqsowrongz,pcorrectwrongzbin+pstar+pgalwrongz+pqsowrongz,color=utils.colours['C3'],label='correct w.\nwrong $z$-bin',alpha=0.5,zorder=1)
 
-        axs[1,i].plot(c_th,completeness,color='darkgrey')
+        axs[1,i].plot(c_th,completeness,color=utils.colours['C3'])
+        axs[1,i].axhline(y=1.0,c='lightgrey',zorder=-1)
 
         """axs[0,i].plot(c_th,pstar,color=utils.colours['C0'],label='star')
         axs[0,i].plot(c_th,pgalwrongz+pstar,color=utils.colours['C1'],label='galaxy w.\nwrong $z$')
