@@ -341,7 +341,7 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
             hists = hists/((hists*(dv_mids.reshape(1,len(dv_mids)))).sum(axis=1)[:,None])
         mean_hist = np.sum(hists,axis=0)
         if norm_dvhist:
-            mean_hist = mean_hist/((mean_hist*dv_mids).sum(axis=1))
+            mean_hist = mean_hist/((mean_hist*dv_mids).sum())
         if show_std:
             std_hist = np.std(hists,axis=0)
 
