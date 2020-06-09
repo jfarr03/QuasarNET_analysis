@@ -817,10 +817,10 @@ def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6
     return fig, axs
 
 # Function for appendix.
-def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsize=(12,6),zbins=[(0.9,2.1),(2.1,None)],desi_nqso=[1.3*10**6,0.8*10**6],dv_max=6000.,show_correctwrongzbin=False,verbose=False,nydec=0,nydec2=0,ymax=0.1,ymin2=0.97,ymax2=1.005,filter=None,c_th=None):
+def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsize=(12,8),zbins=[(0.9,2.1),(2.1,None)],desi_nqso=[1.3*10**6,0.8*10**6],dv_max=6000.,show_correctwrongzbin=False,verbose=False,nydec=0,nydec2=0,ymax=0.1,ymin2=0.97,ymax2=1.005,filter=None,c_th=None):
 
-    fig, axs = plt.subplots(2,len(zbins),figsize=figsize,sharex=True,squeeze=False,
-                            gridspec_kw={'height_ratios': [2, 1]})
+    fig, axs = plt.subplots(2,len(zbins),figsize=figsize,sharey='row',sharex=True,squeeze=False,
+                            gridspec_kw={'height_ratios': [2, 1, 1]})
 
     if filter is None:
         filt = np.ones(len(data_table)).astype(bool)
@@ -910,12 +910,17 @@ def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsiz
         if show_correctwrongzbin:
             axs[0,i].bar(c_th,pcorrectwrongzbin,bottom=pstar+pgalwrongz+pqsowrongz,color=utils.colours['C3'],label='correct w.\nwrong $z$-bin',width=0.5)"""
 
-        """DESI_ncat_presents = []
+        DESI_ncat_presents = []
         for j,c in enumerate(completeness):
             pcon = nwrong[j]/ncat[j]
             DESI_ncat = c * desi_nqso[i]/(1 - pcon)
             DESI_ncat_present = (round(DESI_ncat * 10**-6,3))
-            DESI_ncat_presents.append(DESI_ncat_present)"""
+            DESI_ncat_presents.append(DESI_ncat_present)
+
+        """axs[1,i].plot(c_th,DESI_ncat_presents,color=utils.colours['C3'])
+        axs[1,i].axhline(y=desi_nqso[i],c='lightgrey',zorder=-1)"""
+
+
 
         axs[0,i].set_xlim(min(c_th),max(c_th))
 
@@ -927,6 +932,10 @@ def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsiz
         axs[1,i].set_xlabel(r'$c_{th}$')
         axs[1,i].yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec2))
         axs[1,i].set_ylim(ymin2,ymax2)
+
+        """axs[2,i].set_xlabel(r'$c_{th}$')
+        #axs[1,i].yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec2))
+        axs[2,i].set_ylim(ymin3,ymax3)"""
 
         """cell_text = []
         extrarow = False
