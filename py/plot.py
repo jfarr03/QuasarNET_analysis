@@ -969,7 +969,7 @@ def plot_catalogue_performance_vs_cth(data_table,strategies,filename=None,figsiz
     axs[0,1].legend()
     axs[1,0].set_ylabel('completeness')
 
-    rect = (0.07,0.,1.0,1.0)
+    rect = (0.,0.,1.0,1.0)
     plt.tight_layout(rect=rect)
     if filename is not None:
         plt.savefig(filename)
