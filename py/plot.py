@@ -653,8 +653,10 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
 
     if len(filters)==1:
         axs[0,0].set_xlabel(xlabel)
+        plt.tight_layout()
     else:
         fig.text(0.5,0.14,xlabel,ha='center',va='center')
+        plt.tight_layout(rect=rect)
 
     if need_colourbar:
         # Colour bar
