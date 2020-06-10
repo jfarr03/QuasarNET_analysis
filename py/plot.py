@@ -236,7 +236,7 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
         pur_panel = (0,0)
         com_panel = (0,0)
         dv_panel = (1,0)
-        gridspec_kw = {'height_ratios': [2, 1]}
+        gridspec_kw = {'height_ratios': [3, 2]}
     elif npanel==3:
         panel_dims = (1,3)
         pur_panel = (0,0)
