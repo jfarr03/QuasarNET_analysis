@@ -236,12 +236,14 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
         pur_panel = (0,0)
         com_panel = (0,0)
         dv_panel = (1,0)
+        gridspec_kw = {'height_ratios': [2, 1]}
     elif npanel==3:
         panel_dims = (1,3)
         pur_panel = (0,0)
         com_panel = (0,1)
         dv_panel = (0,2)
-    fig, axs = plt.subplots(*panel_dims,figsize=figsize,squeeze=False)
+        gridspec_kw = {'width_ratios': [1, 1, 1]}
+    fig, axs = plt.subplots(*panel_dims,figsize=figsize,squeeze=False,gridspec_kw=gridspec_kw)
 
     n_dv = 51
     dv_bins = np.linspace(-3000.,3000,n_dv)
