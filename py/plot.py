@@ -447,11 +447,11 @@ def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,
         axs[j//2,j%2].plot(c_th,pur,label='purity',color=utils.colours['C0'])
         axs[j//2,j%2].plot(c_th,com,label='completeness',color=utils.colours['C1'])
 
-    axs[0,0].text(-0.22,0.5,'4 exposure (coadded)\ntesting data',ha='center',va='center',
+    axs[0,0].text(-0.22,0.5,'coadded\ntesting data',ha='center',va='center',
                   transform=axs[0,0].transAxes,rotation=90)
     axs[1,0].text(-0.22,0.5,'single exposure\ntesting data',ha='center',va='center',
                   transform=axs[1,0].transAxes,rotation=90)
-    axs[0,0].text(0.5,1.1,'4 exposure (coadded)\ntraining data',ha='center',va='center',
+    axs[0,0].text(0.5,1.1,'coadded\ntraining data',ha='center',va='center',
                   transform=axs[0,0].transAxes,rotation=0)
     axs[0,1].text(0.5,1.1,'single exposure\ntraining data',ha='center',va='center',
                   transform=axs[0,1].transAxes,rotation=0)
