@@ -216,7 +216,7 @@ def plot_pur_com_vs_cth_zbin(data_table,strategies,filename=None,zbins=[(None,2.
     return fig, axs
 
 ## Function for Figure 2.
-def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec=2,figsize=(12,12),ymin=0.98,ymax=1.,verbose=False,npanel=2,norm_dvhist=True,strategies_to_plot=None,c_th=None,show_std=False,n_std_scale=None,dv_c_th=0.5):
+def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec=2,figsize=(12,12),ymin=0.98,ymax=1.,verbose=False,npanel=2,norm_dvhist=True,strategies_to_plot=None,c_th=None,show_std=False,n_std_scale=None,dv_c_th=0.5,bottom_edge_offset=0.1):
 
     if c_th is None:
         c_th = np.linspace(0.,1.,101)
@@ -377,7 +377,7 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
     axs[dv_panel].set_ylim(bottom=0.)
 
     fig.legend(artists,labels,loc='lower center',borderaxespad=0,bbox_to_anchor=(0.5,0.03),ncol=len(artists))
-    rect = (0,0.1,1.,1.)
+    rect = (0,bottom_edge_offset,1.,1.)
     plt.tight_layout(rect=rect)
 
     if filename is not None:
