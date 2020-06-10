@@ -632,7 +632,6 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
     if auto_legend:
         if len(filters) == 1:
             axs[0,0].legend(loc=legend_loc,ncol=ncol)
-            axs[0,0].set_xlabel(xlabel)
             plt.tight_layout()
         else:
             artists = []
@@ -649,9 +648,13 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
             fig.legend(artists,labels,loc='lower center',borderaxespad=0,bbox_to_anchor=(0.5,0.03),ncol=len(artists))
             rect = (0,0.15,1.,1.)
             plt.tight_layout(rect=rect)
-            fig.text(0.5,0.14,xlabel,ha='center',va='center')
             for k, filt_name in enumerate(filters.keys()):
                 axs[0,k].set_title(filt_name)
+
+    if len(filters)==1:
+        axs[0,0].set_xlabel(xlabel)
+    else:
+        fig.text(0.5,0.14,xlabel,ha='center',va='center')
 
     if need_colourbar:
         # Colour bar
