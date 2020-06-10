@@ -375,7 +375,7 @@ def plot_qn_model_compare(data_table,strategies,filename=None,dv_max=6000.,nydec
     axs[dv_panel].set_ylim(bottom=0.)
 
     fig.legend(artists,labels,loc='lower center',borderaxespad=0,bbox_to_anchor=(0.5,0.03),ncol=len(artists))
-    rect = (0,0.13,1.,1.)
+    rect = (0,0.1,1.,1.)
     plt.tight_layout(rect=rect)
 
     if filename is not None:
