@@ -47,7 +47,7 @@ def get_data_dict(data_file,truth_file,train_file,nspec=None,nspec_method='first
         raise ValueError('nspec_method value is not recognised')
 
     ## Get the training data.
-    tids_train,X_train,Y_train,z_train,bal_train = read_data(train_file, return_spid=False)
+    tids_train,X_train,Y_train,z_train,bal_train = read_data([train_file], return_spid=False)
 
     ## Assess how many spectra from the training data are in the test data.
     in_train = in1d(tids, tids_train)
