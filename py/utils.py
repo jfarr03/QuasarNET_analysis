@@ -90,6 +90,111 @@ def get_data_dict(data_file,truth_file,train_file,nspec=None,nspec_method='first
 
     return data_dict
 
+def show_spec(ax,p,data,wave,tid,lines,lines_bal,show_bal=True,ndetect=1,cth=0.8,verbose=False,show_BOSS=False,files=None,show_qn_BOSS=False,show_DESI=False):
+
+    tids_val = data['tids']
+    X_val = data['X']
+    Y_val = data['Y']
+    ztrue_val = data['z']
+
+    if (tids_val==tid).sum()>0:
+        ival = np.argmax(tids_val==tid)
+    else:
+        text = 'WARN: Spectrum for tid {} not found!'.format(tid)
+        ax.text(0.5,0.5,text,horizontalalignment='center',verticalalignment='center',transform=ax.transAxes)
+        print(text)
+        return
+
+    X = X_val[ival:ival+1,:,None]
+    Y = Y_val[ival:ival+1,:,None]
+    ztrue = ztrue_val[ival]
+
+    c_line, z_line, zbest, c_line_bal, z_line_bal = process_preds(p, lines, lines_bal, wave=wave)
+    X_plot = X.reshape(X.shape[1])
+    ax.plot(wave.wave_grid, X_plot)
+
+    best_line = np.array(lines)[c_line.argmax(axis=0)].flatten()
+
+    class_dict = {0: 'star', 1: 'gal', 2: 'QSOLZ', 3: 'QSOHZ', 4: 'BAD'}
+    true_class = class_dict[np.argmax(Y)]
+    isqso = (c_line>cth).sum()>=ndetect
+
+    text = ''
+    text += r'ann: class = {}, z = {:1.3f}'.format(true_class,ztrue)
+    text += '\n'
+    if isqso:
+        pred_class = 'QSO'
+        text += r'pred: class = {}, z = {:1.3f}'.format(pred_class,zbest[0])
+    else:
+        pred_class = 'non-QSO'
+        text += r'pred: class = {}, z = {:1.3f}'.format(pred_class,zbest[0])
+        #title += r'pred: class = {}, z = {}'.format(pred_class,'N/A')
+
+    #title += r'z$_{{pred}}$ = {:1.3f}, z$_{{ann}}$ = {:1.3f}'.format(zbest[0],ztrue[0])
+    ax.text(0.98, 0.02, text, horizontalalignment='right', verticalalignment='bottom', transform=ax.transAxes)
+
+    m = X_plot.min()
+    M = X_plot.max()
+    ax.grid()
+    ax.set_ylim(m-2,M+2)
+    irrel_lines_text = ''
+    ax.set_xlabel(r'$\AA$')
+
+    for il,l in enumerate(lines):
+
+        lam = absorber_IGM[l]*(1+z_line[il])
+        w = abs(wave.wave_grid-lam)<100
+
+        if w.sum()!=0:
+            m = X_plot[w].min()-1
+            M = X_plot[w].max()+1
+
+            if l == best_line[0]:
+                ls = 'c--'
+            else:
+                ls = 'k--'
+            ax.plot([lam,lam], [m,M],ls, alpha=0.1+0.9*c_line[il,0])
+            text = 'c$_{{{}}}={}$'.format(l,round(c_line[il,0],3))
+            text += '\n'
+            text += 'z$_{{{}}}={}$'.format(l,round(z_line[il,0],3))
+            ax.text(lam,M+0.5,text,alpha=0.1+0.9*c_line[il,0],
+                        horizontalalignment='center',verticalalignment='bottom'
+                        )
+
+            if l != best_line[0]:
+                lam_pred = absorber_IGM[l]*(1+zbest)
+                w2 = abs(wave.wave_grid-lam_pred)<100
+                if w2.sum()!=0:
+                    ax.plot([lam_pred,lam_pred], [m-0.5,m+0.5],'c--')
+                    ax.text(lam_pred,m-1.5,'{} pred'.format(l),
+                                    horizontalalignment='center')
+                else:
+                    irrel_lines_text += '{}'.format(l)
+                    irrel_lines_text += '\n'
+
+            """if c_line[il]<cth:
+                lam_pred = absorber_IGM[l]*(1+zbest)
+                if (lam_pred < 10000) * (lam_pred > 3600):
+                    ax.plot([lam_pred,lam_pred], [m-1,m],'g--', alpha=0.1+0.9*(1-c_line[il,0]))
+                    ax.text(lam_pred,m-1.5,'c$_{{{}}}={}$'.format(l,round(c_line[il,0],3)),
+                                    horizontalalignment='center',alpha=0.1+0.9*(1-c_line[il,0]))"""
+
+
+
+    ax.text(0.98, 0.98, irrel_lines_text, horizontalalignment='right', verticalalignment='top', transform=ax.transAxes, fontsize='large', color='c')
+
+    if show_bal:
+        for il,l in enumerate(lines_bal):
+            lam = absorber_IGM[l]*(1+z_line_bal[il])
+            w = abs(wave.wave_grid-lam)<100
+            if w.sum()!=0:
+                m = X_plot[w].min()-1
+                M = X_plot[w].max()+1
+                ax.plot([lam,lam], [m,M],'r--', alpha=0.1+0.9*c_line_bal[il,0])
+                ax.text(lam,M+2.0,'c$_{{{}}}={}$'.format('BAL'+l,round(c_line_bal[il,0],3)),horizontalalignment='center',alpha=0.1+0.9*c_line_bal[il,0],c='r')
+
+    return
+
 def show_spec_pred(ax,model,data,wave,tid,lines,lines_bal,show_bal=True,ndetect=1,cth=0.8,verbose=False,show_BOSS=False,files=None,show_qn_BOSS=False,show_DESI=False):
 
     tids_val = data['tids']
