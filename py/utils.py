@@ -46,17 +46,15 @@ def get_data_dict(data_file,truth_file,train_file,nspec=None,nspec_method='first
     else:
         raise ValueError('nspec_method value is not recognised')
 
-    h = fits.open(train_file)
-    tids_train = h[1].data['TARGETID']
-    w = np.in1d(tids_full, tids_train)
-    X_train = X_full[w]
-    Y_train = Y_full[w]
-    z_train = z_full[w]
-    bal_train = bal_full[w]
-    h.close()
+    ## Get the training data.
+    tids_train,X_train,Y_train,z_train,bal_train = read_data(train_file, return_spid=False)
+
+    ## Assess how many spectra from the training data are in the test data.
+    in_train = in1d(tids, tids_train)
+    print('INFO: found {} spectra from the training sample in the test sample'.format(in_train.sum()))
 
     ## to get the validation data, remove the spectra in the training sample from the full sample
-    w = ~np.in1d(tids_full, tids_train)
+    w = ~in_train
     tids_val = tids_full[w]
     X_val = X_full[w]
     Y_val = Y_full[w]
