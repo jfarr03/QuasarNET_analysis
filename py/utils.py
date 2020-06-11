@@ -50,7 +50,7 @@ def get_data_dict(data_file,truth_file,train_file,nspec=None,nspec_method='first
     tids_train,X_train,Y_train,z_train,bal_train = read_data([train_file], truth, return_spid=False)
 
     ## Assess how many spectra from the training data are in the test data.
-    in_train = np.in1d(tids, tids_train)
+    in_train = np.in1d(tids_full, tids_train)
     print('INFO: found {} spectra from the training sample in the test sample'.format(in_train.sum()))
 
     ## to get the validation data, remove the spectra in the training sample from the full sample
