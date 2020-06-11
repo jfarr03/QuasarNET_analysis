@@ -577,7 +577,7 @@ def load_sq_data(f_sq,p_min=0.32,include_p=False,mode='BOSS'):
 
     return sq_data
 
-def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include_cbal_qn=False,include_p_sq=False,include_fits_rr=False,common_specids=True):
+def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include_cbal_qn=False,include_p_sq=False,include_fits_rr=False,common_specids=True,spec_ids=None):
 
     ## If no truth provided, make one from VI data.
     if truth is None:
@@ -649,7 +649,12 @@ def reduce_data_to_table(data,truth=None,verbose=True,include_c_qn=False,include
         if ('RR' in c) or ('PIPE' in c):
             cols += [data[c]['ZWARN']]
             colnames += ['ZWARN_{}'.format(c)]
-        nonVI_tables.append(Table(cols,names=colnames))
+
+        dataset_table = Table(cols,names=colnames)
+        if spec_ids is not None:
+            w = np.in1d(dataset_table['SPEC_ID'],spec_ids)
+            dataset_table = dataset_table[w]
+        nonVI_tables.append(dataset_table)
 
     ## Join each table.
     if common_specids:
