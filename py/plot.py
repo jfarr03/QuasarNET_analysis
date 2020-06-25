@@ -478,7 +478,7 @@ def plot_qn_model_data_compare(data_table,strategies,filename=None,dv_max=6000.,
     return fig, axs
 
 ## Function for Figure 4.
-def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(12,6),eff_area=None,dv_max=6000.,zcut=2.1,ymin=0.94,xmin=47.,xmax=52.,verbose=False,n_highz_desi=50,nydec=0,filters=None,marker_size=100,strategies_to_plot=None,npoints_plot=None,point_shift=0.004,auto_legend=True,vmin=0.,vmax=1.,legend_loc=4,ncol=1,cbar_labels={0:'confidence threshold'},cbar_tick_mults={0:1}):
+def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(12,6),eff_area=None,dv_max=6000.,zcut=2.1,ymin=0.94,xmin=47.,xmax=52.,verbose=False,n_highz_desi=50,nydec=0,filters=None,marker_size=100,strategies_to_plot=None,npoints_plot=None,point_shift=0.004,auto_legend=True,vmin={0:0.},vmax={0:1.},legend_loc=4,ncol=1,cbar_labels={0:'confidence threshold'},cbar_tick_mults={0:1}):
 
     if filters is None:
         filters = {None: np.ones(len(data_table)).astype(bool)}
@@ -728,7 +728,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
         for i,i_cb in enumerate(cmaps.keys()):
             cbar_ax = fig.add_axes([1-d_cb+di_cb*i+0.02, bar_bottom, 0.02, bar_height])
             cb = fig.colorbar(cbar_points[i_cb],label=cbar_labels[i_cb],cax=cbar_ax)
-            #cb.mappable.set_clim(vmin=vmin,vmax=vmax)
+            cb.mappable.set_clim(vmin=vmins[i_cb],vmax=vmaxs[i_cb])
             cb.set_ticks(cb.get_ticks())
             if cbar_tick_mults is not None:
                 cb.set_ticklabels(cb.get_ticks()*cbar_tick_mults[i_cb])
