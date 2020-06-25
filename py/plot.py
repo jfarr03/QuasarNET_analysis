@@ -511,6 +511,10 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
         print('WARN: point_shift={} is problematic, changing to 0.004 (use "None" if no shift wanted)'.format(point_shift))
         point_shift = 0.004
 
+    colours = [utils.colours['C0'],utils.colours['C1'],utils.colours['C2'],utils.colours['C3']]
+    nodes = [0.0, 0.33333, 0.66666, 1.0]
+    cmap = LinearSegmentedColormap.from_list("mycmap", list(zip(nodes, colours)))
+
     fig, axs = plt.subplots(1,len(filters),figsize=figsize,squeeze=False,sharey=True)
 
     # determine the true classifications
@@ -604,7 +608,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                 else:
                     inds = np.arange(npoints)
                 axs[0,k].plot(reobs_dens,pli,c='grey',marker=strategies_to_plot[filt_name][s]['marker'],label=s,zorder=2,ms=np.sqrt(marker_size))
-                points = axs[0,k].scatter(reobs_dens[inds],pli[inds],c=strategies_to_plot[filt_name][s]['color'],marker=strategies_to_plot[filt_name][s]['marker'],s=marker_size,zorder=3)
+                points = axs[0,k].scatter(reobs_dens[inds],pli[inds],c=strategies_to_plot[filt_name][s]['color'],cmap=cmap,marker=strategies_to_plot[filt_name][s]['marker'],s=marker_size,zorder=3)
             else:
                 if point_shift is not None:
                     while (reobs_dens,pli) in points_occupied:
