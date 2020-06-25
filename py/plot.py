@@ -513,9 +513,30 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
         print('WARN: point_shift={} is problematic, changing to 0.004 (use "None" if no shift wanted)'.format(point_shift))
         point_shift = 0.004
 
-    colours = [utils.colours['C0'],utils.colours['C1'],utils.colours['C2'],utils.colours['C3']]
-    nodes = [0.0, 0.33333, 0.66666, 1.0]
-    cmap = LinearSegmentedColormap.from_list("mycmap", list(zip(nodes, colours)))
+    # Work out how many colorbars we need
+    i_cb_values = []
+    for s in strategies.keys():
+        try:
+            i_cb_values += [strategies[s]['i_cb']]
+    n_cb = len(set(i_cb_values))
+    if n_cb>2:
+        raise ValueError('Currently only set up for 1 or 2 colorbars')
+    cmaps = {}
+    if n_cb = 1
+        colours = [utils.colours['C0'],utils.colours['C1'],utils.colours['C2'],utils.colours['C3']]
+        nodes = [0.0, 0.33333, 0.66666, 1.0]
+        cmap = LinearSegmentedColormap.from_list("mycmap", list(zip(nodes, colours)))
+        cmaps[i_cb_values[0]] = cmap
+    if n_cb = 2
+        colours = [utils.colours['C0'],utils.colours['C1']]
+        nodes = [0.0, 1.0]
+        cmap = LinearSegmentedColormap.from_list("mycmap", list(zip(nodes, colours)))
+        cmaps[i_cb_values[0]] = cmap
+
+        colours = [utils.colours['C2'],utils.colours['C3']]
+        nodes = [0.0, 1.0]
+        cmap = LinearSegmentedColormap.from_list("mycmap", list(zip(nodes, colours)))
+        cmaps[i_cb_values[1]] = cmap
 
     fig, axs = plt.subplots(1,len(filters),figsize=figsize,squeeze=False,sharey=True)
 
@@ -592,6 +613,12 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                 nhighz_truth_plot += (filt_strategies[ss]['nhighz_truth'])
                 eff_area_plot += (filt_strategies[ss]['eff_area'])
 
+            # Get the cbar index from the last strategy if needed.
+            try:
+                i_cb = filt_strategies[ss]['i_cb']
+            except KeyError:
+                i_cb = 0
+
             #n_strategies_combined = len(strategies_to_plot[filt_name][s]['strategies'])
             reobs_dens = nhighz_flagged_plot/(eff_area_plot) #*n_strategies_combined)
             pli = nhighz_truth_flagged_plot/(nhighz_truth_plot) #*n_strategies_combined)
@@ -610,6 +637,9 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                 else:
                     inds = np.arange(npoints)
                 axs[0,k].plot(reobs_dens,pli,c='grey',marker=strategies_to_plot[filt_name][s]['marker'],label=s,zorder=2,ms=np.sqrt(marker_size))
+
+                cmap = cmaps[i_cb]
+                
                 points = axs[0,k].scatter(reobs_dens[inds],pli[inds],c=strategies_to_plot[filt_name][s]['color'],cmap=cmap,marker=strategies_to_plot[filt_name][s]['marker'],s=marker_size,zorder=3)
             else:
                 if point_shift is not None:
