@@ -519,6 +519,8 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
         try:
             i_cb_values += [strategies[s]['i_cb']]
         except:
+            print('INFO: No colorbar found in strategy {}'.format(s))
+            print(s.keys())
             pass
     n_cb = len(set(i_cb_values))
     print('INFO: {} colorbars needed'.format(n_cb))
