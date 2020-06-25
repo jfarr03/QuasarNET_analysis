@@ -513,35 +513,40 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
         print('WARN: point_shift={} is problematic, changing to 0.004 (use "None" if no shift wanted)'.format(point_shift))
         point_shift = 0.004
 
-    # Work out how many colorbars we need
-    i_cb_values = []
-    for s in strategies.keys():
-        try:
-            i_cb_values += [strategies[s]['i_cb']]
-        except:
-            print('INFO: No colorbar found in strategy {}'.format(s))
-            print(s.keys())
-            pass
-    n_cb = len(set(i_cb_values))
-    print('INFO: {} colorbars needed'.format(n_cb))
-    if n_cb>2:
-        raise ValueError('Currently only set up for 1 or 2 colorbars')
-    cmaps = {}
-    if n_cb == 1:
-        colours = [utils.colours['C0'],utils.colours['C1'],utils.colours['C2'],utils.colours['C3']]
-        nodes = [0.0, 0.33333, 0.66666, 1.0]
-        cmap = LinearSegmentedColormap.from_list("mycmap", list(zip(nodes, colours)))
-        cmaps[i_cb_values[0]] = cmap
-    if n_cb == 2:
-        colours = [utils.colours['C0'],utils.colours['C1']]
-        nodes = [0.0, 1.0]
-        cmap = LinearSegmentedColormap.from_list("mycmap", list(zip(nodes, colours)))
-        cmaps[i_cb_values[0]] = cmap
+    if len(strategies.keys()) == 1:
+        k = [k for k in strategies.keys()][0]
+        # Work out how many colorbars we need
+        i_cb_values = []
+        for s in strategies[k].keys():
+            try:
+                i_cb_values += [strategies[k][s]['i_cb']]
+            except:
+                print('INFO: No colorbar found in strategy {}'.format(s))
+                print(s.keys())
+                pass
+        n_cb = len(set(i_cb_values))
+        print('INFO: {} colorbars needed'.format(n_cb))
+        if n_cb>2:
+            raise ValueError('Currently only set up for 1 or 2 colorbars')
+        cmaps = {}
+        if n_cb == 1:
+            colours = [utils.colours['C0'],utils.colours['C1'],utils.colours['C2'],utils.colours['C3']]
+            nodes = [0.0, 0.33333, 0.66666, 1.0]
+            cmap = LinearSegmentedColormap.from_list("mycmap", list(zip(nodes, colours)))
+            cmaps[i_cb_values[0]] = cmap
+        if n_cb == 2:
+            colours = [utils.colours['C0'],utils.colours['C1']]
+            nodes = [0.0, 1.0]
+            cmap = LinearSegmentedColormap.from_list("mycmap", list(zip(nodes, colours)))
+            cmaps[i_cb_values[0]] = cmap
 
-        colours = [utils.colours['C2'],utils.colours['C3']]
-        nodes = [0.0, 1.0]
-        cmap = LinearSegmentedColormap.from_list("mycmap", list(zip(nodes, colours)))
-        cmaps[i_cb_values[1]] = cmap
+            colours = [utils.colours['C2'],utils.colours['C3']]
+            nodes = [0.0, 1.0]
+            cmap = LinearSegmentedColormap.from_list("mycmap", list(zip(nodes, colours)))
+            cmaps[i_cb_values[1]] = cmap
+
+    else:
+        raise ValueError('Can only deal with more than one colorbar for one filter')
 
     fig, axs = plt.subplots(1,len(filters),figsize=figsize,squeeze=False,sharey=True)
 
