@@ -574,21 +574,21 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
 
         for s in strategies_to_plot[filt_name].keys():
 
-            nhighz_flagged = 0
-            nhighz_truth_flagged = 0
-            nhighz_truth = 0
-            eff_area = 0
+            nhighz_flagged_plot = 0
+            nhighz_truth_flagged_plot = 0
+            nhighz_truth_plot = 0
+            eff_area_plot = 0
 
             for ss in strategies_to_plot[filt_name][s]['strategies']:
 
-                nhighz_flagged += (filt_strategies[ss]['nhighz_flagged'])
-                nhighz_truth_flagged += (filt_strategies[ss]['nhighz_truth_flagged'])
-                nhighz_truth += (filt_strategies[ss]['nhighz_truth'])
-                eff_area += (filt_strategies[ss]['eff_area'])
+                nhighz_flagged_plot += (filt_strategies[ss]['nhighz_flagged'])
+                nhighz_truth_flagged_plot += (filt_strategies[ss]['nhighz_truth_flagged'])
+                nhighz_truth_plot += (filt_strategies[ss]['nhighz_truth'])
+                eff_area_plot += (filt_strategies[ss]['eff_area'])
 
             #n_strategies_combined = len(strategies_to_plot[filt_name][s]['strategies'])
-            reobs_dens = nhighz_flagged/(eff_area) #*n_strategies_combined)
-            pli = nhighz_truth_flagged/(nhighz_truth) #*n_strategies_combined)
+            reobs_dens = nhighz_flagged_plot/(eff_area_plot) #*n_strategies_combined)
+            pli = nhighz_truth_flagged_plot/(nhighz_truth_plot) #*n_strategies_combined)
 
             npoints = len(reobs_dens)
             if npoints>1:
