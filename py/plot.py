@@ -518,7 +518,10 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
     for s in strategies.keys():
         try:
             i_cb_values += [strategies[s]['i_cb']]
+        except:
+            pass
     n_cb = len(set(i_cb_values))
+    print('INFO: {} colorbars needed'.format(n_cb))
     if n_cb>2:
         raise ValueError('Currently only set up for 1 or 2 colorbars')
     cmaps = {}
@@ -639,7 +642,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                 axs[0,k].plot(reobs_dens,pli,c='grey',marker=strategies_to_plot[filt_name][s]['marker'],label=s,zorder=2,ms=np.sqrt(marker_size))
 
                 cmap = cmaps[i_cb]
-                
+
                 points = axs[0,k].scatter(reobs_dens[inds],pli[inds],c=strategies_to_plot[filt_name][s]['color'],cmap=cmap,marker=strategies_to_plot[filt_name][s]['marker'],s=marker_size,zorder=3)
             else:
                 if point_shift is not None:
