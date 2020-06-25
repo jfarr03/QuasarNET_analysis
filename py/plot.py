@@ -730,7 +730,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
             cb = fig.colorbar(cbar_points[i_cb],label=cbar_labels[i_cb],cax=cbar_ax)
             #cb.mappable.set_clim(vmin=vmin,vmax=vmax)
             cb.set_ticks(cb.get_ticks())
-            if cbar_tick_mult is not None:
+            if cbar_tick_mults is not None:
                 cb.set_ticklabels(cb.get_ticks()*cbar_tick_mults[i_cb])
 
     if filename is not None:
