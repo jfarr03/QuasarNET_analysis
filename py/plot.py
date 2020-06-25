@@ -572,6 +572,8 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
 
             if npoints>1:
                 need_colourbar = True
+                if n_cb==0:
+                    n_cb = 1
 
             for i,w_s in enumerate(filt_strategies[s]['w']):
 
@@ -609,6 +611,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                     print('num dens fibres flagged:',(filt_strategies[s]['nhighz_flagged'][i]/eff_area_s).round(6))
                     print('')
 
+        cbar_points = {}
         for s in strategies_to_plot[filt_name].keys():
 
             nhighz_flagged_plot = 0
@@ -651,12 +654,14 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                 cmap = cmaps[i_cb]
 
                 points = axs[0,k].scatter(reobs_dens[inds],pli[inds],c=strategies_to_plot[filt_name][s]['color'],cmap=cmap,marker=strategies_to_plot[filt_name][s]['marker'],s=marker_size,zorder=3)
+
+                cbar_points[i_cb] = points
             else:
                 if point_shift is not None:
                     while (reobs_dens,pli) in points_occupied:
                         print('WARN: strategy {} has been shifted by a factor of {} in reobs dens to avoid point overlap'.format(s,point_shift))
                         reobs_dens *= 1.+point_shift
-                points = axs[0,k].scatter(reobs_dens,pli,c=strategies_to_plot[filt_name][s]['color'],marker=strategies_to_plot[filt_name][s]['marker'],s=marker_size,label=s,zorder=3)
+                axs[0,k].scatter(reobs_dens,pli,c=strategies_to_plot[filt_name][s]['color'],marker=strategies_to_plot[filt_name][s]['marker'],s=marker_size,label=s,zorder=3)
                 points_occupied += [(reobs_dens,pli)]
 
         axs[0,k].axvline(x=n_highz_desi_filt,c='k',zorder=1,ls='--')
@@ -707,20 +712,26 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
         plt.tight_layout(rect=rect)
 
     if need_colourbar:
+
+        di_cb = 0.13
+        d_cb = n_cb*di_cb
+
         # Colour bar
-        fig.subplots_adjust(right=0.87)
+        fig.subplots_adjust(right=1-d_cb)
         bbox = axs[0,0].get_position()
         corners = bbox.corners()
         middle = (corners[3][1] + corners[2][1])/2.
         height = corners[3][1] - corners[2][1]
         bar_height = height*0.9
         bar_bottom = middle - bar_height/2.
-        cbar_ax = fig.add_axes([0.89, bar_bottom, 0.02, bar_height])
-        cb = fig.colorbar(points,label=cbar_label,cax=cbar_ax)
-        cb.mappable.set_clim(vmin=vmin,vmax=vmax)
-        cb.set_ticks(cb.get_ticks())
-        if cbar_tick_mult is not None:
-            cb.set_ticklabels(cb.get_ticks()*cbar_tick_mult)
+
+        for i,i_cb in enumerate(cmaps.keys()):
+            cbar_ax = fig.add_axes([1-d_cb+di_cb*i+0.02, bar_bottom, 0.02, bar_height])
+            cb = fig.colorbar(cbar_points[i_cb],label=cbar_label,cax=cbar_ax)
+            cb.mappable.set_clim(vmin=vmin,vmax=vmax)
+            cb.set_ticks(cb.get_ticks())
+            if cbar_tick_mult is not None:
+                cb.set_ticklabels(cb.get_ticks()*cbar_tick_mult)
 
     if filename is not None:
         plt.savefig(filename)
