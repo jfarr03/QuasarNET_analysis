@@ -525,12 +525,12 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
     if n_cb>2:
         raise ValueError('Currently only set up for 1 or 2 colorbars')
     cmaps = {}
-    if n_cb == 1
+    if n_cb == 1:
         colours = [utils.colours['C0'],utils.colours['C1'],utils.colours['C2'],utils.colours['C3']]
         nodes = [0.0, 0.33333, 0.66666, 1.0]
         cmap = LinearSegmentedColormap.from_list("mycmap", list(zip(nodes, colours)))
         cmaps[i_cb_values[0]] = cmap
-    if n_cb == 2
+    if n_cb == 2:
         colours = [utils.colours['C0'],utils.colours['C1']]
         nodes = [0.0, 1.0]
         cmap = LinearSegmentedColormap.from_list("mycmap", list(zip(nodes, colours)))
