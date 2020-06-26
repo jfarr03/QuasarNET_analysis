@@ -734,7 +734,7 @@ def plot_reobservation_performance(data_table,strategies,filename=None,figsize=(
                 cb.set_ticklabels(cb.get_ticks()*cbar_tick_mults[i_cb])
             if cbar_lines[i_cb] is not None:
                 for val in cbar_lines[i_cb]:
-                    cbar_ax.hlines(val, 0, 1, colors = 'k', linewidth = 10)
+                    cbar_ax.hlines(val, 0, 1, colors = 'k', linewidth = 2)
 
     if filename is not None:
         plt.savefig(filename)
