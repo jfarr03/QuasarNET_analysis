@@ -852,7 +852,7 @@ def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6
         if extrarow:
             cell_text.append(['']*len(completeness))
         cell_text.append(['{:2.1%}'.format(c) for c in completeness])
-        cell_text.append(['{:1.3f}'.format(c) for c in DESI_ncat_presents])
+        cell_text.append(['{:1.2f}'.format(c) for c in DESI_ncat_presents])
 
         rowLabels = []
         if extrarow:
