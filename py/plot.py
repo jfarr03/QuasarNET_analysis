@@ -841,7 +841,7 @@ def plot_catalogue_performance(data_table,strategies,filename=None,figsize=(12,6
             ha = 'right'
         else:
             ha = 'center'
-        axs[0,i].set_xticklabels(slabels,rotation=rotation, ha=ha)
+        axs[0,i].set_xticklabels(slabels,rotation=rotation, ha=ha, rotation_mode="anchor")
 
         axs[0,i].yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1.0,decimals=nydec))
         axs[0,i].set_ylim(0,ymax)
