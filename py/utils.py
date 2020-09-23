@@ -966,6 +966,7 @@ def autolabel_bars(ax,rects,numbers=None,heights=None,percentage=False,above=Fal
             n = numbers[ir]
         else:
             n = height
+        n += 10**(-10)
         if not percentage:
             ax.annotate('{}'.format(n),
                     xy=(rect.get_x() + rect.get_width() / 2, height),
