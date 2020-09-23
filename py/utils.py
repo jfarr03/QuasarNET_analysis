@@ -984,7 +984,7 @@ def autolabel_bars(ax,rects,numbers=None,heights=None,percentage=False,above=Fal
                     ha='center', va=va, color='k')
 
 def print_format_pct(p,ndpmin=1):
-    if p != 0:
+    if p != 0.:
         ndp = np.maximum(-int(np.floor(np.log10(p*100))),ndpmin)
     else:
         ndp = 1
